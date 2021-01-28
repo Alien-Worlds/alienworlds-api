@@ -4,6 +4,7 @@ API to index and read Alien Worlds data
 
 ## Building
 
+`yarn`
 `yarn build`
 
 ## Configuring
