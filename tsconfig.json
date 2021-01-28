@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "outDir": "dist/"
+  },
+  "files": [
+    "src/filler.ts",
+    "src/processor.ts",
+    "src/mongo_setup.ts",
+    "src/fetch_abis.ts"
+  ]
+}
