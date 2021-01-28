@@ -1,7 +1,7 @@
 import {StatsDisplay} from "./include/statsdisplay";
 
-const Amq = require('./connections/amq');
-const connectMongo = require('./connections/mongo');
+import { Amq } from './connections/amq';
+import { connectMongo } from './connections/mongo';
 import { AbiDeserializer } from './include/abideserializer';
 const { Api, JsonRpc, Serialize } = require('eosjs');
 const { Long } = require('mongodb');
@@ -11,7 +11,7 @@ const crypto = require('crypto');
 
 class AlienAPIProcessor {
     config: any;
-    amq: typeof Amq;
+    amq: Amq;
     deserializer: AbiDeserializer;
     mongo: any;
     rpc: typeof JsonRpc;
