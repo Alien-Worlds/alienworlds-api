@@ -4,13 +4,10 @@
     "module": "commonjs",
     "removeComments": true,
     "preserveConstEnums": true,
+    "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "dist/"
   },
-  "files": [
-    "src/filler.ts",
-    "src/processor.ts",
-    "src/mongo_setup.ts",
-    "src/fetch_abis.ts"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

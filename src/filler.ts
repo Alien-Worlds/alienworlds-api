@@ -1,6 +1,5 @@
 
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
-const {Api, JsonRpc, Serialize} = require('eosjs');
 import { Amq } from './connections/amq';
 import { StatsDisplay } from './include/statsdisplay';
 import { TraceHandler } from './handlers/tracehandler';

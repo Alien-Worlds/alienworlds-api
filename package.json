@@ -19,6 +19,12 @@
     "atomicassets": "^1.2.2",
     "crypto": "^1.0.1",
     "eosjs": "^21.0.3",
+    "fastify": "^3.11.0",
+    "fastify-autoload": "^3.4.2",
+    "fastify-cors": "^5.2.0",
+    "fastify-mongodb": "^2.0.1",
+    "fastify-oas": "^3.0.8",
+    "http": "^0.0.1-security",
     "mongodb": "^3.6.3",
     "node-fetch": "^2.6.1"
   }

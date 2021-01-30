@@ -9,6 +9,7 @@ export async function connectMongo(config) {
                 reject(err)
             } else if (client) {
                 console.log(`Connected to mongo at ${config.url}`);
+                console.log(`Got DB `)
                 resolve(client.db(config.dbName))
             }
         });
