@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { connectMongo } from './connections/mongo'
 
 (async () => {
