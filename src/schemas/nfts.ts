@@ -1,6 +1,6 @@
 const minesSchema = {
-    description: 'Get mines',
-    summary: 'Fetch mines by various criteria',
+    description: 'Get NFTs',
+    summary: 'Fetch NFTs by various criteria',
     tags: ['v1'],
     querystring: {
         type: 'object',
