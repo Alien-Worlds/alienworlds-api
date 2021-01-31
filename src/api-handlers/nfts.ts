@@ -2,7 +2,9 @@ import { nftsSchema } from '../schemas'
 
 const getNFTs = async (fastify, request) => {
     const limit = request.query.limit || 20
-    const global_sequence = request.query.global_sequence || 0
+    const sort = request.query.sort || null
+    const global_sequence_from = request.query.global_sequence_from || 0
+    const global_sequence_to = request.query.global_sequence_to || 0
     const miner = request.query.miner || null
     const rarity = request.query.rarity || null
     const land_id = request.query.land_id || null
@@ -42,26 +44,39 @@ const getNFTs = async (fastify, request) => {
         query.block_timestamp.$lt = new Date(Date.parse(to))
         has_query = true
     }
-
-    if (has_query){
-        if (global_sequence){
-            query.global_sequence = {'$gt':global_sequence}
-        }
-        res = collection.find(query).limit(limit)
-
-        const results = []
-        await res.forEach(r => {
-            results.push(r)
-        })
-        const count_query = query
-        if (count_query.global_sequence){
-            delete count_query.global_sequence
-        }
-
-        return {results, count: await collection.find(count_query).count()}
+    let _sort = -1
+    if (sort === 'asc' || sort === 'desc'){
+        _sort = (sort === 'asc')?1:-1
+    }
+    else if (sort){
+        throw new Error('Sort must be either "asc" or "desc"')
     }
 
-    return { error: true, message: 'You must supply either miner, land_id, landowner or planet' }
+    // perform the query
+    if (global_sequence_from){
+        if (typeof query.global_sequence === 'undefined'){
+            query.global_sequence = {}
+        }
+        query.global_sequence['$gte'] = global_sequence_from
+    }
+    if (global_sequence_to){
+        if (typeof query.global_sequence === 'undefined'){
+            query.global_sequence = {}
+        }
+        query.global_sequence['$lt'] = global_sequence_to
+    }
+    res = collection.find(query).sort({global_sequence: _sort}).limit(limit)
+
+    const results = []
+    await res.forEach(r => {
+        results.push(r)
+    })
+    const count_query = query
+    if (count_query.global_sequence){
+        delete count_query.global_sequence
+    }
+
+    return {results, count: await collection.find(count_query).count()}
 }
 
 

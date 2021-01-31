@@ -9,8 +9,16 @@ const minesSchema = {
                 description: 'Limit result count',
                 type: 'integer'
             },
-            "global_sequence": {
-                description: 'Global sequence number is greater than this (use for pagination)',
+            "sort": {
+                description: 'Sort, either asc or desc (default desc)',
+                type: 'string'
+            },
+            "global_sequence_from": {
+                description: 'Global sequence number is greater than or equal to this (use for pagination)',
+                type: 'integer'
+            },
+            "global_sequence_to": {
+                description: 'Global sequence number is less than this',
                 type: 'integer'
             },
             "miner": {
