@@ -26,7 +26,7 @@ const minesSchema = {
                 type: 'string'
             },
             "land_id": {
-                description: 'The land ID',
+                description: 'The land ID, can also be multiple IDs separated by a comma',
                 type: 'string'
             },
             "landowner": {
