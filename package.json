@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "yarn clean && tsc && yarn copy-files",
+    "build": "yarn check-config && yarn clean && tsc && yarn copy-files && yarn abis",
     "clean": "rm -rf ./dist",
-    "copy-files": "cp ./config.js ./dist/"
+    "copy-files": "cp ./config.js ./dist/",
+    "abis": "mkdir -p ./dist/abis && node dist/fetch_abis.js ./dist/abis",
+    "check-config": "node ./scripts/check-config.js || (echo \"Create the config file by copying config.example.js to config.js\" && exit 1)"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +27,7 @@
     "fastify-cors": "^5.2.0",
     "fastify-mongodb": "^2.0.1",
     "fastify-oas": "^3.0.8",
+    "file-exists": "^5.0.1",
     "http": "^0.0.1-security",
     "mongodb": "^3.6.3",
     "node-fetch": "^2.6.1"
