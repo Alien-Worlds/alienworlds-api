@@ -20,6 +20,10 @@ const getMines = async (fastify, request) => {
     const from = request.query.from || null
     const to = request.query.to || null
 
+    if (limit > 1000){
+        throw new Error('Limit maximum is 1000')
+    }
+
     let res = null, query: any = {}, has_query = false
     const db = fastify.mongo.db
     const collection = db.collection('mines')
