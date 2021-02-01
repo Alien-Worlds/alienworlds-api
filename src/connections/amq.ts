@@ -53,7 +53,7 @@ export class Amq {
         this.logger.info(`Connected to ${this.config.connection_string}`);
 
 
-        const channel = await conn.createChannel();
+        const channel = await conn.createConfirmChannel();
 
 
         // channel.assertQueue('block_range', {durable: true});
@@ -85,17 +85,27 @@ export class Amq {
     }
 
     async send(queue_name, msg) {
-        if (!Buffer.isBuffer(msg)) {
-            msg = Buffer.from(msg)
-        }
+        return new Promise((resolve, reject) => {
+            if (!Buffer.isBuffer(msg)) {
+                msg = Buffer.from(msg)
+            }
 
-        if (!this.initialized){
-            await this.init();
-        }
+            const return_fn = (err, ok) => {
+                if (err !== null)
+                    reject(err);
+                else
+                    resolve(ok);
+            };
 
-        // this.logger.info(`Message sent to queue ${queue_name}`);
-
-        return this.channel.sendToQueue(queue_name, msg)
+            if (!this.initialized){
+                this.init().then(i => {
+                    this.channel.sendToQueue(queue_name, msg, {}, return_fn);
+                });
+            }
+            else {
+                this.channel.sendToQueue(queue_name, msg, {}, return_fn);
+            }
+        });
     }
 
     async listen(queue_name, cb) {
