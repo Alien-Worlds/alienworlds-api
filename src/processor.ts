@@ -6,6 +6,8 @@ import { AbiDeserializer } from './include/abideserializer';
 const { Api, JsonRpc, Serialize } = require('eosjs');
 const { Long } = require('mongodb');
 import { deserialize, ObjectSchema } from "atomicassets";
+import * as cluster from "cluster";
+import * as os from 'os';
 const crypto = require('crypto');
 
 
@@ -44,6 +46,7 @@ class AlienAPIProcessor {
     }
 
     start () {
+        console.log(`Starting processor`);
         this.amq.listen('action', this.process_action_job.bind(this));
         this.amq.listen('atomic_deltas', this.process_aa_delta_job.bind(this));
     }
@@ -362,12 +365,26 @@ const deserializer = new AbiDeserializer('./abis');
     const amq = new Amq(config.amq);
     await amq.init();
 
-    const stats = new StatsDisplay();
-
     const mongo = await connectMongo(config.mongo);
 
     await deserializer.load();
 
-    const api = new AlienAPIProcessor(config, deserializer, amq, mongo, stats);
-    api.start();
+    if (cluster.isMaster){
+        let threads = parseInt(config.processor_threads);
+        console.log(`Threads set to ${threads}`);
+        if (threads === 0 || isNaN(threads)){
+            const cpus = os.cpus().length;
+            console.log(`We have ${cpus} CPUs, setting threads to ${cpus - 4}`);
+            threads = cpus - 4;
+        }
+
+        for (let i = 0; i < threads; i++) {
+            cluster.fork();
+        }
+    }
+    else {
+        const stats = new StatsDisplay();
+        const api = new AlienAPIProcessor(config, deserializer, amq, mongo, stats);
+        api.start();
+    }
 })();

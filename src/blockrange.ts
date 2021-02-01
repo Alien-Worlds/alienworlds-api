@@ -8,6 +8,7 @@ import { DeltaHandler } from './handlers/deltahandler';
 import { program } from 'commander';
 import fetch from 'node-fetch';
 import * as cluster from 'cluster';
+import * as os from 'os';
 const { Serialize } = require('eosjs');
 
 class AlienAPIBlockRange {
@@ -73,6 +74,7 @@ class AlienAPIBlockRange {
         this.state_receiver.registerDeltaHandler(delta_handler);
         this.state_receiver.registerDoneHandler(() => {
             this.amq.ack(job);
+            this.stats.add(`Processed range`);
             console.log(`Completed range ${from.toString()}-${to.toString()}`);
         });
 
@@ -80,15 +82,7 @@ class AlienAPIBlockRange {
     }
 
     async start() {
-        if (cluster.isMaster){
-            for (let i = 0; i < 8; i++) {
-                cluster.fork();
-            }
-        }
-        else {
-            this.amq.listen('aw_block_range', this.process_blockrange_job.bind(this));
-        }
-
+        this.amq.listen('aw_block_range', this.process_blockrange_job.bind(this));
     }
 }
 
@@ -96,11 +90,25 @@ class AlienAPIBlockRange {
 (async () => {
     const config = require(`./config`);
 
-    const stats = new StatsDisplay();
-
     const amq = new Amq(config.amq);
     await amq.init();
 
-    const api = new AlienAPIBlockRange(config, amq, stats);
-    await api.start();
+    if (cluster.isMaster){
+        let threads = parseInt(config.blockrange_threads);
+        if (threads === 0 || isNaN(threads)){
+            const cpus = os.cpus().length;
+            threads = cpus - 4;
+        }
+        console.log(`Threads set to ${threads}`);
+
+        for (let i = 0; i < threads; i++) {
+            cluster.fork();
+        }
+    }
+    else {
+        const stats = new StatsDisplay();
+
+        const api = new AlienAPIBlockRange(config, amq, stats);
+        await api.start();
+    }
 })();

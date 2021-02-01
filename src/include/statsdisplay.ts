@@ -23,7 +23,7 @@ export class StatsDisplay {
             items.push(`${name} : ${rate}/s`);
             this.buckets[name] = 0;
         }
-        const str = items.join(' | ') || 'No data';
+        const str = `[${process.pid}] ` + items.join(' | ') || 'No data';
         console.log(str);
     }
 }
