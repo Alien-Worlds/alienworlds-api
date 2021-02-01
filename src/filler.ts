@@ -48,56 +48,8 @@ class AlienAPIFiller {
 
         if (this.options.replay){
             console.log(`Kicking off parallel replay, make sure you start a filler instance after this replay is complete`);
-
-            let lib;
-            if (endBlock === 0xffffffff){
-                console.log(`Ending at head block`);
-                const info_res = await fetch(`${this.config.endpoints[0]}/v1/chain/get_info`);
-                const json = await info_res.json();
-                lib = json.last_irreversible_block_num;
-            }
-
-            const chunk_size = 10000;
-            let from = startBlock;
-            let to = from + chunk_size; // to is not inclusive
-            let break_now = false;
-            let number_jobs = 0;
-
-            while (true) {
-                console.log(`adding job for ${from} to ${to}`);
-                // let from_buffer = Buffer.from(from); //new Int64BE(from).toBuffer();
-                // let to_buffer = Buffer.from(to); //new Int64BE(to).toBuffer();
-
-                const from_buffer = Buffer.allocUnsafe(8);
-                from_buffer.writeBigInt64BE(BigInt(from), 0);
-
-                const to_buffer = Buffer.allocUnsafe(8);
-                to_buffer.writeBigInt64BE(BigInt(to), 0);
-
-                this.amq.send('aw_block_range', Buffer.concat([from_buffer, to_buffer]));
-                number_jobs++;
-
-                if (to === lib) {
-                    break_now = true
-                }
-
-                from += chunk_size;
-                to += chunk_size;
-
-                if (to > lib) {
-                    to = lib
-                }
-
-                if (from > to) {
-                    break_now = true
-                }
-
-                if (break_now) {
-                    break
-                }
-            }
-
-            return;
+            await this.replay(startBlock, endBlock);
+            process.exit(0);
         }
 
         const statereceiver_config = {
@@ -121,6 +73,66 @@ class AlienAPIFiller {
         this.state_receiver.registerTraceHandler(trace_handler);
         this.state_receiver.registerDeltaHandler(delta_handler);
         this.state_receiver.start();
+    }
+
+    async replay (startBlock, endBlock) {
+        // start a replay by populating all the blockranges on rabbitmq
+        let lib;
+        if (endBlock === 0xffffffff){
+            console.log(`Ending at head block`);
+            const info_res = await fetch(`${this.config.endpoints[0]}/v1/chain/get_info`);
+            const json = await info_res.json();
+            lib = json.last_irreversible_block_num;
+        }
+        else {
+            lib = endBlock;
+        }
+
+        const chunk_size = 10000;
+        let from = startBlock;
+        let to = from + chunk_size; // to is not inclusive
+        let break_now = false;
+        let number_jobs = 0;
+
+        const send_promises = [];
+
+        while (true) {
+            // console.log(`adding job for ${from} to ${to}`);
+            // let from_buffer = Buffer.from(from); //new Int64BE(from).toBuffer();
+            // let to_buffer = Buffer.from(to); //new Int64BE(to).toBuffer();
+
+            const from_buffer = Buffer.allocUnsafe(8);
+            from_buffer.writeBigInt64BE(BigInt(from), 0);
+
+            const to_buffer = Buffer.allocUnsafe(8);
+            to_buffer.writeBigInt64BE(BigInt(to), 0);
+
+            send_promises.push(this.amq.send('aw_block_range', Buffer.concat([from_buffer, to_buffer])));
+            number_jobs++;
+
+            if (to === lib) {
+                break_now = true
+            }
+
+            from += chunk_size;
+            to += chunk_size;
+
+            if (to > lib) {
+                to = lib
+            }
+
+            if (from > to) {
+                break_now = true
+            }
+
+            if (break_now) {
+                break
+            }
+        }
+
+        console.log(`Added ${number_jobs} jobs`);
+
+        await Promise.all(send_promises);
     }
 }
 
