@@ -56,11 +56,6 @@ server.register(fastifyMongo, {
     url: mongo_url
 });
 
-// fastify.register(require('./fastify-eos'), config);
-// fastify.register(require('./fastify-dac'), {});
-// fastify.register(require('./fastify-config'), config);
-// fastify.register(require('./fastify-cache'), {});
-
 server.register(fastifyCors, {
     allowedHeaders: 'Content-Type',
     origin: '*'
