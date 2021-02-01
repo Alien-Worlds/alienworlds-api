@@ -62,6 +62,7 @@ export class Amq {
         // channel.assertQueue('trace', {durable: true});
         channel.assertQueue('action', {durable: true});
         channel.assertQueue('atomic_deltas', {durable: true});
+        channel.assertQueue('aw_block_range', {durable: true});
 
         this.channel = channel;
         this.initialized = true;
