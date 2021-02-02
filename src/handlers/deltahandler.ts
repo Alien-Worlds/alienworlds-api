@@ -19,6 +19,7 @@ export class DeltaHandler {
     }
 
     async processDelta(block_num, deltas, abi, block_timestamp) {
+        let sequence = 0;
         for (const delta of deltas) {
             // this.logger.info(delta)
             switch (delta[0]) {
@@ -47,9 +48,17 @@ export class DeltaHandler {
                                         const timestamp_buffer = this.int32ToBuffer(ts);
                                         const block_buffer = Buffer.allocUnsafe(8);
                                         block_buffer.writeBigInt64BE(BigInt(block_num), 0);
+                                        // add a sequence, 32 bit block number should be enough
+                                        const sequence_buffer = Buffer.allocUnsafe(12);
+                                        sequence_buffer.fill(0);
+                                        sequence_buffer.writeBigInt64BE(BigInt(block_num), 1);
+                                        sequence_buffer.writeUInt16BE(sequence, 10);
+                                        // console.log(sequence, sequence_buffer.slice(4), (block_num << 6), typeof block_num, block_num);
                                         const present_buffer = Buffer.from([row.present]);
                                         // this.logger.info(`Publishing ${name}`)
-                                        this.amq.send('atomic_deltas', Buffer.concat([block_buffer, present_buffer, timestamp_buffer, Buffer.from(row.data)]));
+                                        this.amq.send('atomic_deltas', Buffer.concat([block_buffer, sequence_buffer.slice(4), present_buffer, timestamp_buffer, Buffer.from(row.data)]));
+
+                                        sequence++;
 
                                         this.stats.add('Atomic Deltas');
 

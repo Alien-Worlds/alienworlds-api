@@ -178,7 +178,7 @@ class AlienAPIProcessor {
         }
     }
 
-    async save_atomic_delta_data (account, table, data, block_num, block_timestamp, data_hash, present) {
+    async save_atomic_delta_data (account, table, data, block_num, sequence, block_timestamp, data_hash, present) {
         const store_data = data;
         const schema = await this.get_schema(data.schema_name);
 
@@ -187,6 +187,7 @@ class AlienAPIProcessor {
         store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
         store_data.mutable_serialized_data = deserialize(store_data.mutable_serialized_data, schema);
         store_data.block_num = Long.fromString(block_num.toString());
+        store_data.sequence = Long.fromString(sequence.toString());
         store_data.block_timestamp = block_timestamp;
         store_data.data_hash = data_hash;
         store_data.present = !!present;
@@ -278,6 +279,7 @@ class AlienAPIProcessor {
 
 
         const block_num = this.buffer_to_bigint(sb.getUint8Array(8));
+        const sequence = this.buffer_to_bigint(sb.getUint8Array(8));
         const present = sb.get();
         const block_timestamp_arr = sb.getUint8Array(4);
         // const block_timestamp_int = sb.getUint32();
@@ -309,7 +311,7 @@ class AlienAPIProcessor {
                 data.owner = scope;
                 const data_hash = crypto.createHash('sha1').update(data_raw).digest('hex');
                 // console.log(data);
-                await this.save_atomic_delta_data(code, table, data, block_num, block_timestamp, data_hash, present);
+                await this.save_atomic_delta_data(code, table, data, block_num, sequence, block_timestamp, data_hash, present);
             }
 
             await this.amq.ack(job);
