@@ -33,8 +33,12 @@ import { connectMongo } from './connections/mongo'
     const nfts_rarity_ind = await nfts_collection.createIndex({ 'template_data.rarity': 1 }, { background: true });
 
     const assets_collection = mongo.collection('assets');
+    console.log('Creating assets:owner index')
+    const assets_owner_ind = await assets_collection.createIndex({ owner: 1 }, { background: true })
+    console.log('Creating assets:owner_col_schema index')
+    const assets_owner_col_schema_ind = await assets_collection.createIndex({ owner: 1, collection_name: 1, schema_name: 1 }, { background: true })
     console.log('Creating assets:hash_block_num_present index')
-    const assets_global_ind = await assets_collection.createIndex({ data_hash: 1, block_num: 1, present: 1 }, { unique: true, background: true });
+    const assets_global_ind = await assets_collection.createIndex({ data_hash: 1, block_num: 1, present: 1 }, { unique: true, background: true })
 
     process.exit(0);
 })();
