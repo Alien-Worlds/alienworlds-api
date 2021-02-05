@@ -35,10 +35,24 @@ import { connectMongo } from './connections/mongo'
     const assets_collection = mongo.collection('assets');
     console.log('Creating assets:owner index')
     const assets_owner_ind = await assets_collection.createIndex({ owner: 1 }, { background: true })
+    console.log('Creating assets:template_id index')
+    const assets_template_id_ind = await assets_collection.createIndex({ template_id: 1 }, { background: true })
+    console.log('Creating assets:asset_id index')
+    const assets_asset_id_ind = await assets_collection.createIndex({ asset_id: 1 }, { background: true })
     console.log('Creating assets:owner_col_schema index')
     const assets_owner_col_schema_ind = await assets_collection.createIndex({ owner: 1, collection_name: 1, schema_name: 1 }, { background: true })
     console.log('Creating assets:hash_sequence_present index')
     const assets_global_ind = await assets_collection.createIndex({ data_hash: 1, sequence: 1, present: 1 }, { unique: true, background: true })
+
+    const templates_collection = mongo.collection('templates')
+    console.log('Creating templates:template_id index')
+    const templates_template_id_ind = await templates_collection.createIndex({ template_id: 1 }, { unique: true, background: true })
+    console.log('Creating templates:hash_sequence_present index')
+    const templates_global_ind = await templates_collection.createIndex({ data_hash: 1, sequence: 1, present: 1 }, { unique: true, background: true })
+
+    const schemas_collection = mongo.collection('schemas')
+    console.log('Creating assets:hash_sequence_present index')
+    const schemas_global_ind = await schemas_collection.createIndex({ data_hash: 1, sequence: 1, present: 1 }, { unique: true, background: true })
 
     process.exit(0);
 })();
