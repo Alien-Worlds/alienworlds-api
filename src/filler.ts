@@ -44,6 +44,9 @@ class AlienAPIFiller {
         else {
             startBlock = this.options.startBlock;
         }
+        if (this.options.endBlock !== endBlock){
+            endBlock = this.options.endBlock
+        }
         console.log(`Starting from ${startBlock}, ending at ${endBlock}`);
 
         if (this.options.replay){

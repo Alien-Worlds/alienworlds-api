@@ -178,14 +178,25 @@ class AlienAPIProcessor {
         }
     }
 
-    async save_atomic_delta_data (account, table, data, block_num, sequence, block_timestamp, data_hash, present) {
+    async save_atomic_delta_data (scope, table, data, block_num, sequence, block_timestamp, data_hash, present) {
         const store_data = data;
-        const schema = await this.get_schema(data.schema_name);
 
-        // console.log(store_data.asset_id);
-        store_data.asset_id = Long.fromString(store_data.asset_id);
-        store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
-        store_data.mutable_serialized_data = deserialize(store_data.mutable_serialized_data, schema);
+        const schema = await this.get_schema(data.schema_name);
+        switch (table) {
+            case 'assets':
+                store_data.owner = scope;
+                store_data.asset_id = Long.fromString(store_data.asset_id);
+                store_data.mutable_serialized_data = deserialize(store_data.mutable_serialized_data, schema);
+                store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
+                break;
+            case 'templates':
+                store_data.collection = scope;
+                store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
+                break;
+            case 'schemas':
+                break;
+        }
+
         store_data.block_num = Long.fromString(block_num.toString());
         store_data.sequence = Long.fromString(sequence.toString());
         store_data.block_timestamp = block_timestamp;
@@ -193,11 +204,11 @@ class AlienAPIProcessor {
         store_data.present = !!present;
 
         // console.log(store_data);
-        const col = this.mongo.collection('assets');
+        const col = this.mongo.collection(table);
         try {
             const res = await col.insertOne(store_data);
 
-            this.stats.add('Atomic Delta');
+            this.stats.add(`delta::${table}`);
         }
         catch (e){
             if (e.code === 11000){
@@ -305,13 +316,12 @@ class AlienAPIProcessor {
             const data = table_type.deserialize(data_sb);*/
 
             const data = await this.deserializer.deserialize_table(code, table, Buffer.from(data_raw), block_num);
-            // console.log(data);
+            // console.log(data, scope);
 
-            if (data.collection_name === this.config.atomicassets.collection){
-                data.owner = scope;
+            if (data.collection_name === this.config.atomicassets.collection || scope === this.config.atomicassets.collection){
                 const data_hash = crypto.createHash('sha1').update(data_raw).digest('hex');
                 // console.log(data);
-                await this.save_atomic_delta_data(code, table, data, block_num, sequence, block_timestamp, data_hash, present);
+                await this.save_atomic_delta_data(scope, table, data, block_num, sequence, block_timestamp, data_hash, present);
             }
 
             await this.amq.ack(job);
