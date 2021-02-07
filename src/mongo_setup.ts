@@ -26,7 +26,7 @@ import { connectMongo } from './connections/mongo'
     console.log('Creating nfts:global_sequence index')
     const nfts_global_ind = await nfts_collection.createIndex({ global_sequence: 1 }, { unique: true, background: true });
     console.log('Creating nfts:block_timestamp_sequence index')
-    const nfts_global_ind = await nfts_collection.createIndex({ global_sequence: 1, block_timestamp: -1 }, { background: true });
+    const nfts_global_timestamp_ind = await nfts_collection.createIndex({ global_sequence: 1, block_timestamp: -1 }, { background: true });
     console.log('Creating nfts:miner index')
     const nfts_miner_ind = await nfts_collection.createIndex({ miner: 1 }, { background: true });
     console.log('Creating nfts:land_id index')
