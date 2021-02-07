@@ -35,7 +35,7 @@ const openApi = {
             description: 'API for Alien Worlds information',
             version: '1.0.0'
         },
-        host: config || 'localhost',
+        host: config.docs_host || 'localhost',
         schemes: ['https'],
         consumes: ['application/json'],
         produces: ['application/json']
