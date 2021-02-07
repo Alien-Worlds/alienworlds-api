@@ -59,13 +59,13 @@ const getNFTs = async (fastify, request) => {
     // perform the query
     if (global_sequence_from){
         if (typeof query.global_sequence === 'undefined'){
-            query.global_sequence = {}
+            query.global_sequence_from = {}
         }
         query.global_sequence_from['$gte'] = global_sequence_from
     }
     if (global_sequence_to){
         if (typeof query.global_sequence === 'undefined'){
-            query.global_sequence = {}
+            query.global_sequence_to = {}
         }
         query.global_sequence_to['$lt'] = global_sequence_to
     }
