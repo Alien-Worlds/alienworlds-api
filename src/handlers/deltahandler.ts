@@ -43,7 +43,7 @@ export class DeltaHandler {
                                     const scope = sb.getName();
                                     const table = sb.getName();
 
-                                    if (table === 'assets' || table === 'templates' || table === 'schemas'){
+                                    if (table === 'assets' || table === 'schemas'){
                                         const ts = Math.floor(block_timestamp.getTime() / 1000);
                                         const timestamp_buffer = this.int32ToBuffer(ts);
                                         const block_buffer = Buffer.allocUnsafe(8);

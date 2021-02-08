@@ -133,23 +133,6 @@ class AlienAPIProcessor {
                     const col = this.mongo.collection('mines');
                     // console.log(`Saving data for ${account}::${name}`, data);
                     const res = await col.insertOne(store_data);
-                    // console.log(res);
-                    // process.exit(0);
-
-                    /*.then(() => {
-                        console.log(`Stored data in mongodb`);
-                        this.amq.ack(job);
-                        console.log(store_data);
-                        process.exit(0)
-                    }).catch((e) => {
-                        if (e.code === 11000) { // Duplicate index
-                            this.amq.ack(job);
-                        } else {
-                            this.logger.error('DB save failed :(', {e});
-
-                            this.amq.reject(job);
-                        }
-                    });*/
 
                     break;
                 case 'm.federation::logrand':
@@ -163,6 +146,20 @@ class AlienAPIProcessor {
                         const col = this.mongo.collection('nfts');
                         const res = await col.insertOne(store_data);
                     }
+                    break;
+                case `${this.config.atomicassets.contract}::lognewtempl`:
+                    store_data.block_num = Long.fromString(block_num.toString());
+                    store_data.block_timestamp = block_timestamp;
+                    store_data.global_sequence = Long.fromString(global_sequence.toString());
+
+                    let immutable = {};
+                    store_data.immutable_data.forEach(i => {
+                        immutable[i.key] = i.value[1];
+                    });
+                    store_data.immutable_data = immutable;
+
+                    const col_t = this.mongo.collection('templates');
+                    const res_t = await col_t.insertOne(store_data);
                     break;
             }
 
@@ -188,6 +185,8 @@ class AlienAPIProcessor {
                 store_data.asset_id = Long.fromString(store_data.asset_id);
                 store_data.mutable_serialized_data = deserialize(store_data.mutable_serialized_data, schema);
                 store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
+
+                table = 'assets_raw';
                 break;
             case 'templates':
                 store_data.collection = scope;

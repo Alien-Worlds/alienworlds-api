@@ -50,6 +50,7 @@ export class TraceHandler {
                                         case 'logburn':
                                         case 'logmint':
                                         case 'logsetdata':
+                                        case 'lognewtempl':
                                             // const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
                                             // const type = nodeAbieos.get_type_for_action(action[1].act.account, action[1].act.name);
                                             // const json = nodeAbieos.bin_to_json(action[1].act.account, type, Buffer.from(action[1].act.data));
