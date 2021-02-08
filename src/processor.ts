@@ -79,7 +79,8 @@ class AlienAPIProcessor {
         });
 
         if (!schema_res.rows.length){
-            throw new Error(`Could not find schema with name ${schema_name}`);
+            console.error(`Could not find schema with name ${schema_name}`);
+            return null;
         }
 
         const schema = ObjectSchema(schema_res.rows[0].format);
@@ -110,11 +111,17 @@ class AlienAPIProcessor {
         const schema_name = template_res.rows[0].schema_name;
         const schema = await this.get_schema(schema_name);
 
-        const template_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
+        if (schema){
+            const template_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
 
-        this.template_cache[template_id] = template_data;
+            this.template_cache[template_id] = template_data;
 
-        return template_data;
+            return template_data;
+        }
+        else {
+            console.error(`Could not find schema for template ${template_id}`);
+            return {};
+        }
     }
 
     async save_action_data (account, name, data, block_num, block_timestamp, global_sequence) {
