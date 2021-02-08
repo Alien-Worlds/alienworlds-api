@@ -3,6 +3,7 @@ import {StatsDisplay} from "./include/statsdisplay";
 import { Amq } from './connections/amq';
 import { connectMongo } from './connections/mongo';
 import { AbiDeserializer } from './include/abideserializer';
+import { AssetAggregator } from './include/assetaggregator';
 const { Api, JsonRpc, Serialize } = require('eosjs');
 const { Long } = require('mongodb');
 import { deserialize, ObjectSchema } from "atomicassets";
@@ -22,6 +23,7 @@ class AlienAPIProcessor {
     schema_cache: any;
     logger: any;
     stats: StatsDisplay;
+    recalc_worker: any;
 
     constructor (config, deserializer, amq, mongo, stats) {
         const fetch = require('node-fetch');
@@ -34,6 +36,8 @@ class AlienAPIProcessor {
         this.schema_cache = {};
         this.logger = console;
         this.stats = stats;
+
+        this.recalc_worker = null;
 
         this.rpc = new JsonRpc(config.endpoints[0], {fetch});
         this.api = new Api({
@@ -224,6 +228,11 @@ class AlienAPIProcessor {
         try {
             const res = await col.insertOne(store_data);
 
+            if (table === 'assets_raw'){
+                // console.log(`sending recalc meszsage ${store_data.asset_id}`)
+                process.send({type: 'recalc', asset_id: store_data.asset_id});
+            }
+
             this.stats.add(`delta::${table}`);
         }
         catch (e){
@@ -328,15 +337,6 @@ class AlienAPIProcessor {
         const data_raw = sb.getBytes();
 
         try {
-            /*const table_type = await this.get_table_type(code, table);
-            const data_sb = new Serialize.SerialBuffer({
-                textEncoder: new TextEncoder,
-                textDecoder: new TextDecoder,
-                array: data_raw
-            });
-
-            const data = table_type.deserialize(data_sb);*/
-
             const data = await this.deserializer.deserialize_table(code, table, Buffer.from(data_raw), block_num);
             // console.log(data, scope);
 
@@ -348,41 +348,6 @@ class AlienAPIProcessor {
 
             await this.amq.ack(job);
 
-            /*if (code !== 'eosio') {
-                this.logger.info(`Storing ${code}:${table}:${block_timestamp_int}`);
-
-                const data_hash = crypto.createHash('sha1').update(data_raw).digest('hex');
-
-                const doc = {
-                    block_num: MongoLong.fromString(block_num),
-                    block_timestamp,
-                    code,
-                    scope,
-                    table,
-                    primary_key: MongoLong.fromString(primary_key),
-                    payer,
-                    data,
-                    data_hash,
-                    present
-                };
-
-                const col = this.db.collection('contract_rows');
-                col.insertOne(doc).then(() => {
-                    this.logger.info('Contract row save completed', {dac_id:scope, code, scope, table, block_num});
-                    this.processedContractRow(job, doc);
-                    // this.amq.ack(job);
-                }).catch((e) => {
-                    if (e.code === 11000) {
-                        // duplicate index
-                        // this.amq.ack(job);
-                        this.processedContractRow(job, doc);
-                    } else {
-                        this.logger.error('Contract rowDB save failed :(', {e});
-                        this.amq.reject(job);
-                    }
-                });
-
-            }*/
         } catch (e) {
             console.error(`Error deserializing ${code}:${table} : ${e.message}`, {e});
             this.amq.reject(job);
@@ -403,6 +368,7 @@ const deserializer = new AbiDeserializer('./abis');
 
     await deserializer.load();
 
+
     if (cluster.isMaster){
         let threads = parseInt(config.processor_threads);
         console.log(`Threads set to ${threads}`);
@@ -412,13 +378,53 @@ const deserializer = new AbiDeserializer('./abis');
             threads = cpus - 4;
         }
 
-        for (let i = 0; i < threads; i++) {
-            cluster.fork();
-        }
+        const workers = [];
+        // recalc_worker
+        const recalc_worker = await cluster.fork();
+        recalc_worker.on('message', (msg) => {
+            // Worker is online
+            if (msg.online){
+                recalc_worker.send({type: 'recalc'});
+
+                // start the processor workers
+                for (let i = 0; i < threads - 1; i++) {
+                    workers.push(cluster.fork());
+                    workers[i].on('message', (msg) => {
+                        // Worker is online
+                        if (msg.online){
+                            workers[i].send({type: 'processor'});
+                        }
+                        else {
+                            // console.log('other msg', msg)
+                            recalc_worker.send(msg);
+                        }
+                    });
+                }
+            }
+        });
     }
     else {
-        const stats = new StatsDisplay();
-        const api = new AlienAPIProcessor(config, deserializer, amq, mongo, stats);
-        api.start();
+        let aggregator = null
+        process.on('message', function(msg) {
+            // console.log('Worker ' + process.pid + ' received message from master.', msg);
+            switch (msg.type){
+                case 'processor':
+                    const stats = new StatsDisplay();
+                    const api = new AlienAPIProcessor(config, deserializer, amq, mongo, stats);
+                    api.start();
+                    break;
+                case 'recalc':
+                    if (!aggregator){
+                        aggregator = new AssetAggregator(config, mongo);
+                    }
+                    if (msg.asset_id){
+                        // todo - send this to rabbitmq so we dont lose any
+                        aggregator.process(msg.asset_id);
+                    }
+                    break;
+            }
+        });
+
+        process.send({online: true});
     }
 })();
