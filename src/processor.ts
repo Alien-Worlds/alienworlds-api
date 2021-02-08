@@ -161,6 +161,9 @@ class AlienAPIProcessor {
 
                     let immutable = {};
                     store_data.immutable_data.forEach(i => {
+                        if (i.key.indexOf('.') > -1){
+                            i.key = i.key.replace(/\./g, '_')
+                        }
                         immutable[i.key] = i.value[1];
                     });
                     store_data.immutable_data = immutable;
@@ -266,7 +269,13 @@ class AlienAPIProcessor {
         }
         catch (e){
             console.error(`Error processing job for ${account}::${name} - ${e.message} in block ${block_num} (${trx_id})`);
-            await this.amq.reject(job);
+            if (e.message.indexOf('key') !== -1 && e.message.indexOf('must not contain') !== -1){
+                // ignore errors in data like one in https://wax.bloks.io/transaction/8a054d3fb4d0fdfe7141d4be3f59250539aa3d65ef82b6a0c0fef8a6118e7580
+                await this.amq.ack(job);
+            }
+            else {
+                await this.amq.reject(job);
+            }
         }
     }
 
