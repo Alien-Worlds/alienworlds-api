@@ -186,22 +186,29 @@ class AlienAPIProcessor {
         const store_data = data;
 
         const schema = await this.get_schema(data.schema_name);
-        switch (table) {
-            case 'assets':
-                store_data.owner = scope;
-                store_data.asset_id = Long.fromString(store_data.asset_id);
-                store_data.mutable_serialized_data = deserialize(store_data.mutable_serialized_data, schema);
-                store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
+        if (schema){
+            switch (table) {
+                case 'assets':
+                    store_data.owner = scope;
+                    store_data.asset_id = Long.fromString(store_data.asset_id);
+                    store_data.mutable_serialized_data = deserialize(store_data.mutable_serialized_data, schema);
+                    store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
 
-                table = 'assets_raw';
-                break;
-            case 'templates':
-                store_data.collection = scope;
-                store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
-                break;
-            case 'schemas':
-                break;
+                    table = 'assets_raw';
+                    break;
+                case 'templates':
+                    store_data.collection = scope;
+                    store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
+                    break;
+                case 'schemas':
+                    break;
+            }
         }
+        else {
+            console.error(`Could not load schema for ${table} ${store_data.asset_id}${store_data.template_id}`);
+            return;
+        }
+
 
         store_data.block_num = Long.fromString(block_num.toString());
         store_data.sequence = Long.fromString(sequence.toString());
