@@ -2,6 +2,7 @@ import axon from 'axon';
 const sock = axon.socket('pub-emitter');
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 const {Api, JsonRpc, Serialize} = require('eosjs');
+const fetch = require('node-fetch');
 
 class WSTraceHandler {
     config: any;
@@ -13,7 +14,6 @@ class WSTraceHandler {
         this.config = config;
         this.sock = sock;
 
-        const fetch = require('node-fetch');
         this.eos_rpc = new JsonRpc(config.endpoints[0], {fetch});
         this.eos_api = new Api({ rpc: this.eos_rpc, signatureProvider:null, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
     }
@@ -65,6 +65,10 @@ class WSTraceHandler {
 (async () => {
     const config = require(`./config`);
 
+    const eos_rpc = new JsonRpc(config.endpoints[0], {fetch});
+    const info = await eos_rpc.get_info();
+    const startBlock = info.head_block_num;
+
     const statereceiver_config = {
         eos: {
             wsEndpoint: config.ship_endpoints[0],
@@ -77,7 +81,7 @@ class WSTraceHandler {
 
     const trace_handler = new WSTraceHandler({config, sock});
     const state_receiver = new StateReceiver({
-        startBlock: 102941695,
+        startBlock,
         config: statereceiver_config
     });
     state_receiver.registerTraceHandler(trace_handler);
