@@ -22,11 +22,11 @@ export class AssetAggregator {
             const template = await collection_t.findOne(query_t, {sort: { sequence: -1 }})
 
             if (!template){
-                // console.log(`Could not find template id ${asset.template_id}`)
+                console.log(`Could not find template id ${asset.template_id}`)
                 return
             }
 
-            asset.data = {...asset.mutable_serialized_data, ...asset.immutable_serialized_data, ...template.immutable_data}
+            asset.data = {...asset.mutable_serialized_data, ...asset.immutable_serialized_data, ...template.immutable_serialized_data}
 
             // find mint number
             // get the first sequence number for this
