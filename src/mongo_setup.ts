@@ -44,6 +44,7 @@ import { connectMongo } from './connections/mongo'
     console.log('Creating assets:owner_col_schema index')
     const assets_owner_col_schema_ind = await assets_collection.createIndex({ owner: 1, collection_name: 1, schema_name: 1 }, { background: true })
 
+    const assets_raw_collection = mongo.collection('assets_raw');
     console.log('Creating assets_raw:hash_sequence_present index')
     const assets_raw_global_ind = await assets_raw_collection.createIndex({ data_hash: 1, sequence: 1, present: 1 }, { unique: true, background: true })
 
