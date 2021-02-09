@@ -19,7 +19,7 @@ export class AssetAggregator {
         if (asset.template_id > 0){
             const collection_t = this.mongo.collection('templates')
             const query_t = { template_id: asset.template_id }
-            const template = await collection_t.findOne(query_t)
+            const template = await collection_t.findOne(query_t, {sort: { sequence: -1 }})
 
             asset.data = {...asset.mutable_serialized_data, ...asset.immutable_serialized_data, ...template.immutable_data}
 
