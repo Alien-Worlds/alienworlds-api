@@ -201,6 +201,22 @@ class AlienAPIProcessor {
                     store_data.asset_id = Long.fromString(store_data.asset_id);
                     store_data.mutable_serialized_data = deserialize(store_data.mutable_serialized_data, schema);
                     store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
+                    for (let key in store_data.immutable_serialized_data){
+                        if (key.indexOf('.') > -1){
+                            const val = store_data.immutable_serialized_data[key];
+                            delete store_data.immutable_serialized_data[key];
+                            key = key.replace(/\./g, '^');
+                            store_data.immutable_serialized_data[key] = val;
+                        }
+                    }
+                    for (let key in store_data.mutable_serialized_data){
+                        if (key.indexOf('.') > -1){
+                            const val = store_data.mutable_serialized_data[key];
+                            delete store_data.mutable_serialized_data[key];
+                            key = key.replace(/\./g, '^');
+                            store_data.mutable_serialized_data[key] = val;
+                        }
+                    }
 
                     table = 'assets_raw';
                     break;
