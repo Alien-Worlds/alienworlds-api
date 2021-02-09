@@ -50,7 +50,7 @@ import { connectMongo } from './connections/mongo'
 
     const templates_collection = mongo.collection('templates')
     console.log('Creating templates:template_id index')
-    const templates_template_id_ind = await templates_collection.createIndex({ template_id: 1 }, { unique: true, background: true })
+    const templates_template_id_ind = await templates_collection.createIndex({ template_id: 1 }, { background: true })
     console.log('Creating templates:hash_sequence_present index')
     const templates_global_ind = await templates_collection.createIndex({ data_hash: 1, sequence: 1, present: 1 }, { unique: true, background: true })
 
