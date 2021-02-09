@@ -40,11 +40,12 @@ import { connectMongo } from './connections/mongo'
     console.log('Creating assets:template_id index')
     const assets_template_id_ind = await assets_collection.createIndex({ template_id: 1 }, { background: true })
     console.log('Creating assets:asset_id index')
-    const assets_asset_id_ind = await assets_collection.createIndex({ asset_id: 1 }, { background: true })
+    const assets_asset_id_ind = await assets_collection.createIndex({ asset_id: 1 }, { unique:true, background: true })
     console.log('Creating assets:owner_col_schema index')
     const assets_owner_col_schema_ind = await assets_collection.createIndex({ owner: 1, collection_name: 1, schema_name: 1 }, { background: true })
-    console.log('Creating assets:hash_sequence_present index')
-    const assets_global_ind = await assets_collection.createIndex({ data_hash: 1, sequence: 1, present: 1 }, { unique: true, background: true })
+
+    console.log('Creating assets_raw:hash_sequence_present index')
+    const assets_raw_global_ind = await assets_raw_collection.createIndex({ data_hash: 1, sequence: 1, present: 1 }, { unique: true, background: true })
 
     const templates_collection = mongo.collection('templates')
     console.log('Creating templates:template_id index')
