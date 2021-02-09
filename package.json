@@ -19,6 +19,7 @@
     "@types/node": "^14.14.22",
     "amqplib": "^0.6.0",
     "atomicassets": "^1.2.2",
+    "axon": "^2.0.3",
     "commander": "^7.0.0",
     "crypto": "^1.0.1",
     "eosjs": "^21.0.3",
