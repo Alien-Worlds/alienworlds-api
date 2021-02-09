@@ -21,6 +21,11 @@ export class AssetAggregator {
             const query_t = { template_id: asset.template_id }
             const template = await collection_t.findOne(query_t, {sort: { sequence: -1 }})
 
+            if (!template){
+                console.log(`Could not find template id ${asset.template_id}`)
+                return
+            }
+
             asset.data = {...asset.mutable_serialized_data, ...asset.immutable_serialized_data, ...template.immutable_data}
 
             // find mint number
