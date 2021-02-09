@@ -207,6 +207,14 @@ class AlienAPIProcessor {
                 case 'templates':
                     store_data.collection = scope;
                     store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
+                    for (let key in store_data.immutable_serialized_data){
+                        if (key.indexOf('.') > -1){
+                            const val = store_data.immutable_serialized_data[key];
+                            delete store_data.immutable_serialized_data[key];
+                            key = key.replace(/\./g, '^');
+                            store_data.immutable_serialized_data[key] = val;
+                        }
+                    }
                     break;
                 case 'schemas':
                     break;

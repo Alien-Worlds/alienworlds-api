@@ -1,4 +1,5 @@
 import { assetSchema } from '../schemas'
+import { NotFoundError } from '../errors'
 const { Long } = require('mongodb')
 
 const asset_data = async (asset_id, db) => {
@@ -6,7 +7,9 @@ const asset_data = async (asset_id, db) => {
     const query = { asset_id: Long.fromString(asset_id) }
     const asset = await collection.findOne(query)
 
-    delete asset._id
+    if (asset){
+        delete asset._id
+    }
 
     return asset
 }
@@ -21,10 +24,19 @@ const getAsset = async (fastify, request) => {
     const db = fastify.mongo.db
     const assets = []
     asset_ids.forEach(asset_id => {
-        assets.push(asset_data(asset_id, db))
+        const ad = asset_data(asset_id, db);
+        if (ad){
+            assets.push(ad)
+        }
     })
 
-    return await Promise.all(assets)
+    const ret = (await Promise.all(assets)).filter(a => a)
+
+    if (!ret.length){
+        throw new NotFoundError('Asset(s) not found')
+    }
+
+    return ret
 }
 
 
