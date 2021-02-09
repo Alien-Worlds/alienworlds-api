@@ -43,7 +43,7 @@ export class DeltaHandler {
                                     const scope = sb.getName();
                                     const table = sb.getName();
 
-                                    if (table === 'assets' || table === 'schemas'){
+                                    if (table === 'assets' || table === 'schemas' || table === 'templates'){
                                         const ts = Math.floor(block_timestamp.getTime() / 1000);
                                         const timestamp_buffer = this.int32ToBuffer(ts);
                                         const block_buffer = Buffer.allocUnsafe(8);
@@ -55,12 +55,11 @@ export class DeltaHandler {
                                         sequence_buffer.writeUInt16BE(sequence, 10);
                                         // console.log(sequence, sequence_buffer.slice(4), (block_num << 6), typeof block_num, block_num);
                                         const present_buffer = Buffer.from([row.present]);
-                                        // this.logger.info(`Publishing ${name}`)
                                         this.amq.send('atomic_deltas', Buffer.concat([block_buffer, sequence_buffer.slice(4), present_buffer, timestamp_buffer, Buffer.from(row.data)]));
 
                                         sequence++;
 
-                                        this.stats.add('Atomic Deltas');
+                                        this.stats.add(`deltas::${table}`);
 
                                         // console.log(`AA Delta`, scope, table);
                                         // process.exit(0);

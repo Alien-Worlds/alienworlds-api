@@ -22,7 +22,7 @@ export class AssetAggregator {
             const template = await collection_t.findOne(query_t, {sort: { sequence: -1 }})
 
             if (!template){
-                console.log(`Could not find template id ${asset.template_id}`)
+                // console.log(`Could not find template id ${asset.template_id}`)
                 return
             }
 

@@ -68,14 +68,14 @@ class AlienAPIProcessor {
         return BigInt('0x' + hex.join(''));
     }
 
-    async get_schema (schema_name) {
-        if (typeof this.schema_cache[schema_name] !== 'undefined'){
-            return this.schema_cache[schema_name];
+    async get_schema (schema_name, collection_name) {
+        if (typeof this.schema_cache[`${schema_name}::${collection_name}`] !== 'undefined'){
+            return this.schema_cache[`${schema_name}::${collection_name}`];
         }
 
         const schema_res = await this.rpc.get_table_rows({
             code: this.config.atomicassets.contract,
-            scope: this.config.atomicassets.collection,
+            scope: collection_name,
             table: 'schemas',
             lower_bound: schema_name,
             upper_bound: schema_name,
@@ -83,13 +83,13 @@ class AlienAPIProcessor {
         });
 
         if (!schema_res.rows.length){
-            console.error(`Could not find schema with name ${schema_name}`);
+            console.error(`Could not find schema with name ${schema_name} in collection ${collection_name}`);
             return null;
         }
 
         const schema = ObjectSchema(schema_res.rows[0].format);
 
-        this.schema_cache[schema_name] = schema;
+        this.schema_cache[`${schema_name}::${collection_name}`] = schema;
 
         return schema;
     }
@@ -113,7 +113,7 @@ class AlienAPIProcessor {
         }
 
         const schema_name = template_res.rows[0].schema_name;
-        const schema = await this.get_schema(schema_name);
+        const schema = await this.get_schema(schema_name, this.config.atomicassets.collection);
 
         if (schema){
             const template_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
@@ -158,7 +158,7 @@ class AlienAPIProcessor {
                         const res = await col.insertOne(store_data);
                     }
                     break;
-                case `${this.config.atomicassets.contract}::lognewtempl`:
+                /*case `${this.config.atomicassets.contract}::lognewtempl`:
                     store_data.block_num = Long.fromString(block_num.toString());
                     store_data.block_timestamp = block_timestamp;
                     store_data.global_sequence = Long.fromString(global_sequence.toString());
@@ -174,7 +174,7 @@ class AlienAPIProcessor {
 
                     const col_t = this.mongo.collection('templates');
                     const res_t = await col_t.insertOne(store_data);
-                    break;
+                    break;*/
             }
 
             this.stats.add(combined);
@@ -190,9 +190,10 @@ class AlienAPIProcessor {
     }
 
     async save_atomic_delta_data (scope, table, data, block_num, sequence, block_timestamp, data_hash, present) {
-        const store_data = data;
+        const store_data = data
+        const collection_name = data.collection_name || scope
+        const schema = await this.get_schema(data.schema_name, collection_name)
 
-        const schema = await this.get_schema(data.schema_name);
         if (schema){
             switch (table) {
                 case 'assets':
@@ -212,7 +213,7 @@ class AlienAPIProcessor {
             }
         }
         else {
-            console.error(`Could not load schema for ${table} ${store_data.asset_id}${store_data.template_id}`);
+            console.error(`Could not load schema for ${table} ${store_data.asset_id || ''}${store_data.template_id || ''}`);
             return;
         }
 
@@ -238,7 +239,7 @@ class AlienAPIProcessor {
         catch (e){
             if (e.code === 11000){
                 // duplicate index
-                this.stats.add('Atomic Delta Duplicates');
+                this.stats.add(`delta_duplicate::${table}`);
             }
             else {
                 throw e;
@@ -336,15 +337,20 @@ class AlienAPIProcessor {
         const payer = sb.getName();
         const data_raw = sb.getBytes();
 
+
         try {
             const data = await this.deserializer.deserialize_table(code, table, Buffer.from(data_raw), block_num);
             // console.log(data, scope);
 
-            if (data.collection_name === this.config.atomicassets.collection || scope === this.config.atomicassets.collection){
-                const data_hash = crypto.createHash('sha1').update(data_raw).digest('hex');
-                // console.log(data);
-                await this.save_atomic_delta_data(scope, table, data, block_num, sequence, block_timestamp, data_hash, present);
-            }
+            // if (table === 'templates'){
+            //     console.log('templates', scope, this.config.atomicassets.collection)
+            // }
+            const data_hash = crypto.createHash('sha1').update(data_raw).digest('hex');
+            // console.log(data);
+            // console.log(table);
+            await this.save_atomic_delta_data(scope, table, data, block_num, sequence, block_timestamp, data_hash, present);
+            // if (data.collection_name === this.config.atomicassets.collection || scope === this.config.atomicassets.collection){
+            // }
 
             await this.amq.ack(job);
 
