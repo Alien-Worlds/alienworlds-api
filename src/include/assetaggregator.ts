@@ -48,6 +48,7 @@ export class AssetAggregator {
 
         asset.asset_id = Long.fromNumber(asset.asset_id)
         const processed_col = this.mongo.collection('assets')
-        const res = await processed_col.insertOne(asset);
+        await processed_col.deleteOne({asset_id: asset.asset_id})
+        const res = await processed_col.insertOne(asset)
     }
 }
