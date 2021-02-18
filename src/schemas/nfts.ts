@@ -1,4 +1,4 @@
-const minesSchema = {
+const nftsSchema = {
     description: 'Get NFTs',
     summary: 'Fetch NFTs by various criteria',
     tags: ['v1'],
@@ -51,4 +51,4 @@ const minesSchema = {
     response: {}
 }
 
-export default {GET: minesSchema}
+export default {GET: nftsSchema}
