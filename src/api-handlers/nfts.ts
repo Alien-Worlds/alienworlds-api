@@ -24,7 +24,14 @@ const getNFTs = async (fastify, request) => {
         has_query = true
     }
     if (land_id){
-        query.land_id = land_id.toString()
+        if (land_id.indexOf(',') !== -1){
+            const land_ids = land_id.split(',')
+            query.land_id = { $in: land_ids }
+        }
+        else {
+            query.land_id = land_id
+        }
+        console.log(query)
         has_query = true
     }
     if (rarity){
