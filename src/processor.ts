@@ -116,11 +116,18 @@ class AlienAPIProcessor {
         const schema = await this.get_schema(schema_name, this.config.atomicassets.collection);
 
         if (schema){
-            const template_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
+            try {
+                const template_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
 
-            this.template_cache[template_id] = template_data;
+                this.template_cache[template_id] = template_data;
 
-            return template_data;
+                return template_data;
+            }
+            catch (e){
+                console.error(`Could not deserialize atomic data ${e.message}`);
+                delete this.schema_cache[`${schema_name}::${this.config.atomicassets.collection}`];
+                throw e;
+            }
         }
         else {
             console.error(`Could not find schema for template ${template_id}`);
@@ -379,17 +386,17 @@ class AlienAPIProcessor {
             await this.amq.ack(job);
 
         } catch (e) {
-            console.error(`Error deserializing ${code}:${table} : ${e.message}`, {e});
+            console.error(`Error deserializing ${code}:${table} in block ${block_num} : ${e.message}`, {e});
             this.amq.reject(job);
         }
     }
 }
 
 
-const deserializer = new AbiDeserializer('./abis');
+const deserializer = new AbiDeserializer(`${__dirname}./abis`);
 
 (async () => {
-    const config = require(`./config`);
+    const config = require(`${__dirname}./config`);
 
     const amq = new Amq(config.amq);
     await amq.init();
@@ -449,7 +456,7 @@ const deserializer = new AbiDeserializer('./abis');
                     }
                     if (msg.asset_id){
                         // todo - send this to rabbitmq so we dont lose any
-                        aggregator.process(msg.asset_id);
+                        //aggregator.process(msg.asset_id);
                     }
                     break;
             }
