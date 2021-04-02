@@ -33,7 +33,13 @@ const getMines = async (fastify, request) => {
         has_query = true
     }
     if (landowner){
-        query.landowner = landowner
+        if (landowner.indexOf(',') !== -1){
+            const landowners = landowner.split(',')
+            query.landowner = { $in: landowners }
+        }
+        else {
+            query.landowner = landowner
+        }
         has_query = true
     }
     if (land_id){
