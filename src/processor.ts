@@ -197,6 +197,7 @@ class AlienAPIProcessor {
     }
 
     async save_atomic_delta_data (scope, table, data, block_num, sequence, block_timestamp, data_hash, present) {
+        return;
         const store_data = data
         const collection_name = data.collection_name || scope
         const schema = await this.get_schema(data.schema_name, collection_name)
