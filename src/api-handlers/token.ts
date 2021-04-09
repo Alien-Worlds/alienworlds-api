@@ -6,6 +6,7 @@ const getTokenSupplies = async (fastify, request) => {
     // const stats =
 
     // console.log(fetch, config)
+    console.log(request.query.type)
     const url = `${config.endpoints[0]}/v1/chain/get_currency_stats`
     const req_data = {
         json: true,
@@ -20,12 +21,17 @@ const getTokenSupplies = async (fastify, request) => {
     })
     const json = await res.json()
     // console.log(json)
+    const supply = json.TLM.supply
 
-    const results = {
-        supply: json.TLM.supply
+    if (request.query.type === 'circulating'){
+        return '1240473079.0000'
     }
-
-    return {results}
+    else if (request.query.type === 'supply'){
+        return supply.replace(' TLM', '')
+    }
+    else {
+        return 'Invalid type'
+    }
 }
 
 
