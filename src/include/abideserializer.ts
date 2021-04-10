@@ -23,6 +23,7 @@ export class AbiDeserializer {
             // console.log(file.name);
             const [contract, block_num_str] = file.name.replace(/\.hex$/, '').split('-');
             const block_num = parseInt(block_num_str);
+            console.log(`Loading ${this.dir}/${file.name}...`);
             const abi_hex = fs.readFileSync(`${this.dir}/${file.name}`, 'utf-8');
             abi_temp.push({
                 contract,
@@ -34,6 +35,7 @@ export class AbiDeserializer {
 
         this.abis = abi_temp.sort((a, b) => (a.block_num < b.block_num)?-1:1);
 
+        console.log('Loaded ABIs')
         // console.log(this.abis);
         this.loaded = true;
     }
