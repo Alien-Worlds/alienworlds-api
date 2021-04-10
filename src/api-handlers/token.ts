@@ -116,12 +116,21 @@ const getTokenSupplies = async (fastify, request) => {
     const supply = json.TLM.supply.replace(' TLM', '')
 
     let circulating = parseFloat(supply);
-    for await (let exclude_account of exclude_accounts_wax){
-        circulating -= await get_wax_balance(exclude_account)
+    const balance_promises = [];
+    for (let exclude_account of exclude_accounts_wax){
+        balance_promises.push(get_wax_balance(exclude_account))
     }
-    for await (let exclude_account of exclude_accounts_eth){
-        circulating -= await get_eth_balance(exclude_account)
+    for (let exclude_account of exclude_accounts_eth){
+        balance_promises.push(get_eth_balance(exclude_account))
     }
+    for (let exclude_account of exclude_accounts_bsc){
+        balance_promises.push(get_bsc_balance(exclude_account))
+    }
+
+    const balances = await Promise.all(balance_promises)
+    balances.forEach(b => {
+        circulating -= b
+    })
 
     if (request.query.type === 'circulating'){
         return circulating.toFixed(4)
