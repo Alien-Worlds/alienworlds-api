@@ -40,7 +40,7 @@ export class TraceHandler {
                     for (let action of trx.action_traces) {
                         switch (action[0]) {
                             case 'action_trace_v0':
-                                if (action[1].act.account === this.config.mining_contract || action[1].act.account === this.config.atomicassets.contract){
+                                if (action[1].act.account === this.config.mining_contract){//} || action[1].act.account === this.config.atomicassets.contract){
                                     this.stats.add('actions');
 
                                     switch (action[1].act.name){
