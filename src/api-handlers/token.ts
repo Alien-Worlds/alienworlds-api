@@ -1,6 +1,69 @@
 import { tokenSchema } from '../schemas'
 import fetch from 'node-fetch'
+import { ethers } from 'ethers'
 const config = require('../config')
+
+const bsc_provider = new ethers.providers.JsonRpcProvider(config.bsc_endpoint)
+const eth_provider = new ethers.providers.JsonRpcProvider(config.eth_endpoint)
+
+const erc_abi = [
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "_owner",
+                "type": "address"
+            }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "type": "function"
+    }
+]
+
+const get_wax_balance = async (account) => {
+    const url = `${config.endpoints[0]}/v1/chain/get_currency_balance`
+    const req_data = {
+        account,
+        code: 'alien.worlds',
+        symbol: 'TLM'
+    }
+
+    const res = await fetch(url, {
+        method: 'POST',
+        body:    JSON.stringify(req_data),
+        headers: { 'Content-Type': 'application/json' },
+    })
+    const json = await res.json()
+
+    if (!json.length){
+        return 0
+    }
+
+    const [bal_str] = json[0].split(' ')
+
+    return parseFloat(bal_str)
+}
+
+const get_eth_balance = async (address) => {
+    const contract = new ethers.Contract(config.eth_token_contract, erc_abi, eth_provider);
+    const balance = await contract.balanceOf(address);
+
+    return balance.toNumber() / 10000
+}
+
+const get_bsc_balance = async (address) => {
+    const contract = new ethers.Contract(config.bsc_token_contract, erc_abi, bsc_provider);
+    const balance = await contract.balanceOf(address);
+
+    return balance.toNumber() / 10000
+}
 
 const getTokenSupplies = async (fastify, request) => {
     // const stats =
@@ -28,9 +91,7 @@ const getTokenSupplies = async (fastify, request) => {
     ]
     const exclude_accounts_eth = [
         '0xa0ea3f87922810c012db706e247636c71868ffbb',
-        '0x3333336d579a0107849eb68c9f1c0b92d48c2889',
-        '0xdfcf7aa08c9cc0549a94396a0fa156feda987ff6',
-        '0xa15b9b9581a3746db297cbe28cf15bd239637b78'
+        '0x3333336d579a0107849eb68c9f1c0b92d48c2889'
     ]
     const exclude_accounts_bsc = [
         '0x5903b5f7eb3733fec8477be1b0a0fd149b33b547'
@@ -54,8 +115,16 @@ const getTokenSupplies = async (fastify, request) => {
     // console.log(json)
     const supply = json.TLM.supply.replace(' TLM', '')
 
+    let circulating = parseFloat(supply);
+    for await (let exclude_account of exclude_accounts_wax){
+        circulating -= await get_wax_balance(exclude_account)
+    }
+    for await (let exclude_account of exclude_accounts_eth){
+        circulating -= await get_eth_balance(exclude_account)
+    }
+
     if (request.query.type === 'circulating'){
-        return '1240473079.0000'
+        return circulating.toFixed(4)
     }
     else if (request.query.type === 'supply'){
         return supply

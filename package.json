@@ -23,6 +23,7 @@
     "commander": "^7.0.0",
     "crypto": "^1.0.1",
     "eosjs": "^21.0.3",
+    "ethers": "^5.1.0",
     "fastify": "^3.11.0",
     "fastify-autoload": "^3.4.2",
     "fastify-cors": "^5.2.0",
