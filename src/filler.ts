@@ -65,7 +65,7 @@ class AlienAPIFiller {
 
         // console.log(`Starting filler`);
         const trace_handler = new TraceHandler({config: this.config, amq: this.amq, stats: this.stats});
-        const delta_handler = new DeltaHandler({config: this.config, amq: this.amq, stats: this.stats});
+        // const delta_handler = new DeltaHandler({config: this.config, amq: this.amq, stats: this.stats});
 
         this.state_receiver = new StateReceiver({
             startBlock,
@@ -74,7 +74,7 @@ class AlienAPIFiller {
             config: statereceiver_config
         });
         this.state_receiver.registerTraceHandler(trace_handler);
-        this.state_receiver.registerDeltaHandler(delta_handler);
+        // this.state_receiver.registerDeltaHandler(delta_handler);
         this.state_receiver.start();
     }
 
