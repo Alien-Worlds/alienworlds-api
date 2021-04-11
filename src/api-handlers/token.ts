@@ -82,6 +82,15 @@ const getTokenSupplies = async (fastify, request) => {
         'sixpepvamshi',
         'iamababygirl',
         'careforchild',
+        'doctormanasa',
+        'emahalakshmi',
+        'helloashwath',
+        'idwarakaravi',
+        'itstharshita',
+        'mrsuryapavan',
+        'realshirisha',
+        'sriramsurya2',
+        'thereallatha',
         'kavian.world',
         'neri.world',
         'magor.world',
@@ -133,7 +142,8 @@ const getTokenSupplies = async (fastify, request) => {
     })
 
     if (request.query.type === 'circulating'){
-        return circulating.toFixed(4)
+        return '128488577'.toFixed(4)
+        // return circulating.toFixed(4)
     }
     else if (request.query.type === 'supply'){
         return supply
