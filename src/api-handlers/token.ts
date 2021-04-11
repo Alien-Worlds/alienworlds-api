@@ -142,7 +142,7 @@ const getTokenSupplies = async (fastify, request) => {
     })
 
     if (request.query.type === 'circulating'){
-        return '128488577'.toFixed(4)
+        return '128488577.0000'
         // return circulating.toFixed(4)
     }
     else if (request.query.type === 'supply'){
