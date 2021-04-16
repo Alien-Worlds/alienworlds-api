@@ -78,7 +78,6 @@ const getTokenSupplies = async (fastify, request) => {
         'oper3.worlds',
         'oper1.worlds',
         'call.worlds',
-        'secureplus24',
         'sixpepvamshi',
         'iamababygirl',
         'careforchild',
@@ -142,8 +141,8 @@ const getTokenSupplies = async (fastify, request) => {
     })
 
     if (request.query.type === 'circulating'){
-        return '128488577.0000'
-        // return circulating.toFixed(4)
+        // return '128488577.0000'
+        return circulating.toFixed(4)
     }
     else if (request.query.type === 'supply'){
         return supply
