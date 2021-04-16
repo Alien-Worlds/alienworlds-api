@@ -20,8 +20,8 @@ const getMines = async (fastify, request) => {
     const from = request.query.from || null
     const to = request.query.to || null
 
-    if (limit > 1000){
-        throw new Error('Limit maximum is 1000')
+    if (limit > 2000){
+        throw new Error('Limit maximum is 2000')
     }
 
     let res = null, query: any = {}, has_query = false
