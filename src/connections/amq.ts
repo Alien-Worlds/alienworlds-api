@@ -61,8 +61,8 @@ export class Amq {
         // channel.assertQueue('permission_link', {durable: true});
         // channel.assertQueue('trace', {durable: true});
         channel.assertQueue('action', {durable: true});
-        channel.assertQueue('atomic_deltas', {durable: true});
         channel.assertQueue('aw_block_range', {durable: true});
+        channel.assertQueue('recalc_asset', {durable: true});
 
         this.channel = channel;
         this.initialized = true;
