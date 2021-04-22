@@ -44,8 +44,8 @@ export class TraceHandler {
                                     this.stats.add('actions');
 
                                     switch (action[1].act.name){
-                                        // case 'logmine':
-                                        // case 'logrand':
+                                        case 'logmine':
+                                        case 'logrand':
                                         case 'logtransfer':
                                         case 'logburn':
                                         case 'logmint':
