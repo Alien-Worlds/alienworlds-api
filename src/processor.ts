@@ -274,7 +274,7 @@ class AlienAPIProcessor {
         const asset_id = this.buffer_to_bigint(sb.getUint8Array(8));
 
         try {
-            console.log('Processing asset', asset_id.toString())
+            // console.log('Processing asset', asset_id.toString())
             const col_t = this.mongo.collection('atomictransfers');
             const col_a = this.mongo.collection('assets');
             const asset_id_long = Long.fromString(asset_id.toString());
@@ -297,7 +297,7 @@ class AlienAPIProcessor {
             };
             await col_a.updateOne(update_query, update_doc, {upsert: true});
 
-            console.log(asset)
+            // console.log(asset)
             await this.amq.ack(job);
         }
         catch (e){
