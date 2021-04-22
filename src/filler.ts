@@ -82,7 +82,6 @@ class AlienAPIFiller {
         // start a replay by populating all the blockranges on rabbitmq
         let lib;
         if (endBlock === 0xffffffff){
-            console.log(`Ending at head block`);
             const info_res = await fetch(`${this.config.endpoints[0]}/v1/chain/get_info`);
             const json = await info_res.json();
             lib = json.last_irreversible_block_num;
@@ -90,6 +89,7 @@ class AlienAPIFiller {
         else {
             lib = endBlock;
         }
+        console.log(`Ending at ${lib}`);
 
         const chunk_size = 10000;
         let from = startBlock;
@@ -103,6 +103,7 @@ class AlienAPIFiller {
             // console.log(`adding job for ${from} to ${to}`);
             // let from_buffer = Buffer.from(from); //new Int64BE(from).toBuffer();
             // let to_buffer = Buffer.from(to); //new Int64BE(to).toBuffer();
+            process.stdout.write('.');
 
             const from_buffer = Buffer.allocUnsafe(8);
             from_buffer.writeBigInt64BE(BigInt(from), 0);
