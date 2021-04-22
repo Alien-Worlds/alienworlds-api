@@ -82,6 +82,7 @@ class AlienAPIFiller {
         // start a replay by populating all the blockranges on rabbitmq
         let lib;
         if (endBlock === 0xffffffff){
+            console.log(`Fetching lib from ${this.config.endpoints[0]}/v1/chain/get_info`);
             const info_res = await fetch(`${this.config.endpoints[0]}/v1/chain/get_info`);
             const json = await info_res.json();
             lib = json.last_irreversible_block_num;
