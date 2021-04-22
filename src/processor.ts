@@ -10,6 +10,7 @@ import { deserialize, ObjectSchema } from "atomicassets";
 import * as cluster from "cluster";
 import * as os from 'os';
 const crypto = require('crypto');
+const fetch = require('node-fetch');
 
 
 class AlienAPIProcessor {
@@ -52,7 +53,7 @@ class AlienAPIProcessor {
     start () {
         console.log(`Starting processor`);
         this.amq.listen('action', this.process_action_job.bind(this));
-        this.amq.listen('atomic_deltas', this.process_aa_delta_job.bind(this));
+        this.amq.listen('recalc_asset', this.process_recalc_job.bind(this));
     }
 
     buffer_to_bigint (buf) {
@@ -138,7 +139,7 @@ class AlienAPIProcessor {
     async save_action_data (account, name, data, block_num, block_timestamp, global_sequence) {
         const combined = `${account}::${name}`;
         try {
-            const store_data = data;
+            let store_data = data;
 
             switch (combined){
                 case 'm.federation::logmine':
@@ -165,23 +166,46 @@ class AlienAPIProcessor {
                         const res = await col.insertOne(store_data);
                     }
                     break;
-                /*case `${this.config.atomicassets.contract}::lognewtempl`:
+                case `${this.config.atomicassets.contract}::logtransfer`:
+                case `${this.config.atomicassets.contract}::logmint`:
+                case `${this.config.atomicassets.contract}::logburn`:
+                    if (data.collection_name !== this.config.atomicassets.collection){
+                        return;
+                    }
+
+                    store_data = {};
                     store_data.block_num = Long.fromString(block_num.toString());
                     store_data.block_timestamp = block_timestamp;
                     store_data.global_sequence = Long.fromString(global_sequence.toString());
 
-                    let immutable = {};
-                    store_data.immutable_data.forEach(i => {
-                        if (i.key.indexOf('.') > -1){
-                            i.key = i.key.replace(/\./g, '_')
-                        }
-                        immutable[i.key] = i.value[1];
-                    });
-                    store_data.immutable_data = immutable;
+                    store_data.type = name.replace('log', '');
+                    switch (store_data.type){
+                        case 'transfer':
+                            store_data.from = data.from;
+                            store_data.to = data.to;
+                            store_data.asset_ids = data.asset_ids.map(a => Long.fromString(a.toString()));
+                            break;
+                        case 'mint':
+                            store_data.from = null;
+                            store_data.to = data.new_asset_owner;
+                            store_data.asset_ids = [Long.fromString(data.asset_id.toString())];
+                            break;
+                        case 'burn':
+                            store_data.from = data.asset_owner;
+                            store_data.to = null;
+                            store_data.asset_ids = [Long.fromString(data.asset_id.toString())];
+                            break;
+                    }
 
-                    const col_t = this.mongo.collection('templates');
+                    const col_t = this.mongo.collection('atomictransfers');
                     const res_t = await col_t.insertOne(store_data);
-                    break;*/
+
+                    for (let a = 0; a < store_data.asset_ids.length; a++){
+                        const asset_id = Buffer.allocUnsafe(8);
+                        asset_id.writeBigInt64BE(BigInt(store_data.asset_ids[a].toString()), 0);
+                        this.amq.send('recalc_asset', Buffer.concat([asset_id]));
+                    }
+                    break;
             }
 
             this.stats.add(combined);
@@ -193,90 +217,6 @@ class AlienAPIProcessor {
             else {
                 this.stats.add(`duplicate_${combined}`);
             }
-        }
-    }
-
-    async save_atomic_delta_data (scope, table, data, block_num, sequence, block_timestamp, data_hash, present) {
-        return;
-        const store_data = data
-        const collection_name = data.collection_name || scope
-        const schema = await this.get_schema(data.schema_name, collection_name)
-
-        if (schema){
-            switch (table) {
-                case 'assets':
-                    store_data.owner = scope;
-                    store_data.asset_id = Long.fromString(store_data.asset_id);
-                    store_data.mutable_serialized_data = deserialize(store_data.mutable_serialized_data, schema);
-                    store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
-                    for (let key in store_data.immutable_serialized_data){
-                        if (key.indexOf('.') > -1){
-                            const val = store_data.immutable_serialized_data[key];
-                            delete store_data.immutable_serialized_data[key];
-                            key = key.replace(/\./g, '^');
-                            store_data.immutable_serialized_data[key] = val;
-                        }
-                    }
-                    for (let key in store_data.mutable_serialized_data){
-                        if (key.indexOf('.') > -1){
-                            const val = store_data.mutable_serialized_data[key];
-                            delete store_data.mutable_serialized_data[key];
-                            key = key.replace(/\./g, '^');
-                            store_data.mutable_serialized_data[key] = val;
-                        }
-                    }
-
-                    table = 'assets_raw';
-                    break;
-                case 'templates':
-                    store_data.collection = scope;
-                    store_data.immutable_serialized_data = deserialize(store_data.immutable_serialized_data, schema);
-                    for (let key in store_data.immutable_serialized_data){
-                        if (key.indexOf('.') > -1){
-                            const val = store_data.immutable_serialized_data[key];
-                            delete store_data.immutable_serialized_data[key];
-                            key = key.replace(/\./g, '^');
-                            store_data.immutable_serialized_data[key] = val;
-                        }
-                    }
-                    break;
-                case 'schemas':
-                    break;
-            }
-        }
-        else {
-            console.error(`Could not load schema for ${table} ${store_data.asset_id || ''}${store_data.template_id || ''}`);
-            return;
-        }
-
-
-        store_data.block_num = Long.fromString(block_num.toString());
-        store_data.sequence = Long.fromString(sequence.toString());
-        store_data.block_timestamp = block_timestamp;
-        store_data.data_hash = data_hash;
-        store_data.present = !!present;
-
-        // console.log(store_data);
-        const col = this.mongo.collection(table);
-        try {
-            const res = await col.insertOne(store_data);
-
-            if (table === 'assets_raw'){
-                // console.log(`sending recalc meszsage ${store_data.asset_id}`)
-                process.send({type: 'recalc', asset_id: store_data.asset_id});
-            }
-
-            this.stats.add(`delta::${table}`);
-        }
-        catch (e){
-            if (e.code === 11000){
-                // duplicate index
-                this.stats.add(`delta_duplicate::${table}`);
-            }
-            else {
-                throw e;
-            }
-            // console.log(e.code);
         }
     }
 
@@ -321,75 +261,89 @@ class AlienAPIProcessor {
         }
     }
 
-    async get_table_type (code, table) {
-        const contract = await this.api.getContract(code);
-        const abi = await this.api.getAbi(code);
-
-        // this.logger.info(abi)
-
-        let this_table, type;
-        for (let t of abi.tables) {
-            if (t.name === table) {
-                this_table = t;
-                break
-            }
-        }
-
-        if (this_table) {
-            type = this_table.type
-        } else {
-            this.logger.error(`Could not find table "${table}" in the abi`, {code, table});
-            return
-        }
-
-        return contract.types.get(type)
-    }
-
-    async process_aa_delta_job (job) {
+    async process_recalc_job (job) {
         const sb = new Serialize.SerialBuffer({
             textEncoder: new TextEncoder,
             textDecoder: new TextDecoder,
             array: new Uint8Array(job.content)
         });
 
+        // console.log(sb.array, sb.array.length);
+        // process.exit(0);
 
-        const block_num = this.buffer_to_bigint(sb.getUint8Array(8));
-        const sequence = this.buffer_to_bigint(sb.getUint8Array(8));
-        const present = sb.get();
-        const block_timestamp_arr = sb.getUint8Array(4);
-        // const block_timestamp_int = sb.getUint32();
-        let buffer = Buffer.from(block_timestamp_arr);
-        var block_timestamp_int = buffer.readUInt32BE(0);
-        const block_timestamp = new Date(block_timestamp_int * 1000);
-        sb.get(); // version
-        const code = sb.getName();
-        const scope = sb.getName();
-        const table = sb.getName();
-        const primary_key = this.buffer_to_bigint(sb.getUint8Array(8));
-        const payer = sb.getName();
-        const data_raw = sb.getBytes();
-
+        const asset_id = this.buffer_to_bigint(sb.getUint8Array(8));
 
         try {
-            const data = await this.deserializer.deserialize_table(code, table, Buffer.from(data_raw), block_num);
-            // console.log(data, scope);
+            console.log('Processing asset', asset_id.toString())
+            const col_t = this.mongo.collection('atomictransfers');
+            const col_a = this.mongo.collection('assets');
+            const asset_id_long = Long.fromString(asset_id.toString());
+            const query = {asset_ids: asset_id_long};
+            const transfer_res = await col_t.findOne(query, {sort: {global_sequence: -1}});
+            let asset = await col_a.findOne({asset_id: asset_id_long});
+            if (!asset){
+                asset = {
+                    asset_id: asset_id_long,
+                    data: await this.get_asset_data(asset_id.toString(), transfer_res.to)
+                }
+            }
+            asset.owner = transfer_res.to;
 
-            // if (table === 'templates'){
-            //     console.log('templates', scope, this.config.atomicassets.collection)
-            // }
-            const data_hash = crypto.createHash('sha1').update(data_raw).digest('hex');
-            // console.log(data);
-            // console.log(table);
-            await this.save_atomic_delta_data(scope, table, data, block_num, sequence, block_timestamp, data_hash, present);
-            // if (data.collection_name === this.config.atomicassets.collection || scope === this.config.atomicassets.collection){
-            // }
+            const update_doc = {
+                $set: asset
+            };
+            const update_query = {
+                asset_id: asset_id_long
+            };
+            await col_a.updateOne(update_query, update_doc, {upsert: true});
 
+            console.log(asset)
             await this.amq.ack(job);
-
-        } catch (e) {
-            console.error(`Error deserializing ${code}:${table} in block ${block_num} : ${e.message}`, {e});
-            this.amq.reject(job);
         }
+        catch (e){
+            if (e.message.substr(0, 8) === 'NOTFOUND'){
+                console.log(e.message);
+                await this.amq.ack(job);
+            }
+            else {
+                console.error(`Error recalc asset ${asset_id.toString()}`, e.message);
+                await this.amq.reject(job);
+            }
+        }
+    }
+
+    async get_asset_data (asset_id, owner) {
+        const res = await this.rpc.get_table_rows({
+            code: this.config.atomicassets.contract,
+            scope: owner,
+            table: 'assets',
+            lower_bound: asset_id,
+            upper_bound: asset_id,
+            limit: 1
+        });
+
+        if (!res.rows.length){
+            throw new Error(`NOTFOUND : Could not find asset ${asset_id} owned by ${owner}`);
+        }
+
+        const data: any = {};
+        data.collection_name = res.rows[0].collection_name;
+        data.schema_name = res.rows[0].schema_name;
+        data.template_id = res.rows[0].template_id;
+
+        const template_res = await this.rpc.get_table_rows({
+            code: this.config.atomicassets.contract,
+            scope: data.collection_name,
+            table: 'templates',
+            lower_bound: data.template_id,
+            upper_bound: data.template_id,
+            limit: 1
+        });
+
+        const schema = await this.get_schema(data.schema_name, data.collection_name);
+        data.immutable_serialized_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
+
+        return data;
     }
 }
 

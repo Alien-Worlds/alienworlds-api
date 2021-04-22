@@ -40,21 +40,25 @@ export class TraceHandler {
                     for (let action of trx.action_traces) {
                         switch (action[0]) {
                             case 'action_trace_v0':
-                                if (action[1].act.account === this.config.mining_contract){//} || action[1].act.account === this.config.atomicassets.contract){
+                                if (action[1].act.account === this.config.mining_contract || action[1].act.account === this.config.atomicassets.contract){
                                     this.stats.add('actions');
 
                                     switch (action[1].act.name){
-                                        case 'logmine':
-                                        case 'logrand':
+                                        // case 'logmine':
+                                        // case 'logrand':
                                         case 'logtransfer':
                                         case 'logburn':
                                         case 'logmint':
-                                        case 'logsetdata':
+                                        // case 'logsetdata':
                                         // case 'lognewtempl':
                                             // const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
                                             // const type = nodeAbieos.get_type_for_action(action[1].act.account, action[1].act.name);
                                             // const json = nodeAbieos.bin_to_json(action[1].act.account, type, Buffer.from(action[1].act.data));
                                             // console.log(action[1].act.name, json);
+                                            if (action[1].receiver !== action[1].act.account){
+                                                return;
+                                            }
+                                            // console.log(action[1])
 
                                             const sb_action = new Serialize.SerialBuffer({
                                                 textEncoder: new TextEncoder,
