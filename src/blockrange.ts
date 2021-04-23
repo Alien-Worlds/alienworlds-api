@@ -71,7 +71,7 @@ class AlienAPIBlockRange {
             config: statereceiver_config
         });
         this.state_receiver.registerTraceHandler(trace_handler);
-        this.state_receiver.registerDeltaHandler(delta_handler);
+        // this.state_receiver.registerDeltaHandler(delta_handler);
         this.state_receiver.registerDoneHandler(() => {
             this.amq.ack(job);
             this.stats.add(`Processed range`);
