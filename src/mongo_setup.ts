@@ -39,10 +39,10 @@ import { connectMongo } from './connections/mongo'
     const assets_collection = mongo.collection('assets');
     console.log('Creating assets:owner index')
     const assets_owner_ind = await assets_collection.createIndex({ owner: 1 }, { background: true })
-    console.log('Creating assets:asset_id index')
-    const assets_asset_id_ind = await assets_collection.createIndex({ asset_id: 1 }, { unique:true, background: true })
-    console.log('Creating assets:asset_id_schema index')
-    const assets_asset_id_schema_ind = await assets_collection.createIndex({ asset_id: 1, "data.schema_name": 1 }, { background: true })
+
+    const atomictransfers_collection = mongo.collection('atomictransfers');
+    console.log('Creating atomictransfers:asset_ids index')
+    const atomictransfers_asset_ids_ind = await atomictransfers_collection.createIndex({ asset_ids: 1 }, { background: true })
 
     process.exit(0);
 })();
