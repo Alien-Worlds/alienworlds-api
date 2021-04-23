@@ -7,11 +7,16 @@ const asset_data = async (asset_id, db) => {
     const query = { asset_id: Long.fromString(asset_id) }
     const asset = await collection.findOne(query)
 
+    let asset_data: any = null
     if (asset){
-        delete asset._id
+        asset_data = asset.data
+        asset_data.asset_id = asset.asset_id
+        asset_data.owner = asset.owner
+        asset_data.data = asset.data.immutable_serialized_data
+        delete asset_data.immutable_serialized_data
     }
 
-    return asset
+    return asset_data
 }
 
 const getAsset = async (fastify, request) => {
