@@ -15,6 +15,8 @@ import { connectMongo } from './connections/mongo'
     const mines_miners_ind = await mines_collection.createIndex({ miner: 1, global_sequence: -1 }, {background: true});
     console.log('Creating mines:land_id index')
     const mines_land_id_ind = await mines_collection.createIndex({ land_id: 1, global_sequence: -1 }, {background: true});
+    console.log('Creating mines:land_id_block_timestamp index')
+    const mines_land_id_block_timestamp_ind = await mines_collection.createIndex({ land_id: 1, block_timestamp: -1 }, {background: true});
     console.log('Creating mines:landowner index')
     const mines_landowner_ind = await mines_collection.createIndex({ landowner: 1, global_sequence: -1 }, {background: true});
     console.log('Creating mines:planet index')
