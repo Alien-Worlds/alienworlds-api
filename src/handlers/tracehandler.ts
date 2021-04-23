@@ -1,5 +1,6 @@
 import {StatsDisplay} from "../include/statsdisplay";
 const {Api, JsonRpc, Serialize} = require('eosjs');
+// const nodeAbieos = require('@eosrio/node-abieos');
 
 export class TraceHandler {
     config: any;
@@ -51,12 +52,21 @@ export class TraceHandler {
                                         case 'logmint':
                                         // case 'logsetdata':
                                         // case 'lognewtempl':
-                                            // const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
-                                            // const type = nodeAbieos.get_type_for_action(action[1].act.account, action[1].act.name);
-                                            // const json = nodeAbieos.bin_to_json(action[1].act.account, type, Buffer.from(action[1].act.data));
-                                            // console.log(action[1].act.name, json);
+                                        //     const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
+                                        //     const type = nodeAbieos.get_type_for_action(action[1].act.account, action[1].act.name);
+                                        //     const json = nodeAbieos.bin_to_json(action[1].act.account, type, Buffer.from(action[1].act.data));
+                                        //     console.log(action[1].act.name, json);
+                                            // console.log(action[1].act.authorization)
+                                            // if (action[1].receipt[1].global_sequence == '3024635758'){
+                                                // const data = await this.eos_api.deserializeActions([action[1].act])
+                                                // console.log(data[0], action[1], action[1].receipt[1].global_sequence)
+                                                // console.log(action[1])
+                                                // process.exit(0)
+                                            // }
+
+
                                             if (action[1].receiver !== action[1].act.account){
-                                                return;
+                                                continue;
                                             }
                                             // console.log(action[1])
 
