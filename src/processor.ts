@@ -25,6 +25,7 @@ class AlienAPIProcessor {
     logger: any;
     stats: StatsDisplay;
     recalc_worker: any;
+    insert_queue: any;
 
     constructor (config, deserializer, amq, mongo, stats) {
         const fetch = require('node-fetch');
@@ -37,6 +38,7 @@ class AlienAPIProcessor {
         this.schema_cache = {};
         this.logger = console;
         this.stats = stats;
+        this.insert_queue = [];
 
         this.recalc_worker = null;
 
@@ -48,12 +50,19 @@ class AlienAPIProcessor {
             textDecoder: new TextDecoder(),
             textEncoder: new TextEncoder(),
         });
+
+        // start queue processor
+        console.log('Starting queue processor')
+        setInterval(this.process_insert_queue.bind(this), 1000);
     }
 
     start () {
         console.log(`Starting processor`);
-        this.amq.listen('action', this.process_action_job.bind(this));
-        this.amq.listen('recalc_asset', this.process_recalc_job.bind(this));
+        for (let i = 0; i < 30; i++){
+            // pull 10 jobs at a time
+            this.amq.listen('action', this.process_action_job.bind(this));
+            this.amq.listen('recalc_asset', this.process_recalc_job.bind(this));
+        }
     }
 
     buffer_to_bigint (buf) {
@@ -136,8 +145,83 @@ class AlienAPIProcessor {
         }
     }
 
-    async save_action_data (account, name, data, block_num, block_timestamp, global_sequence) {
+    async process_insert_queue () {
+        const queue = this.insert_queue;
+        this.insert_queue = [];
+        const inserts = {};
+        if (!queue){
+            console.log(`Queue is null`);
+            return;
+        }
+        queue.forEach(q => {
+            inserts[q.collection] = inserts[q.collection] || [];
+            inserts[q.collection].push(q);
+        });
+        console.log(inserts);
+        for (let col_name in inserts) {
+            const documents = inserts[col_name].map(i => i.document);
+
+            const col = this.mongo.collection(col_name);
+
+            // testing
+            /*const to_delete = [];
+            for (let d=0;d<documents.length;d++){
+                if (d % 2 === 0){
+                    // console.log(documents[d])
+                    to_delete.push(documents[d].global_sequence)
+                }
+            }
+            const delres = await col.deleteMany({global_sequence: {$in: to_delete}});*/
+
+
+            col.insertMany(documents, {ordered:false}, (err, res) => {
+                // console.log(err, res);
+                if (err){
+                    // some documents failed
+                    // console.log('ERROR', err.result);
+                    // console.log(err.result.result.writeErrors);
+                    // console.log(err.result.result.insertedIds);
+
+                    // loop through everything and see if the index errored
+                    for (let i = 0; i < inserts[col_name].length; i++){
+                        const write_error = err.result.result.writeErrors.find(we => we.err.index === i);
+                        if (write_error){
+                            if (write_error.err.code === 11000){
+                                console.log('duplicate')
+                            }
+                            console.error(i, write_error.err.errmsg);
+                        }
+                        // console.log(inserts[col_name][i].job)
+                        try {
+                            this.amq.ack(inserts[col_name][i].job);
+                        }
+                        catch (e){
+                            console.error(e.message);
+                            process.exit(1);
+                        }
+                        //
+                    }
+
+                    /*for (let e = 0; e < err.result.result.writeErrors.length; e++){
+                        const write_error = err.result.result.writeErrors[e];
+                        console.log(write_error.err.op)
+                    }*/
+                }
+                else if (res){
+                    // console.log('SUCCESS', res)
+                    // all documents inserted
+                    inserts[col_name].forEach(i => {
+                        this.amq.ack(i.job);
+                    })
+                }
+            });
+        }
+    }
+
+    async save_action_data (account, name, data, block_num, block_timestamp, global_sequence, job) {
         const combined = `${account}::${name}`;
+        // console.log(combined);
+        let queued = false;
         try {
             let store_data = data;
 
@@ -151,7 +235,14 @@ class AlienAPIProcessor {
 
                     const col = this.mongo.collection('mines');
                     // console.log(`Saving data for ${account}::${name}`, data);
-                    const res = await col.insertOne(store_data);
+                    // console.log(`Insert queue`)
+                    this.insert_queue.push({
+                        collection: 'mines',
+                        document: store_data,
+                        job
+                    });
+                    // const res = await col.insertOne(store_data);
+                    queued = true;
 
                     break;
                 case 'm.federation::logrand':
@@ -170,6 +261,7 @@ class AlienAPIProcessor {
                 case `${this.config.atomicassets.contract}::logmint`:
                 case `${this.config.atomicassets.contract}::logburn`:
                     if (data.collection_name !== this.config.atomicassets.collection){
+                        await this.amq.ack(job);
                         return;
                     }
 
@@ -208,6 +300,10 @@ class AlienAPIProcessor {
                     break;
             }
 
+            if (!queued){
+                await this.amq.ack(job);
+            }
+
             this.stats.add(combined);
         }
         catch (e) {
@@ -216,6 +312,11 @@ class AlienAPIProcessor {
             }
             else {
                 this.stats.add(`duplicate_${combined}`);
+
+                if (!queued){
+                    console.log('ack job')
+                    await this.amq.ack(job);
+                }
             }
         }
     }
@@ -245,9 +346,9 @@ class AlienAPIProcessor {
 
         try {
             const data = await this.deserializer.deserialize_action(account, name, Buffer.from(data_arr), block_num);
-            await this.save_action_data(account, name, data, block_num, block_timestamp, global_sequence);
+            await this.save_action_data(account, name, data, block_num, block_timestamp, global_sequence, job);
 
-            await this.amq.ack(job);
+            // await this.amq.ack(job);
         }
         catch (e){
             console.error(`Error processing job for ${account}::${name} - ${e.message} in block ${block_num} (${trx_id})`);
@@ -379,7 +480,7 @@ const deserializer = new AbiDeserializer(`${__dirname}/abis`);
                 recalc_worker.send({type: 'recalc'});
 
                 // start the processor workers
-                for (let i = 0; i < threads - 1; i++) {
+                for (let i = 0; i < threads; i++) {
                     workers.push(cluster.fork());
                     workers[i].on('message', (msg) => {
                         // Worker is online
