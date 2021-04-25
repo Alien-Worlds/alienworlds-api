@@ -157,7 +157,7 @@ class AlienAPIProcessor {
             inserts[q.collection] = inserts[q.collection] || [];
             inserts[q.collection].push(q);
         });
-        console.log(inserts);
+        // console.log(inserts);
         for (let col_name in inserts) {
             const documents = inserts[col_name].map(i => i.document);
 
@@ -201,6 +201,9 @@ class AlienAPIProcessor {
                                 // throw new Error(write_error.err.errmsg)
                             }
                             // console.error(i, write_error.err.errmsg);
+                        }
+                        else {
+                            this.amq.ack(inserts[col_name][i].job);
                         }
                         // console.log(inserts[col_name][i].job)
 
