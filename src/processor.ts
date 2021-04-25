@@ -187,7 +187,7 @@ class AlienAPIProcessor {
                         const write_error = err.result.result.writeErrors.find(we => we.err.index === i);
                         if (write_error){
                             if (write_error.err.code === 11000){
-                                console.log('duplicate')
+                                // console.log('duplicate')
                                 try {
                                     this.amq.ack(inserts[col_name][i].job);
                                 }
