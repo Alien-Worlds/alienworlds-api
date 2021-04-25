@@ -322,7 +322,7 @@ class AlienAPIProcessor {
                 this.stats.add(`duplicate_${combined}`);
 
                 if (!queued){
-                    console.log('ack job')
+                    // console.log('ack job')
                     await this.amq.ack(job);
                 }
             }
