@@ -53,7 +53,7 @@ class AlienAPIProcessor {
 
         // start queue processor
         console.log('Starting queue processor')
-        setInterval(this.process_insert_queue.bind(this), 1000);
+        setInterval(this.process_insert_queue.bind(this), 500);
     }
 
     start () {
