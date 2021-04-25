@@ -188,17 +188,22 @@ class AlienAPIProcessor {
                         if (write_error){
                             if (write_error.err.code === 11000){
                                 console.log('duplicate')
+                                try {
+                                    this.amq.ack(inserts[col_name][i].job);
+                                }
+                                catch (e){
+                                    console.error(e.message);
+                                    process.exit(1);
+                                }
                             }
-                            console.error(i, write_error.err.errmsg);
+                            else {
+                                this.amq.reject(inserts[col_name][i].job);
+                                // throw new Error(write_error.err.errmsg)
+                            }
+                            // console.error(i, write_error.err.errmsg);
                         }
                         // console.log(inserts[col_name][i].job)
-                        try {
-                            this.amq.ack(inserts[col_name][i].job);
-                        }
-                        catch (e){
-                            console.error(e.message);
-                            process.exit(1);
-                        }
+
                         //
                     }
 
