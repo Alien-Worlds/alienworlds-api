@@ -50,8 +50,6 @@ export class Amq {
     async init(){
         const conn = await Amqp.connect(this.config.connection_string);
 
-        this.logger.info(`Connected to ${this.config.connection_string}`);
-
 
         const channel = await conn.createConfirmChannel();
 
@@ -67,6 +65,8 @@ export class Amq {
         this.channel = channel;
         this.initialized = true;
         this.connection_errors = 0;
+
+        this.logger.info(`Connected to AMQ ${this.config.connection_string}`);
 
         conn.on('error', (err) => {
             if (err.message !== 'Connection closing') {
