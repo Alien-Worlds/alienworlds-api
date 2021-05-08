@@ -61,11 +61,11 @@ server.register(fastifyCors, {
     origin: '*'
 });
 
-const server_address = process.env.SERVER_ADDR || '127.0.0.1'
-const server_port = process.env.SERVER_PORT || '8800'
+const server_address = config.api.host || '127.0.0.1'
+const server_port = config.api.port || '8800'
 
 server.ready().then(async () => {
-    console.log(`Started API server with config ${process.env.CONFIG} on ${server_address}:${server_port}`);
+    console.log(`Started API server on ${server_address}:${server_port}`);
     await server.oas();
 }, (err) => {
     console.error('Error starting API', err)
