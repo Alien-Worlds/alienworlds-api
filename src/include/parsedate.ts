@@ -14,6 +14,7 @@ export function parseDate (fullStr) {
     dt.setUTCHours(hourStr)
     dt.setUTCMinutes(minuteStr)
     dt.setUTCSeconds(secondStr)
+    dt.setUTCMilliseconds(0)
 
     return dt.getTime()
 }
