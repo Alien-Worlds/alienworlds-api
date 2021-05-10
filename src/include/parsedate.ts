@@ -2,7 +2,10 @@ export function parseDate (fullStr) {
     const [fullDate] = fullStr.split('.')
     const [dateStr, timeStr] = fullDate.split('T')
     const [year, month, day] = dateStr.split('-')
-    const [hourStr, minuteStr, secondStr] = timeStr.split(':')
+    let hourStr = 0, minuteStr = 0, secondStr = 0
+    if (timeStr){
+        [hourStr, minuteStr, secondStr] = timeStr.split(':')
+    }
 
     const dt = new Date()
     dt.setUTCFullYear(year)
