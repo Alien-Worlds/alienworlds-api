@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@eosdacio/eosio-statereceiver": "^1.0.4",
+    "@eosdacio/eosio-statereceiver": "^1.1.0",
     "@eosrio/node-abieos": "^2.1.0-beta.0",
     "@types/node": "^14.14.22",
     "amqplib": "^0.6.0",
