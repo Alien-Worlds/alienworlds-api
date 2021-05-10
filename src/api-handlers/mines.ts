@@ -1,4 +1,5 @@
 import { minesSchema } from '../schemas'
+import { parseDate } from '../include/parsedate'
 
 // const {TextDecoder, TextEncoder} = require('text-encoding');
 // const {Api, JsonRpc} = require('@jafri/eosjs2');
@@ -61,14 +62,14 @@ const getMines = async (fastify, request) => {
         if (typeof query.block_timestamp === 'undefined'){
             query.block_timestamp = {}
         }
-        query.block_timestamp.$gte = new Date(Date.parse(from))
+        query.block_timestamp.$gte = new Date(parseDate(from))
         has_query = true
     }
     if (to){
         if (typeof query.block_timestamp === 'undefined'){
             query.block_timestamp = {}
         }
-        query.block_timestamp.$lt = new Date(Date.parse(to))
+        query.block_timestamp.$lt = new Date(parseDate(to))
         has_query = true
     }
     let _sort = -1
