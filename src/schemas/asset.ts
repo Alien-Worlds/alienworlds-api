@@ -8,6 +8,10 @@ const assetSchema = {
             "id": {
                 description: 'Asset ID',
                 type: 'string'
+            },
+            "owner": {
+                description: 'Owner',
+                type: 'string'
             }
         },
         required: []

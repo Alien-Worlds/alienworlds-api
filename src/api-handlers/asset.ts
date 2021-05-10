@@ -20,25 +20,56 @@ const asset_data = async (asset_id, db) => {
 }
 
 const getAsset = async (fastify, request) => {
-    const asset_id = request.query.id || null
-    if (!asset_id){
-        throw new Error('ID is required')
-    }
-    const asset_ids = asset_id.split(',')
-
     const db = fastify.mongo.db
-    const assets = []
-    asset_ids.forEach(asset_id => {
-        const ad = asset_data(asset_id, db);
-        if (ad){
-            assets.push(ad)
+    console.log(db)
+    const asset_id = request.query.id || null
+    const owner = request.query.owner || null
+    const schema_name = request.query.schema || null
+    let asset_ids = []
+    let ret = []
+
+    if (asset_id){
+        const assets = []
+        asset_ids = asset_id.split(',')
+
+        asset_ids.forEach(asset_id => {
+            const ad = asset_data(asset_id, db);
+            if (ad){
+                assets.push(ad)
+            }
+        })
+
+        ret = (await Promise.all(assets)).filter(a => a)
+
+        if (!ret.length){
+            throw new NotFoundError('Asset(s) not found')
         }
-    })
+    }
+    else if (owner){
+        const collection = db.collection('assets')
+        const query: any = { owner }
+        if (schema_name){
+            query.schema_name = schema_name
+        }
+        const assets = await collection.find(query)
+        // console.log(query, await assets.count())
 
-    const ret = (await Promise.all(assets)).filter(a => a)
+        await assets.forEach(asset => {
+            console.log(asset)
+            let asset_data: any = null
+            if (asset){
+                asset_data = asset.data
+                asset_data.asset_id = asset.asset_id
+                asset_data.owner = asset.owner
+                asset_data.data = asset.data.immutable_serialized_data
+                delete asset_data.immutable_serialized_data
 
-    if (!ret.length){
-        throw new NotFoundError('Asset(s) not found')
+                // console.log(asset_data)
+                ret.push(asset_data)
+            }
+        })
+
+        // console.log(ret)
     }
 
     return ret
