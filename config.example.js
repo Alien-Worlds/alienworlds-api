@@ -12,7 +12,8 @@ module.exports = {
     start_block: 93613945, // m.federation genesis block 93613945, atomicassets genesis = 64105503
     api: {
         host: '127.0.0.1',
-        port: 8800
+        port: 8800,
+        schemes: ['https'] // one or both of: http, https
     },
     amq: {
         connection_string: 'amqp://user:password@host/alienworlds_mainnet'

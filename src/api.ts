@@ -36,7 +36,7 @@ const openApi = {
             version: '1.0.0'
         },
         host: config.docs_host || 'localhost',
-        schemes: ['https'],
+        schemes: config.api.schemes || ['https'],
         consumes: ['application/json'],
         produces: ['application/json']
     }
