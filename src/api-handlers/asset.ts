@@ -53,7 +53,7 @@ const getAsset = async (fastify, request) => {
         if (schema_name){
             query.schema_name = schema_name
         }
-        const assets = await collection.find(query).limit(limit).offset(offset)
+        const assets = await collection.find(query, {skip: offset}).limit(limit)
         // console.log(query, await assets.count())
 
         await assets.forEach(asset => {

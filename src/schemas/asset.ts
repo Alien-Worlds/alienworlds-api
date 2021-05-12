@@ -12,6 +12,14 @@ const assetSchema = {
             "owner": {
                 description: 'Owner',
                 type: 'string'
+            },
+            "limit": {
+                description: 'Limit',
+                type: 'integer'
+            },
+            "offset": {
+                description: 'Offset',
+                type: 'integer'
             }
         },
         required: []
