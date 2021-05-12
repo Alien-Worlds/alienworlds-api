@@ -21,12 +21,14 @@ const asset_data = async (asset_id, db) => {
 
 const getAsset = async (fastify, request) => {
     const db = fastify.mongo.db
-    console.log(db)
+    // console.log(db)
+    const limit = request.query.limit || 20
+    const offset = request.query.offset || 0
     const asset_id = request.query.id || null
     const owner = request.query.owner || null
     const schema_name = request.query.schema || null
     let asset_ids = []
-    let ret = []
+    let results = []
 
     if (asset_id){
         const assets = []
@@ -39,9 +41,9 @@ const getAsset = async (fastify, request) => {
             }
         })
 
-        ret = (await Promise.all(assets)).filter(a => a)
+        results = (await Promise.all(assets)).filter(a => a)
 
-        if (!ret.length){
+        if (!results.length){
             throw new NotFoundError('Asset(s) not found')
         }
     }
@@ -51,11 +53,11 @@ const getAsset = async (fastify, request) => {
         if (schema_name){
             query.schema_name = schema_name
         }
-        const assets = await collection.find(query)
+        const assets = await collection.find(query).limit(limit).offset(offset)
         // console.log(query, await assets.count())
 
         await assets.forEach(asset => {
-            console.log(asset)
+            // console.log(asset)
             let asset_data: any = null
             if (asset){
                 asset_data = asset.data
@@ -65,14 +67,14 @@ const getAsset = async (fastify, request) => {
                 delete asset_data.immutable_serialized_data
 
                 // console.log(asset_data)
-                ret.push(asset_data)
+                results.push(asset_data)
             }
         })
 
         // console.log(ret)
     }
 
-    return ret
+    return { results }
 }
 
 
