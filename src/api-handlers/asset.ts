@@ -51,7 +51,7 @@ const getAsset = async (fastify, request) => {
         const collection = db.collection('assets')
         const query: any = { owner }
         if (schema_name){
-            query.schema_name = schema_name
+            query.data = { schema_name }
         }
         const assets = await collection.find(query, {skip: offset}).limit(limit)
         // console.log(query, await assets.count())

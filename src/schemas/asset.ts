@@ -13,6 +13,10 @@ const assetSchema = {
                 description: 'Owner',
                 type: 'string'
             },
+            "schema": {
+                description: 'Schema Name',
+                type: 'string'
+            },
             "limit": {
                 description: 'Limit',
                 type: 'integer'
