@@ -99,12 +99,13 @@ const getMines = async (fastify, request) => {
     await res.forEach(r => {
         results.push(r)
     })
-    const count_query = query
-    if (count_query.global_sequence){
-        delete count_query.global_sequence
-    }
+    // const count_query = query
+    // if (count_query.global_sequence){
+    //     delete count_query.global_sequence
+    // }
 
-    return {results, count: await collection.find(count_query).count()}
+    // return {results, count: await collection.find(count_query).count()}
+    return {results, count: -1}
 }
 
 
