@@ -42,7 +42,17 @@ const getMineLuck = async (fastify, request) => {
             bag_items: {$addToSet:"$bag_items"}
         }},
         {$match: {total_luck: {$gt: 0}}},
-        {$project: {total_mines: 1, total_luck:1, bag_items: {$setUnion:"$tools"}}}
+        {$addFields: {tools: {$arrayElemAt:["$bag_items", 0]}, avg_luck: {$divide: ["$total_luck", "$total_mines"]}}},
+        {
+            $lookup:
+            {
+                from: "assets",
+                localField: "tools",
+                foreignField: "asset_id",
+                as: "rarities"
+            }
+        },
+        { $project: {_id: 1, total_luck: 1, avg_luck: 1, total_mines: 1, planets: 1, tools: 1, rarities: {$map: {input: "$rarities", as: "asset", in: "$$asset.data.immutable_serialized_data.rarity"}}} }
     ]
     // console.log(pipeline[0]['$match'])
 
