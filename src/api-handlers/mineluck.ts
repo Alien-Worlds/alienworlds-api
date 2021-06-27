@@ -34,8 +34,15 @@ const getMineLuck = async (fastify, request) => {
 
     const pipeline = [
         {$match: query},
-        {$group: {_id: "$miner", total_luck: {$sum: "$params.luck"}, total_mines: {$sum: 1}, planets: {$addToSet: "$planet_name"}}},
-        {$match: {total_luck: {$gt: 0}}}
+        {$group: {
+            _id: "$miner",
+            total_luck: {$sum: "$params.luck"},
+            total_mines: {$sum: 1},
+            planets: {$addToSet: "$planet_name"},
+            bag_items: {$addToSet:"$bag_items"}
+        }},
+        {$match: {total_luck: {$gt: 0}}},
+        {$project: {total_mines: 1, total_luck:1, bag_items: {$setUnion:"$tools"}}}
     ]
     // console.log(pipeline[0]['$match'])
 
