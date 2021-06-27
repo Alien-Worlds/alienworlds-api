@@ -226,7 +226,7 @@ class AlienAPIProcessor {
         }
     }
 
-    async save_action_data (account, name, data, block_num, block_timestamp, global_sequence, job) {
+    async save_action_data (account, name, data, block_num, block_timestamp, global_sequence, tx_id, job) {
         const combined = `${account}::${name}`;
         // console.log(combined);
         let queued = false;
@@ -240,7 +240,8 @@ class AlienAPIProcessor {
                     store_data.block_num = Long.fromString(block_num.toString());
                     store_data.block_timestamp = block_timestamp;
                     store_data.global_sequence = Long.fromString(global_sequence.toString());
-                    store_data.bag_items = data.bag_items.map(b => Long.fromString(b))
+                    store_data.bag_items = data.bag_items.map(b => Long.fromString(b));
+                    store_data.tx_id = tx_id;
 
                     const col = this.mongo.collection('mines');
                     // console.log(`Saving data for ${account}::${name}`, data);
@@ -355,7 +356,7 @@ class AlienAPIProcessor {
 
         try {
             const data = await this.deserializer.deserialize_action(account, name, Buffer.from(data_arr), block_num);
-            await this.save_action_data(account, name, data, block_num, block_timestamp, global_sequence, job);
+            await this.save_action_data(account, name, data, block_num, block_timestamp, global_sequence, trx_id, job);
 
             // await this.amq.ack(job);
         }
