@@ -240,6 +240,7 @@ class AlienAPIProcessor {
                     store_data.block_num = Long.fromString(block_num.toString());
                     store_data.block_timestamp = block_timestamp;
                     store_data.global_sequence = Long.fromString(global_sequence.toString());
+                    store_data.bag_items = data.bag_items.map(b => Long.fromString(b))
 
                     const col = this.mongo.collection('mines');
                     // console.log(`Saving data for ${account}::${name}`, data);
