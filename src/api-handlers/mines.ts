@@ -20,6 +20,7 @@ const getMines = async (fastify, request) => {
     const planet_name = request.query.planet_name || null
     const from = request.query.from || null
     const to = request.query.to || null
+    const tx_id = request.query.tx_id || null
 
     if (limit > 5000){
         throw new Error('Limit maximum is 5000')
@@ -93,6 +94,10 @@ const getMines = async (fastify, request) => {
         }
         query.global_sequence['$lt'] = global_sequence_to
     }
+    if (tx_id){
+        query = {tx_id}
+    }
+
     res = collection.find(query).sort({global_sequence: _sort}).limit(limit)
 
     const results = []

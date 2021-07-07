@@ -27,6 +27,8 @@ import { connectMongo } from './connections/mongo'
     const mines_block_num_ind = await mines_collection.createIndex({ block_num: -1 }, {background: true});
     console.log('Creating mines:block_timestamp index')
     const mines_block_timestamp_ind = await mines_collection.createIndex({ block_timestamp: 1 }, {background: true});
+    console.log('Creating mines:tx_id index')
+    const mines_tx_id_ind = await mines_collection.createIndex({ tx_id: 1 }, {background: true});
 
     const nfts_collection = mongo.collection('nfts');
     console.log('Creating nfts:global_sequence index')
