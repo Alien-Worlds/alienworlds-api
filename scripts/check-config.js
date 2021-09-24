@@ -10,6 +10,6 @@ try {
     else {
         process.exit(1)
     }
-} catch(err) {
+} catch (err) {
     process.exit(1)
 }

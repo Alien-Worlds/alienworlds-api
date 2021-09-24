@@ -5,9 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "yarn check-config && yarn clean && tsc && yarn copy-files && yarn abis",
+    "build": "yarn clean && tsc && yarn abis",
     "clean": "rm -rf ./dist",
-    "copy-files": "cp ./config.js ./dist/",
     "abis": "mkdir -p ./dist/abis && node dist/fetch_abis.js ./dist/abis",
     "check-config": "node ./scripts/check-config.js || (echo \"Create the config file by copying config.example.js to config.js\" && exit 1)"
   },
@@ -16,12 +15,16 @@
   "dependencies": {
     "@eosdacio/eosio-statereceiver": "^1.1.0",
     "@eosrio/node-abieos": "^2.1.0-beta.0",
+    "@types/dotenv-safe": "^8.1.2",
+    "@types/mongodb": "^4.0.7",
     "@types/node": "^14.14.22",
+    "@types/yargs": "^17.0.3",
     "amqplib": "^0.6.0",
     "atomicassets": "^1.2.2",
     "axon": "^2.0.3",
     "commander": "^7.0.0",
     "crypto": "^1.0.1",
+    "dotenv-safe": "^8.2.0",
     "eosjs": "^21.0.3",
     "ethers": "^5.1.0",
     "fastify": "^3.11.0",
@@ -32,6 +35,9 @@
     "file-exists": "^5.0.1",
     "http": "^0.0.1-security",
     "mongodb": "^3.6.3",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "tsc": "^2.0.3",
+    "typescript": "^4.4.3",
+    "yargs": "^17.1.1"
   }
 }

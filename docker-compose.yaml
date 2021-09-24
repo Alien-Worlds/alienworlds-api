@@ -1,0 +1,120 @@
+version: '3.5'
+services:
+  api:
+    image: node:14
+    ports: 
+        - 8804:8804
+    volumes: 
+        - .:/usr/code
+    working_dir: /usr/code
+    networks:
+      - rabbitmq_go_net
+    depends_on:
+      - rabbitmq
+      - mongodb
+    command: node dist/api.js
+  init_mongo_indexes:
+    image: node:14
+    # ports: 
+    #     - 8900:8900
+    volumes: 
+        - .:/usr/code
+    depends_on:
+        - mongodb
+    working_dir: /usr/code
+    networks:
+      - rabbitmq_go_net
+    command: node dist/mongo_setup.js
+  batch_filler:
+    image: node:14
+    # ports: 
+    #     - 8900:8900
+    volumes: 
+        - .:/usr/code
+    depends_on:
+        - rabbitmq
+        - mongodb
+    working_dir: /usr/code
+    networks:
+      - rabbitmq_go_net
+    command: node dist/batchfiller.js
+  filler:
+    image: node:14
+    # ports: 
+    #     - 8900:8900
+    volumes: 
+        - .:/usr/code
+    depends_on:
+        - rabbitmq
+        - mongodb
+    working_dir: /usr/code
+    networks:
+      - rabbitmq_go_net
+    command: node dist/filler.js
+  processor:
+    image: node:14
+    # ports: 
+    #     - 8900:8900
+    volumes: 
+        - .:/usr/code
+    depends_on:
+        - rabbitmq
+        - mongodb
+    working_dir: /usr/code
+    networks:
+      - rabbitmq_go_net
+    command: node dist/processor.js
+  blockrange:
+    image: node:14
+    # ports: 
+    #     - 8900:8900
+    volumes: 
+        - .:/usr/code
+    depends_on:
+        - rabbitmq
+        - mongodb
+    working_dir: /usr/code
+    networks:
+      - rabbitmq_go_net
+    command: node dist/blockrange.js
+  mongodb:
+    image : mongo
+    container_name: mongodb
+    environment:
+    - PUID=1000
+    - PGID=1000
+    volumes:
+    - ~/mongodb/database:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+      retries: 5
+    networks:
+      - rabbitmq_go_net
+    ports:
+    - 27017:27017
+    restart: unless-stopped
+  rabbitmq:
+      image: rabbitmq:3-management-alpine
+      hostname: rabbitmq
+      container_name: 'rabbitmq'
+      ports:
+          - 5672:5672
+          - 15672:15672
+      healthcheck:
+        test: nc -z rabbitmq 5672
+        interval: 10s
+        timeout: 10s
+        retries: 100
+      volumes:
+          - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+          - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+      networks:
+          - rabbitmq_go_net
+
+networks:
+    rabbitmq_go_net:
+    # driver: bridge
