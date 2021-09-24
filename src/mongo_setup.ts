@@ -29,8 +29,8 @@ export const createMongoIndexes = async (config: ConfigType) => {
     console.log('Creating mines:land_id_block_timestamp index');
     const mines_land_id_block_timestamp_ind =
       await mines_collection.createIndexes(
-        { land_id: 1, block_timestamp: -1 },
-        { background: true }
+    console.log('Creating mines:tx_id index')
+    const mines_tx_id_ind = await mines_collection.createIndex({ tx_id: 1 }, {background: true});
       );
     console.log('Creating mines:landowner index');
     const mines_landowner_ind = await mines_collection.createIndexes(
