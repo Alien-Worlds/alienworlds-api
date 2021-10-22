@@ -10,6 +10,12 @@ import { deserialize, ObjectSchema } from 'atomicassets';
 import * as cluster from 'cluster';
 import * as os from 'os';
 import { ConfigType, config } from './config';
+import {
+  waitForDependencies,
+  waitForMongo,
+  waitForRabbitMQ,
+} from './api_launcher';
+import { createMongoIndexes } from './mongo_setup';
 
 class AlienAPIProcessor {
   config: ConfigType;
@@ -517,7 +523,7 @@ class AlienAPIProcessor {
 
 const deserializer = new AbiDeserializer(`${__dirname}/abis`);
 
-(async () => {
+const startProcessor = async () => {
   try {
     const amq = new Amq(config);
     await amq.init();
@@ -591,4 +597,13 @@ const deserializer = new AbiDeserializer(`${__dirname}/abis`);
   } catch (e) {
     console.log('error while starting the processor: ', e);
   }
+};
+
+// Start the BlockRange after the dependencies
+(async () => {
+  await waitForDependencies(
+    [waitForMongo, waitForRabbitMQ, createMongoIndexes],
+    5000,
+    startProcessor
+  );
 })();

@@ -8,8 +8,15 @@ import * as cluster from 'cluster';
 import * as os from 'os';
 const { Serialize } = require('eosjs');
 import { config, ConfigType } from './config';
-import { sleep } from './filler';
-
+import {
+  waitForDependencies,
+  waitForMongo,
+  waitForRabbitMQ,
+} from './api_launcher';
+import { createMongoIndexes } from './mongo_setup';
+/**
+ * processes blocks that have been queued into RabbitMQ with the queue name `aw_block_range`
+ */
 class AlienAPIBlockRange {
   state_receiver: typeof StateReceiver;
   config: ConfigType;
@@ -87,10 +94,11 @@ class AlienAPIBlockRange {
 
   async start() {
     this.amq.listen('aw_block_range', this.process_blockrange_job.bind(this));
+    this.amq.
   }
 }
 
-(async () => {
+const startBlockRange = async () => {
   try {
     const amq = new Amq(config);
     await amq.init();
@@ -113,10 +121,15 @@ class AlienAPIBlockRange {
       await api.start();
     }
   } catch (e) {
-    await sleep(5000);
-    console.log(
-      'error while starting the BlockRange. Will not try again in 5 seconds.: ',
-      e
-    );
+    console.log('error while starting the BlockRange.: ', e);
   }
+};
+
+// Start the BlockRange after the dependencies
+(async () => {
+  await waitForDependencies(
+    [waitForMongo, waitForRabbitMQ, createMongoIndexes],
+    5000,
+    startBlockRange
+  );
 })();

@@ -37,7 +37,7 @@ services:
     working_dir: /usr/code
     networks:
       - rabbitmq_go_net
-    command: node dist/batchfiller.js
+    command: node dist/batchfiller.js -s 93613945
   filler:
     image: node:14
     # ports: 
@@ -84,7 +84,7 @@ services:
     - PUID=1000
     - PGID=1000
     volumes:
-    - ~/mongodb/database:/data/db
+    - ~/docker-volumes/mongodb/database:/data/db
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
       interval: 10s
@@ -110,8 +110,8 @@ services:
         timeout: 10s
         retries: 100
       volumes:
-          - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-          - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+          - ~/docker-volumes/rabbitmq/data/:/var/lib/rabbitmq/
+          - ~/docker-volumes/rabbitmq/log/:/var/log/rabbitmq
       networks:
           - rabbitmq_go_net
 

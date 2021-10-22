@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 import { connectMongo } from './connections/mongo';
-import { ConfigType } from './config';
+import { ConfigType, config } from './config';
 
-export const createMongoIndexes = async (config: ConfigType) => {
+export const createMongoIndexes = async (_config: ConfigType = config) => {
   try {
     console.log('Starting to create indices in mongoDB...');
 
-    const mongo = await connectMongo(config.mongo);
+    const mongo = await connectMongo(_config.mongo);
     console.log('Connected to mongo');
 
     const mines_collection = mongo.collection('mines');
@@ -29,8 +29,8 @@ export const createMongoIndexes = async (config: ConfigType) => {
     console.log('Creating mines:land_id_block_timestamp index');
     const mines_land_id_block_timestamp_ind =
       await mines_collection.createIndexes(
-    console.log('Creating mines:tx_id index')
-    const mines_tx_id_ind = await mines_collection.createIndex({ tx_id: 1 }, {background: true});
+        { land_id: 1, block_timestamp: -1 },
+        { background: true }
       );
     console.log('Creating mines:landowner index');
     const mines_landowner_ind = await mines_collection.createIndexes(
@@ -56,6 +56,11 @@ export const createMongoIndexes = async (config: ConfigType) => {
     console.log('Creating mines:block_timestamp index');
     const mines_block_timestamp_ind = await mines_collection.createIndexes(
       { block_timestamp: 1 },
+      { background: true }
+    );
+    console.log('Creating mines:tx_id index');
+    const mines_tx_id_ind = await mines_collection.createIndex(
+      { tx_id: 1 },
       { background: true }
     );
 

@@ -6,6 +6,12 @@ import { TraceHandler } from './handlers/tracehandler';
 import { config, ConfigType } from './config';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import {
+  waitForDependencies,
+  waitForMongo,
+  waitForRabbitMQ,
+} from './api_launcher';
+import { createMongoIndexes } from './mongo_setup';
 
 export const sleep = async (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -87,7 +93,7 @@ class AlienAPIFiller {
   }
 }
 
-(async () => {
+const startFiller = async () => {
   console.log('start async');
   const stats = new StatsDisplay();
   const options: AlienAPIFillerOptions = await yargs(hideBin(process.argv))
@@ -125,4 +131,13 @@ class AlienAPIFiller {
   } catch (error) {
     console.log('Error occured while starting the filler: ', error);
   }
+};
+
+// Start the BlockRange after the dependencies
+(async () => {
+  await waitForDependencies(
+    [waitForMongo, waitForRabbitMQ, createMongoIndexes],
+    5000,
+    startFiller
+  );
 })();

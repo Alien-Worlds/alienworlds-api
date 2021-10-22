@@ -5,6 +5,12 @@ import fetch from 'node-fetch';
 import { config, ConfigType } from './config';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import {
+  waitForDependencies,
+  waitForMongo,
+  waitForRabbitMQ,
+} from './api_launcher';
+import { createMongoIndexes } from './mongo_setup';
 
 interface AlienBatchAPIFillerOptions {
   startBlock: number;
@@ -120,7 +126,7 @@ class AlienBatchAPIFiller {
   }
 }
 
-(async () => {
+const startBatchFiller = async () => {
   console.log('start async');
   const stats = new StatsDisplay();
   const options: AlienBatchAPIFillerOptions = await yargs(hideBin(process.argv))
@@ -149,7 +155,20 @@ class AlienBatchAPIFiller {
     const mongo = await connectMongo(config.mongo);
     const api = new AlienBatchAPIFiller(config, options, amq, mongo);
     await api.start();
+    console.log(
+      'Successfully enqueued blocks to process. Exiting happiliy now.'
+    );
+    process.exit(0);
   } catch (error) {
     console.log('Error occured while starting the filler: ', error);
   }
+};
+
+// Start the filler after the dependencies
+(async () => {
+  await waitForDependencies(
+    [waitForMongo, waitForRabbitMQ, createMongoIndexes],
+    5000,
+    startBatchFiller
+  );
 })();

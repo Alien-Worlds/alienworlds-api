@@ -13,6 +13,12 @@ import fastifyAutoload from 'fastify-autoload';
 import fastifyMongo from 'fastify-mongodb';
 import { Server, IncomingMessage, ServerResponse } from 'http';
 import { config } from './config';
+import {
+  waitForDependencies,
+  waitForMongo,
+  waitForRabbitMQ,
+} from './api_launcher';
+import { createMongoIndexes } from './mongo_setup';
 
 const logger = console;
 
@@ -74,7 +80,7 @@ server.ready().then(
   }
 );
 
-(async () => {
+const startAPI = async () => {
   try {
     await server.listen(server_port, server_address);
     console.log('Server listening on port: ', server_port);
@@ -82,4 +88,13 @@ server.ready().then(
     server.log.error(err);
     process.exit(1);
   }
+};
+
+// Start the BlockRange after the dependencies
+(async () => {
+  await waitForDependencies(
+    [waitForMongo, waitForRabbitMQ, createMongoIndexes],
+    5000,
+    startAPI
+  );
 })();
