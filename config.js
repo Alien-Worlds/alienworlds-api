@@ -19,7 +19,7 @@ module.exports = {
         connection_string: 'amqp://user:password@host/alienworlds_mainnet'
     },
     mongo: {
-        url :'mongodb://127.0.0.1',
+        url :'mongodb://db',
         dbName: 'alienworlds_mainnet',
     },
     atomicassets: {

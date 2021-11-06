@@ -1,0 +1,30 @@
+version: "2"
+services:
+
+  api:
+    ports:
+      - "8800:8800"
+    build: .
+    volumes:
+      - "./src:/var/www/api/src"
+      - "./scripts:/var/www/api/scripts"
+      - "./config.js:/var/www/api/config.js"
+      - "./package.json:/var/www/api/package.json"
+      - "./tsconfig.json:/var/www/api/tsconfig.json"
+      - distribution:/var/www/api/dist
+      - node_modules:/var/www/api/node_modules
+    depends_on:
+      - db
+
+  db:
+    ports:
+      - "27017"
+    image: mongo
+    restart: always
+    volumes:
+      - database:/data/db
+
+volumes:
+  distribution:
+  node_modules:
+  database:

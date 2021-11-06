@@ -2,35 +2,30 @@
 
 API to index and read Alien Worlds data
 
-## Building
+## Requirements
 
-`yarn`
-`yarn build`
+- Docker
 
 ## Configuring
 
-`cp config.example.js dist/config.js`
+Please edit `config.js`
 
-Edit the config file as necessary
+# Running
 
-Run directly or use pm2
+`docker compose up`
+
+# Manual Procedures
+
+## Full rebuild
+
+`docker compose build`
 
 ### Fetch ABIs
 
-It is necessary to do a one-time fetch of the contract ABIs (this must be redone if the ABI changes)
+This must be redone when the ABI changes
 
-`node ./fetch_abis.js`
+`docker compose run api yarn abis`
 
 ### Setup Mongo Indexes
 
-`node ./mongo_setup.js`
-
-## Running
-
-Run the filler first
-
-`node ./filler.js`
-
-Then the processor
-
-`node ./processor.js`
+`docker compose run api yarn mongo-indexes`
