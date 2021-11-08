@@ -16,7 +16,7 @@ module.exports = {
         schemes: ['https'] // one or both of: http, https
     },
     amq: {
-        connection_string: 'amqp://user:password@host/alienworlds_mainnet'
+        connection_string: 'amqp://guest:guest@queue/'
     },
     mongo: {
         url :'mongodb://db',

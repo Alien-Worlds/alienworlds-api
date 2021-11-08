@@ -1,30 +1,47 @@
-version: "2"
+version: "3"
 services:
 
   api:
     ports:
       - "8800:8800"
     build: .
-    volumes:
-      - "./src:/var/www/api/src"
-      - "./scripts:/var/www/api/scripts"
-      - "./config.js:/var/www/api/config.js"
-      - "./package.json:/var/www/api/package.json"
-      - "./tsconfig.json:/var/www/api/tsconfig.json"
-      - distribution:/var/www/api/dist
-      - node_modules:/var/www/api/node_modules
-    depends_on:
-      - db
+    command: "yarn mongo-indexes && yarn api"
+    restart: on-failure
+
+  processor:
+    build: .
+    command: "yarn processor"
+    restart: on-failure
+
+  blockrange:
+    build: .
+    command: "yarn blockrange"
+    restart: on-failure
+
+  filler:
+    build: .
+    command: "yarn filler"
+    restart: on-failure
 
   db:
-    ports:
-      - "27017"
     image: mongo
     restart: always
+    ports:
+      - "27017"
     volumes:
       - database:/data/db
 
+  queue: # login guest:guest
+    image: rabbitmq:management
+    restart: always
+    ports:
+      - "5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 volumes:
-  distribution:
-  node_modules:
   database:

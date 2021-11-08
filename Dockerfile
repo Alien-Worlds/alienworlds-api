@@ -14,7 +14,4 @@ WORKDIR /var/www/api
 RUN yarn
 RUN yarn build
 
-CMD yarn mongo-indexes && \
-    yarn filler && \
-    yarn processor
 
