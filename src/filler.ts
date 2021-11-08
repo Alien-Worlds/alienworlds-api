@@ -16,7 +16,7 @@ class AlienAPIFiller {
     stats: any;
     amq: any;
 
-    constructor (config, options, amq, mongo, stats) {
+    constructor (config: any, options: any, amq: Amq, mongo: unknown, stats: StatsDisplay) {
         console.log(`Constructing...`, config, options);
 
         this.config = config;
@@ -40,8 +40,7 @@ class AlienAPIFiller {
             if (res && res.block_num){
                 startBlock = res.block_num;
             }
-        }
-        else {
+        } else {
             startBlock = this.options.startBlock;
         }
         if (this.options.endBlock !== endBlock){
@@ -51,8 +50,19 @@ class AlienAPIFiller {
 
         if (this.options.replay){
             console.log(`Kicking off parallel replay, make sure you start a filler instance after this replay is complete`);
-            await this.replay(startBlock, endBlock);
-            process.exit(0);
+            let lib: number
+            if (endBlock === 0xffffffff) {
+                lib = await this.fetchLastIrreversableBlockNum();
+            }
+           
+            await this.replay(startBlock, lib);
+            if (this.options.continueWithFiller) {
+                console.log("Prepare the startBlock and endBlock to continue a filler after the replay has been scheduled instead of exiting the process.")
+                startBlock = lib
+                endBlock === 0xffffffff
+            } else {
+                process.exit(0);
+            }
         }
 
         const statereceiver_config = {
@@ -78,19 +88,9 @@ class AlienAPIFiller {
         this.state_receiver.start();
     }
 
-    async replay (startBlock, endBlock) {
+    async replay (startBlock: number, endBlock: number) {
         // start a replay by populating all the blockranges on rabbitmq
-        let lib;
-        if (endBlock === 0xffffffff){
-            console.log(`Fetching lib from ${this.config.endpoints[0]}/v1/chain/get_info`);
-            const info_res = await fetch(`${this.config.endpoints[0]}/v1/chain/get_info`);
-            const json = await info_res.json();
-            lib = json.last_irreversible_block_num;
-        }
-        else {
-            lib = endBlock;
-        }
-        console.log(`Ending at ${lib}`);
+       
 
         const chunk_size = 10000;
         let from = startBlock;
@@ -115,15 +115,15 @@ class AlienAPIFiller {
             send_promises.push(this.amq.send('aw_block_range', Buffer.concat([from_buffer, to_buffer])));
             number_jobs++;
 
-            if (to === lib) {
+            if (to === endBlock) {
                 break_now = true
             }
 
             from += chunk_size;
             to += chunk_size;
 
-            if (to > lib) {
-                to = lib
+            if (to > endBlock) {
+                to = endBlock
             }
 
             if (from > to) {
@@ -139,9 +139,17 @@ class AlienAPIFiller {
 
         await Promise.all(send_promises);
     }
+
+    private async fetchLastIrreversableBlockNum() {
+        console.log(`Fetching lib from ${this.config.endpoints[0]}/v1/chain/get_info`);
+        const info_res = await fetch(`${this.config.endpoints[0]}/v1/chain/get_info`);
+        const json = await info_res.json();
+        const lib: number = json.last_irreversible_block_num;
+        return lib;
+    }
 }
 
-const commanderParseInt = (value, _) => {
+const commanderParseInt = (value: string, _: any) => {
     // parseInt takes a string and a radix
     const parsedValue = parseInt(value, 10);
     if (isNaN(parsedValue)) {
@@ -166,6 +174,7 @@ const commanderParseInt = (value, _) => {
         .option('-t, --test <block>', 'Test mode, specify a single block to pull and process', commanderParseInt, 0)
         .option('-e, --end-block <end-block>', 'End block (exclusive)', commanderParseInt, 4294967295)
         .option('-r, --replay', 'Force replay (ignore head block).  This option will populate a blockrange queue (must specify start block too)', false)
+        .option('-c, --continue-with-filler', 'used with --replay.  This option will set a serial filler to continure after the batch', false)
         .parse(process.argv);
 
     const options = program.opts();

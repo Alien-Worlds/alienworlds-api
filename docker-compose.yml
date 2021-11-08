@@ -20,7 +20,7 @@ services:
 
   filler:
     build: .
-    command: ["sh", "-c", "scripts/wq.sh && yarn filler"]
+    command: ["sh", "-c", "scripts/wq.sh && yarn filler ${FILLER_FLAGS}"]
     restart: on-failure
 
   db:
