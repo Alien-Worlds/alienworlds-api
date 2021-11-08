@@ -5,22 +5,22 @@ services:
     ports:
       - "8800:8800"
     build: .
-    command: "yarn mongo-indexes && yarn api"
+    command: ["sh", "-c", "yarn mongo-indexes && yarn api"]
     restart: on-failure
 
   processor:
     build: .
-    command: "yarn processor"
+    command: ["sh", "-c", "scripts/wq.sh && yarn processor"]
     restart: on-failure
 
   blockrange:
     build: .
-    command: "yarn blockrange"
+    command: ["sh", "-c", "scripts/wq.sh && yarn blockrange"]
     restart: on-failure
 
   filler:
     build: .
-    command: "yarn filler"
+    command: ["sh", "-c", "scripts/wq.sh && yarn filler"]
     restart: on-failure
 
   db:
