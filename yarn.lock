@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@eosdacio/eosio-statereceiver@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@eosdacio/eosio-statereceiver/-/eosio-statereceiver-1.0.4.tgz#06b0ca0f9317ecc5ca0ee5b29f77023a3ad24f42"
-  integrity sha512-90yk6v3vlLi6jczvJp2FRn8sxIDBaNrvmeTGzi8Ckuo+aXiHBkPLLZpOjOIu9PVhaI2NYuok4Ra0DWY9RnAEug==
+"@eosdacio/eosio-statereceiver@^1.1.0":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@eosdacio/eosio-statereceiver/-/eosio-statereceiver-1.1.1.tgz#656abf8e3f8dbad70eb622515ceca7d0a706102c"
+  integrity sha512-dfpScXUdJjQ5yHSDdtlHwNQiK7nS8jLAQ+Ofto+bvLyY8a0rfE0tHF2m5kkwNB0uktvPa0FnkSDzIyF8K4yNxw==
   dependencies:
     eosjs "^21.0.3"
     text-encoding "^0.7.0"
