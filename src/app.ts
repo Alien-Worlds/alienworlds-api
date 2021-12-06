@@ -1,10 +1,5 @@
-#!/usr/bin/env node
-
 process.title = 'eosdac-api';
 
-// const openApi = require('./open-api');
-// const {loadConfig} = require('./functions');
-// const path = require('path');
 import path from 'path'
 import fastify, { FastifyInstance, RouteShorthandOptions } from "fastify"
 import fastifyOas from 'fastify-oas';
@@ -51,9 +46,9 @@ server.register(fastifyAutoload, {
     }
 });
 
-const mongo_url = `${config.mongo.url}/${config.mongo.dbName}`;
+const mongoUrl = `${config.mongo.url}/${config.mongo.dbName}`;
 server.register(fastifyMongo, {
-    url: mongo_url
+    url: mongoUrl
 });
 
 server.register(fastifyCors, {
@@ -61,21 +56,4 @@ server.register(fastifyCors, {
     origin: '*'
 });
 
-const server_address = config.api.host || '127.0.0.1'
-const server_port = config.api.port || '8800'
-
-server.ready().then(async () => {
-    console.log(`Started API server on ${server_address}:${server_port}`);
-    await server.oas();
-}, (err) => {
-    console.error('Error starting API', err)
-});
-
-(async () => {
-    try {
-        await server.listen(server_port, server_address)
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1)
-    }
-})();
+export default server;
