@@ -7,7 +7,7 @@ import fastifyCors from 'fastify-cors';
 import fastifyAutoload from 'fastify-autoload';
 import fastifyMongo from 'fastify-mongodb';
 import { Server, IncomingMessage, ServerResponse } from "http"
-const config = require('./config')
+import config from '../config';
 
 const logger = console;
 
@@ -30,7 +30,7 @@ const openApi = {
             description: 'API for Alien Worlds information',
             version: '1.0.0'
         },
-        host: config.docs_host || 'localhost',
+        host: config?.docs_host || 'localhost',
         schemes: config.api.schemes || ['https'],
         consumes: ['application/json'],
         produces: ['application/json']
@@ -55,5 +55,9 @@ server.register(fastifyCors, {
     allowedHeaders: 'Content-Type',
     origin: '*'
 });
+
+server.get('/', async function (request, reply) {
+    return { hello: 'world' }
+  });
 
 export default server;

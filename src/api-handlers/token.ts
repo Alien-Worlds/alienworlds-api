@@ -1,7 +1,7 @@
 import { tokenSchema } from '../schemas'
 import fetch from 'node-fetch'
 import { ethers } from 'ethers'
-const config = require('../config')
+import config from '../../config';
 
 const bsc_provider = new ethers.providers.JsonRpcProvider(config.bsc_endpoint)
 const eth_provider = new ethers.providers.JsonRpcProvider(config.eth_endpoint)

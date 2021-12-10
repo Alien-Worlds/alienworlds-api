@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs')
 
-const path = './config.js'
+const path = './config.ts'
 
 try {
     if (fs.existsSync(path)) {

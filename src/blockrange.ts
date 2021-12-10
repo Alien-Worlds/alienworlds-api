@@ -88,7 +88,7 @@ class AlienAPIBlockRange {
 
 
 (async () => {
-    const config = require(`./config`);
+    import config from './config';
 
     const amq = new Amq(config.amq);
     await amq.init();

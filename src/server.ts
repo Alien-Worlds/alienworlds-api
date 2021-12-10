@@ -1,5 +1,5 @@
 import server from './app';
-const config = require('./config');
+import config from './config';
 
 const address = config.api.host || '127.0.0.1'
 const port = config.api.port || '8800'

@@ -159,7 +159,7 @@ const commanderParseInt = (value: string, _: any) => {
 }
 
 (async () => {
-    const config = require(`./config`);
+    import config from './config';
 
     const stats = new StatsDisplay();
 

@@ -8,7 +8,7 @@ RUN mkdir -p /var/www/api
 ADD scripts /var/www/api/scripts
 ADD src /var/www/api/src
 
-COPY config.js package.json tsconfig.json yarn.lock /var/www/api/
+COPY config.ts package.json tsconfig.json yarn.lock /var/www/api/
 
 WORKDIR /var/www/api
 

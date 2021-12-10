@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
     processor_threads: 0, // number of threads for filler process, 0 = number of cores - 4
     blockrange_threads: 0, // number of threads for blockrange process, 0 = number of cores - 4
     ship_endpoints: ['ws://ship.alienworlds.io:28080/'],
@@ -12,18 +12,21 @@ module.exports = {
     start_block: 93613945, // m.federation genesis block 93613945, atomicassets genesis = 64105503
     api: {
         host: '0.0.0.0',
-        port: 8800,
+        port: 8801,
         schemes: ['https', 'http'] // one or both of: http, https
     },
     amq: {
         connection_string: 'amqp://guest:guest@queue/'
     },
     mongo: {
-        url: 'mongodb://db',
+        url: 'mongodb://0.0.0.0:27017',
         dbName: 'alienworlds_mainnet',
     },
     atomicassets: {
         contract: 'atomicassets',
         collection: 'alien.worlds'
-    }
+    },
+    docs_host: null
 }
+
+export default config;

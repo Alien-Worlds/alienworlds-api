@@ -8,7 +8,7 @@ API to index and read Alien Worlds data
 
 ## Configuring
 
-Please edit `config.js`
+Please edit `config.ts`
 
 # Running
 

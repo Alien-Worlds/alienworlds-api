@@ -462,7 +462,7 @@ class AlienAPIProcessor {
 const deserializer = new AbiDeserializer(`${__dirname}/abis`);
 
 (async () => {
-    const config = require(`${__dirname}/config`);
+    import config from './config';
 
     const amq = new Amq(config.amq);
     await amq.init();

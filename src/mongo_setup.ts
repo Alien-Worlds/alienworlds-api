@@ -3,7 +3,7 @@
 import { connectMongo } from './connections/mongo'
 
 (async () => {
-    const config = require(`./config`);
+    import config from './config';
 
     const mongo: any = await connectMongo(config.mongo);
     console.log('Connected to mongo')
