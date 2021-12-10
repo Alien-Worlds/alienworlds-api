@@ -12,14 +12,14 @@ const config = {
     start_block: 93613945, // m.federation genesis block 93613945, atomicassets genesis = 64105503
     api: {
         host: '0.0.0.0',
-        port: 8801,
+        port: 8800,
         schemes: ['https', 'http'] // one or both of: http, https
     },
     amq: {
         connection_string: 'amqp://guest:guest@queue/'
     },
     mongo: {
-        url: 'mongodb://0.0.0.0:27017',
+        url: 'mongodb://db',
         dbName: 'alienworlds_mainnet',
     },
     atomicassets: {

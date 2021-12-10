@@ -4,8 +4,7 @@
   "description": "API for AlienWorlds data",
   "main": "index.js",
   "scripts": {
-    "test": "tap --reporter=list --watch",
-    "dd": "tap --dump-config",
+    "test": "npx tap --ts",
     "build": "yarn check-config && yarn clean && tsc && yarn abis",
     "clean": "rm -rf ./dist",
     "abis": "mkdir -p ./dist/abis && node dist/src/fetch_abis.js ./dist/abis",
