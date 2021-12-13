@@ -46,18 +46,4 @@ server.register(fastifyAutoload, {
     }
 });
 
-const mongoUrl = `${config.mongo.url}/${config.mongo.dbName}`;
-server.register(fastifyMongo, {
-    url: mongoUrl
-});
-
-server.register(fastifyCors, {
-    allowedHeaders: 'Content-Type',
-    origin: '*'
-});
-
-server.get('/', async function (request, reply) {
-    return { hello: 'world' }
-  });
-
 export default server;
