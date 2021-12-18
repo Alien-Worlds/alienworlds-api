@@ -4,14 +4,13 @@
   "description": "API for AlienWorlds data",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "yarn check-config && yarn clean && tsc && yarn copy-files && yarn abis",
+    "test": "jest",
+    "test:unit": "jest --testPathIgnorePatterns \"/(routes|workflows)/\"",
+    "build": "yarn clean && tsc && yarn abis",
     "clean": "rm -rf ./dist",
-    "copy-files": "cp ./config.js ./dist/",
     "abis": "mkdir -p ./dist/abis && node dist/fetch_abis.js ./dist/abis",
-    "check-config": "node ./scripts/check-config.js || (echo \"Create the config file by copying config.example.js to config.js\" && exit 1)",
     "mongo-indexes": "node dist/mongo_setup.js",
-    "api": "node dist/api.js",
+    "api": "node dist/index.js",
     "blockrange": "node dist/blockrange.js",
     "filler": "node dist/filler.js",
     "processor": "node dist/processor.js"
@@ -27,6 +26,7 @@
     "axon": "^2.0.3",
     "commander": "^7.0.0",
     "crypto": "^1.0.1",
+    "dotenv": "^10.0.0",
     "eosjs": "^21.0.3",
     "ethers": "^5.1.0",
     "fastify": "^3.11.0",
@@ -38,5 +38,13 @@
     "http": "^0.0.1-security",
     "mongodb": "^3.6.3",
     "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.5",
+    "@types/jest": "^27.0.3",
+    "babel-jest": "^27.4.5",
+    "jest": "^27.4.5"
   }
 }
