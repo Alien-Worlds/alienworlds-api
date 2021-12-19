@@ -1,18 +1,18 @@
 type MongoConfig = {
   host: string;
   dbName: string;
-}
+};
 
 type AtomicAssetsConfig = {
   contract: string;
   collection: string;
-}
+};
 
 type DocsConfig = {
   host: string;
   routePrefix: string;
   exposeRoute: boolean;
-}
+};
 
 export default class Config {
   constructor(
