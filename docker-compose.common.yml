@@ -1,0 +1,7 @@
+version: "3"
+services:
+  common:
+    build: .
+    env_file:
+      - ".env-${NODE_ENV}"
+    restart: on-failure

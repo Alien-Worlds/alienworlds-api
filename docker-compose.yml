@@ -1,27 +1,30 @@
 version: "3"
 services:
-
   api:
+    extends:
+      file: docker-compose.common.yml
+      service: common
     ports:
       - "8800:8800"
-    build: .
-    command: ["sh", "-c", "yarn mongo-indexes && yarn api"]
-    restart: on-failure
+    command: ["sh", "-c", "yarn api"]
 
   processor:
-    build: .
+    extends:
+      file: docker-compose.common.yml
+      service: common
     command: ["sh", "-c", "scripts/wq.sh && yarn processor"]
-    restart: on-failure
 
   blockrange:
-    build: .
+    extends:
+      file: docker-compose.common.yml
+      service: common
     command: ["sh", "-c", "scripts/wq.sh && yarn blockrange"]
-    restart: on-failure
 
   filler:
-    build: .
+    extends:
+      file: docker-compose.common.yml
+      service: common
     command: ["sh", "-c", "scripts/wq.sh && yarn filler ${FILLER_FLAGS}"]
-    restart: on-failure
 
   db:
     image: mongo
