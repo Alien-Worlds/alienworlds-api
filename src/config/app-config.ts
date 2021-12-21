@@ -1,20 +1,6 @@
-type MongoConfig = {
-  host: string;
-  dbName: string;
-};
+import { AtomicAssetsConfig, Config, DocsConfig, MongoConfig } from "./config.types";
 
-type AtomicAssetsConfig = {
-  contract: string;
-  collection: string;
-};
-
-type DocsConfig = {
-  host: string;
-  routePrefix: string;
-  exposeRoute: boolean;
-};
-
-export default class Config {
+export default class AppConfig implements Config {
   constructor(
     public readonly host: string = process.env.HOST,
     public readonly port: number = Number(process.env.PORT),
@@ -30,7 +16,7 @@ export default class Config {
     public readonly bscTokenContract: string = process.env.BSC_TOKEN_CONTRACT,
     public readonly ethTokenContract: string = process.env.ETH_TOKEN_CONTRACT,
     public readonly startBlock: number = Number(process.env.START_BLOCK),
-    public readonly smqConnectionString: string = process.env.AMQ_CONNECTION_STRING,
+    public readonly amqConnectionString: string = process.env.AMQ_CONNECTION_STRING,
     public readonly atomicAssets: AtomicAssetsConfig = {
       contract: process.env.ATOMIC_ASSETS_CONTRACT,
       collection: process.env.ATOMIC_ASSETS_COLLECTION,

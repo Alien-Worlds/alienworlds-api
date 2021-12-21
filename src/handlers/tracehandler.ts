@@ -1,9 +1,10 @@
+import { Config } from "../config";
 import {StatsDisplay} from "../include/statsdisplay";
 const {Api, JsonRpc, Serialize} = require('eosjs');
 // const nodeAbieos = require('@eosrio/node-abieos');
 
 export class TraceHandler {
-    config: any;
+    config: Config;
     eos_rpc: typeof JsonRpc;
     eos_api: typeof Api;
     abis: Array<any>;
@@ -41,7 +42,7 @@ export class TraceHandler {
                     for (let action of trx.action_traces) {
                         switch (action[0]) {
                             case 'action_trace_v0':
-                                if (action[1].act.account === this.config.mining_contract || action[1].act.account === this.config.atomicassets.contract){
+                                if (action[1].act.account === this.config.miningContract || action[1].act.account === this.config.atomicAssets.contract){
                                     this.stats.add('actions');
 
                                     switch (action[1].act.name){

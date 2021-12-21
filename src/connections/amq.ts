@@ -8,10 +8,10 @@ export class Amq {
     connection_errors: number;
     max_connection_errors: number;
     listeners: any;
-    config: any;
+    connection_string: string;
 
-    constructor(config){
-        this.config = config;
+    constructor(connection_string){
+        this.connection_string = connection_string;
         this.initialized = false;
         this.listeners = [];
         this.connection_errors = 0;
@@ -48,7 +48,7 @@ export class Amq {
     }
 
     async init(){
-        const conn = await Amqp.connect(this.config.connection_string);
+        const conn = await Amqp.connect(this.connection_string);
 
 
         const channel = await conn.createConfirmChannel();
@@ -66,7 +66,7 @@ export class Amq {
         this.initialized = true;
         this.connection_errors = 0;
 
-        this.logger.info(`Connected to AMQ ${this.config.connection_string}`);
+        this.logger.info(`Connected to AMQ ${this.connection_string}`);
 
         conn.on('error', (err) => {
             if (err.message !== 'Connection closing') {

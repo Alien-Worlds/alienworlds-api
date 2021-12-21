@@ -11,8 +11,15 @@ switch (process.env.NODE_ENV) {
 }
 require('dotenv').config({ path: path });
 
-import Config from "./config";
+import { Config } from "./config.types";
+import AppConfig from "./app-config";
 
-const config = new Config();
+console.log('__dirname:', __dirname);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('HOST:', process.env.HOST);
+
+const config: Config = new AppConfig();
 
 export default config;
+
+export { Config } from "./config.types";

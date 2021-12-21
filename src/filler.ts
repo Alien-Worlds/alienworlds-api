@@ -7,16 +7,17 @@ import { TraceHandler } from './handlers/tracehandler';
 import { DeltaHandler } from './handlers/deltahandler';
 import { program } from 'commander';
 import fetch from 'node-fetch';
+import config, { Config } from './config';
 
 class AlienAPIFiller {
     state_receiver: typeof StateReceiver;
-    config: any;
+    config: Config;
     options: any;
     mongo: any;
     stats: any;
     amq: any;
 
-    constructor (config: any, options: any, amq: Amq, mongo: unknown, stats: StatsDisplay) {
+    constructor (config: Config, options: any, amq: Amq, mongo: unknown, stats: StatsDisplay) {
         console.log(`Constructing...`, config, options);
 
         this.config = config;
@@ -27,7 +28,7 @@ class AlienAPIFiller {
     }
 
     async start() {
-        let startBlock = this.config.start_block;
+        let startBlock = this.config.startBlock;
         let endBlock = 0xffffffff;
 
         if (this.options.startBlock === -1){
@@ -67,8 +68,8 @@ class AlienAPIFiller {
 
         const statereceiver_config = {
             eos: {
-                wsEndpoint: this.config.ship_endpoints[0],
-                chainId: this.config.chain_id,
+                wsEndpoint: this.config.shipEndpoints[0],
+                chainId: this.config.chainId,
                 endpoint: this.config.endpoints[0]
             }
         }
@@ -159,11 +160,11 @@ const commanderParseInt = (value: string, _: any) => {
 }
 
 (async () => {
-    const config = require(`./config`);
+    //const config = require(`./config`);
 
     const stats = new StatsDisplay();
 
-    const amq = new Amq(config.amq);
+    const amq = new Amq(config.amqConnectionString);
     await amq.init();
 
     const mongo = await connectMongo(config.mongo);
