@@ -5,5 +5,5 @@ module.exports = {
   collectCoverage: false,
   // testEnvironment: './.jest/fastify.env.ts',
   testEnvironment: 'jest-environment-node',
-  testMatch: ["**/tests/**/*.test.ts"]
+  testMatch: ["**/tests/api/**/*.api.test.ts"]
 };

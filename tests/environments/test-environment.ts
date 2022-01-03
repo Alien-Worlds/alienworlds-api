@@ -1,11 +1,3 @@
-export interface TestEnvironmentServer {
-    inject<T>(options: {
-        url: string,
-        method: string,
-        payload?: T,
-    })
-}
-
 export type TestHooks = {
     beforeAll?: Function,
     beforeEach?: Function,
@@ -14,6 +6,5 @@ export type TestHooks = {
 }
 
 export interface TestEnvironment {
-    get server(): TestEnvironmentServer;
     initialize(hooks?: TestHooks): void;
 }

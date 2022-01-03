@@ -1,4 +1,4 @@
 import { FastifyTestEnvironment } from "./fastify.environment";
-import { TestEnvironment } from "./test-environment";
+import { ApiTestEnvironment } from "./api-test-environment";
 
-export const createTestEnvironment = (): TestEnvironment => new FastifyTestEnvironment();
+export const createApiTestEnvironment = (): ApiTestEnvironment => new FastifyTestEnvironment();
