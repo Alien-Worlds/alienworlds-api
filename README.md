@@ -8,17 +8,29 @@ API to index and read Alien Worlds data
 
 ## Configuring
 
-Please edit `./src/config/config.ts` along with `.env-{develop|test|production}`
+Please edit `./src/config/config.ts`
 
 # Running
 
-`NODE_ENV=develop|test|production docker compose up`
+```
+docker compose up
+
+// or with a custom NODE_ENV
+
+NODE_ENV=your_environment docker compose up
+```
 
 # Manual Procedures
 
 ## Full rebuild
 
-`NODE_ENV=develop|test|production docker compose build`
+```
+docker compose build
+
+// or with a custom NODE_ENV that was used during build
+
+NODE_ENV=your_environment docker compose build
+```
 
 ### Fetch ABIs
 

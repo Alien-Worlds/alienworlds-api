@@ -59,12 +59,8 @@ metadata
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+.env*
 .secret
-
-.env-test
-.env-develop
-.env-production
 
 ~$*.pptx
 .DS_Store

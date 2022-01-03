@@ -6,7 +6,7 @@
   "scripts": {
     "test:unit": "jest --config=jest.config.unit.js",
     "test:api": "jest --config=jest.config.api.js",
-    "build": "yarn clean && tsc && yarn abis",
+    "build": "node ./scripts/create-env.js && yarn clean && tsc && yarn abis",
     "clean": "rm -rf ./dist",
     "abis": "mkdir -p ./dist/abis && node dist/fetch_abis.js ./dist/abis",
     "mongo-indexes": "node dist/mongo_setup.js",

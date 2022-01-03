@@ -1,25 +1,21 @@
-let path;
-switch (process.env.NODE_ENV) {
-  case "test":
-    path = `${__dirname}/../../.env-test`;
-    break;
-  case "production":
-    path = `${__dirname}/../../.env-production`;
-    break;
-  default:
-    path = `${__dirname}/../../.env-develop`;
-}
-require('dotenv').config({ path: path });
-
-import { Config } from "./config.types";
+import { existsSync, statSync } from "fs";
 import AppConfig from "./app-config";
 
-console.log('__dirname:', __dirname);
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('HOST:', process.env.HOST);
+const envPath = process.env.NODE_ENV
+  ? `./.env-${process.env.NODE_ENV}`
+  : `./.env`;
 
-const config: Config = new AppConfig();
+if (!existsSync(envPath)) {
+  throw new Error(`Configuration file not found. Please check path: ${envPath}`);
+}
 
-export default config;
+const envStats = statSync(envPath);
 
+if (!envStats.isFile()) {
+  throw new Error(`The given path is not a file. Please check path: ${envPath}`);
+}
+
+require('dotenv').config({ path: envPath });
+
+export default new AppConfig();
 export { Config } from "./config.types";
