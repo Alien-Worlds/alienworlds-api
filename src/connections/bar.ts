@@ -1,1 +1,0 @@
-export const bar = (a, b) => a + b;
