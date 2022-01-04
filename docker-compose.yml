@@ -6,7 +6,7 @@ services:
       service: common
     ports:
       - "8800:8800"
-    command: ["sh", "-c", "yarn api"]
+    command: ["sh", "-c", "yarn mongo-indexes && yarn api"]
 
   processor:
     extends:

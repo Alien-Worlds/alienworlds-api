@@ -1,8 +1,6 @@
 import { Config } from "../config";
 import {StatsDisplay} from "../include/statsdisplay";
 const {Api, JsonRpc, Serialize} = require('eosjs');
-// const nodeAbieos = require('@eosrio/node-abieos');
-
 export class TraceHandler {
     config: Config;
     eos_rpc: typeof JsonRpc;

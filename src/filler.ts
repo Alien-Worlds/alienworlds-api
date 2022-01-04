@@ -160,8 +160,6 @@ const commanderParseInt = (value: string, _: any) => {
 }
 
 (async () => {
-    //const config = require(`./config`);
-
     const stats = new StatsDisplay();
 
     const amq = new Amq(config.amqConnectionString);

@@ -64,8 +64,6 @@ class WSTraceHandler {
 }
 
 (async () => {
-    //  const config = require(`./config`);
-
     const eos_rpc = new JsonRpc(config.endpoints[0], {fetch});
     const info = await eos_rpc.get_info();
     const startBlock = info.head_block_num;
