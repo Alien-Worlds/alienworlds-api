@@ -43,7 +43,7 @@ export const buildAPI = async (): Promise<FastifyInstance> => {
     });
     
     api.register(fastifyMongo, {
-        url: `${config.mongo.host}/${config.mongo.dbName}`
+        url: `${config.mongo.url}/${config.mongo.dbName}`
     });
     
     api.register(fastifyCors, {

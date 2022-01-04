@@ -1,5 +1,5 @@
 export type MongoConfig = {
-  host: string;
+  url: string;
   dbName: string;
 };
 

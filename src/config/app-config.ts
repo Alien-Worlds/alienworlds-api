@@ -22,7 +22,7 @@ export default class AppConfig implements Config {
       collection: process.env.ATOMIC_ASSETS_COLLECTION,
     },
     public readonly mongo: MongoConfig = {
-      host: process.env.MONGO_HOST,
+      url: process.env.MONGO_URL,
       dbName: process.env.MONGO_DB_NAME,
 
     },

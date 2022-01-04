@@ -21,7 +21,7 @@ AMQ_CONNECTION_STRING='amqp://guest:guest@queue/'
 ATOMIC_ASSETS_CONTRACT='atomicassets'
 ATOMIC_ASSETS_COLLECTION='alien.worlds'
 # MONGO DB
-MONGO_HOST='mongodb://db'
+MONGO_URL='mongodb://db'
 MONGO_DB_NAME='alienworlds_mainnet'
 # DOCS
 DOCS_HOST='localhost'
