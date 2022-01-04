@@ -7,15 +7,15 @@ describe('Health check', () => {
     it('should return 200', async () => {
         const response = await environment.server.inject({
             method: 'GET',
-            url: '/health'
+            url: '/v1/alienworlds/health'
         });
         expect(response.statusCode).toEqual(200);
     });
     it('should return message OK', async () => {
         const response = await environment.server.inject({
             method: 'GET',
-            url: '/health'
+            url: '/v1/alienworlds/health'
         });
-        expect(response.body.message).toEqual('OK');
+        expect(JSON.parse(response.body).message).toEqual('OK');
     });
 });
