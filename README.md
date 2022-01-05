@@ -41,3 +41,7 @@ This must be redone when the ABI changes
 ### Setup Mongo Indexes
 
 `docker compose run api yarn mongo-indexes`
+
+### Run API tests
+
+`docker compose -f docker-compose-api-tests.yml up`
