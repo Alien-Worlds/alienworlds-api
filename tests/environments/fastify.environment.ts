@@ -1,5 +1,6 @@
 import { buildAPI } from "../../src/api";
-import { TestEnvironment, TestEnvironmentServer, TestHooks } from "./test-environment";
+import { TestEnvironment, TestHooks } from "./test-environment";
+import { TestEnvironmentServer } from "./api-test-environment";
 
 export class FastifyTestEnvironment implements TestEnvironment {
   private _server;
