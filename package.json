@@ -7,6 +7,7 @@
     "test:unit": "jest --config=jest.config.unit.js",
     "test:api": "jest --config=jest.config.api.js",
     "build": "node ./scripts/create-env.js && yarn clean && tsc && yarn abis",
+    "build-tests:api": "node ./scripts/create-env.js && yarn clean && tsc",
     "clean": "rm -rf ./dist",
     "abis": "mkdir -p ./dist/abis && node dist/fetch_abis.js ./dist/abis",
     "mongo-indexes": "node dist/mongo_setup.js",

@@ -44,4 +44,8 @@ This must be redone when the ABI changes
 
 ### Run API tests
 
-`docker compose -f docker-compose-api-tests.yml up`
+```
+sh scripts/run-api-tests.sh
+```
+
+Keep in mind that this is a temporary solution.

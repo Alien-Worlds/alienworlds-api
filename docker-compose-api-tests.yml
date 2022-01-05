@@ -6,11 +6,12 @@ services:
       dockerfile: Dockerfile.api.tests
     ports:
       - "8800:8800"
-    command: ["sh", "-c", "yarn mongo-indexes && yarn test:api"]
+    command: ["sh", "-c", "yarn test:api"]
+    depends_on:
+      - db
 
   db:
     image: mongo
-    restart: always
     ports:
       - "27017"
     volumes:
