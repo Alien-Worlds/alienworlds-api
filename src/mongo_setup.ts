@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
 import { connectMongo } from './connections/mongo'
+import config from './config';
 
 (async () => {
-    const config = require(`./config`);
-
     const mongo: any = await connectMongo(config.mongo);
     console.log('Connected to mongo')
 

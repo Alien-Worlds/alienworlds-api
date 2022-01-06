@@ -1,0 +1,29 @@
+FILLER_FLAGS='-r -s 93613945 -c'
+# FILLER_FLAGS='-s 93613945'
+
+HOST='0.0.0.0'
+PORT=8800
+SCHEMES='https http'
+PROCESSOR_THREADS=0
+BLOCKRANGE_THREADS=0
+SHIP_ENDPOINTS='ws://ship.alienworlds.io:28080/'
+CHAIN_ID='1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4'
+ENDPOINTS='https://wax.eosdac.io'
+MINING_CONTRACT='m.federation'
+BSC_ENDPOINT=''
+ETH_ENDPOINT=''
+BSC_TOKEN_CONTRACT=''
+ETH_TOKEN_CONTRACT=''
+START_BLOCK=93613945 # m.federation genesis block 93613945, atomicassets genesis = 64105503
+# AMQ
+AMQ_CONNECTION_STRING='amqp://guest:guest@queue/'
+# ATOMIC ASSETS
+ATOMIC_ASSETS_CONTRACT='atomicassets'
+ATOMIC_ASSETS_COLLECTION='alien.worlds'
+# MONGO DB
+MONGO_URL='mongodb://db'
+MONGO_DB_NAME='alienworlds_mainnet'
+# DOCS
+DOCS_HOST='localhost'
+DOCS_ROUTE_PREFIX='/v1/alienworlds/docs'
+DOCS_EXPOSE_ROUTE=true

@@ -9,15 +9,17 @@ import { program } from 'commander';
 import fetch from 'node-fetch';
 import * as cluster from 'cluster';
 import * as os from 'os';
+import config, { Config } from './config';
+
 const { Serialize } = require('eosjs');
 
 class AlienAPIBlockRange {
     state_receiver: typeof StateReceiver;
-    config: any;
+    config: Config;
     stats: any;
     amq: any;
 
-    constructor (config, amq, stats) {
+    constructor(config, amq, stats) {
         console.log(`Constructing...`, config);
 
         this.config = config;
@@ -25,7 +27,7 @@ class AlienAPIBlockRange {
         this.amq = amq;
     }
 
-    buffer_to_bigint (buf) {
+    buffer_to_bigint(buf) {
         const hex = [];
         const u8 = Uint8Array.from(buf);
 
@@ -55,14 +57,14 @@ class AlienAPIBlockRange {
 
         const statereceiver_config = {
             eos: {
-                wsEndpoint: this.config.ship_endpoints[0],
-                chainId: this.config.chain_id,
+                wsEndpoint: this.config.shipEndpoints[0],
+                chainId: this.config.chainId,
                 endpoint: this.config.endpoints[0]
             }
         }
         // console.log(`Starting filler`);
-        const trace_handler = new TraceHandler({config: this.config, amq: this.amq, stats: this.stats});
-        const delta_handler = new DeltaHandler({config: this.config, amq: this.amq, stats: this.stats});
+        const trace_handler = new TraceHandler({ config: this.config, amq: this.amq, stats: this.stats });
+        const delta_handler = new DeltaHandler({ config: this.config, amq: this.amq, stats: this.stats });
 
         this.state_receiver = new StateReceiver({
             startBlock: from.toString(),
@@ -88,14 +90,14 @@ class AlienAPIBlockRange {
 
 
 (async () => {
-    const config = require(`./config`);
+    // const config = require(`./config`);
 
-    const amq = new Amq(config.amq);
+    const amq = new Amq(config.amqConnectionString);
     await amq.init();
 
-    if (cluster.isMaster){
-        let threads = parseInt(config.blockrange_threads);
-        if (threads === 0 || isNaN(threads)){
+    if (cluster.isMaster) {
+        let threads = config.blockrangeThreads;
+        if (threads === 0 || isNaN(threads)) {
             const cpus = os.cpus().length;
             threads = cpus - 4;
         }

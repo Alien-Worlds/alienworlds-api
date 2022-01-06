@@ -1,0 +1,11 @@
+version: "3"
+services:
+  common:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: "${NODE_ENV}"
+    environment:
+      NODE_ENV: "${NODE_ENV}"
+    restart: on-failure

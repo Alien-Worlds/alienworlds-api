@@ -11,10 +11,11 @@ import * as cluster from "cluster";
 import * as os from 'os';
 const crypto = require('crypto');
 const fetch = require('node-fetch');
+import config, { Config } from './config';
 
 
 class AlienAPIProcessor {
-    config: any;
+    config: Config;
     amq: Amq;
     deserializer: AbiDeserializer;
     mongo: any;
@@ -46,7 +47,7 @@ class AlienAPIProcessor {
         this.api = new Api({
             rpc: this.rpc,
             signatureProvider: null,
-            chainId: this.config.chain_id,
+            chainId: this.config.chainId,
             textDecoder: new TextDecoder(),
             textEncoder: new TextEncoder(),
         });
@@ -84,7 +85,7 @@ class AlienAPIProcessor {
         }
 
         const schema_res = await this.rpc.get_table_rows({
-            code: this.config.atomicassets.contract,
+            code: this.config.atomicAssets.contract,
             scope: collection_name,
             table: 'schemas',
             lower_bound: schema_name,
@@ -110,8 +111,8 @@ class AlienAPIProcessor {
         }
 
         const template_res = await this.rpc.get_table_rows({
-            code: this.config.atomicassets.contract,
-            scope: this.config.atomicassets.collection,
+            code: this.config.atomicAssets.contract,
+            scope: this.config.atomicAssets.collection,
             table: 'templates',
             lower_bound: template_id,
             upper_bound: template_id,
@@ -123,7 +124,7 @@ class AlienAPIProcessor {
         }
 
         const schema_name = template_res.rows[0].schema_name;
-        const schema = await this.get_schema(schema_name, this.config.atomicassets.collection);
+        const schema = await this.get_schema(schema_name, this.config.atomicAssets.collection);
 
         if (schema){
             try {
@@ -135,7 +136,7 @@ class AlienAPIProcessor {
             }
             catch (e){
                 console.error(`Could not deserialize atomic data ${e.message}`);
-                delete this.schema_cache[`${schema_name}::${this.config.atomicassets.collection}`];
+                delete this.schema_cache[`${schema_name}::${this.config.atomicAssets.collection}`];
                 throw e;
             }
         }
@@ -267,10 +268,10 @@ class AlienAPIProcessor {
                         const res = await col.insertOne(store_data);
                     }
                     break;
-                case `${this.config.atomicassets.contract}::logtransfer`:
-                case `${this.config.atomicassets.contract}::logmint`:
-                case `${this.config.atomicassets.contract}::logburn`:
-                    if (data.collection_name !== this.config.atomicassets.collection){
+                case `${this.config.atomicAssets.contract}::logtransfer`:
+                case `${this.config.atomicAssets.contract}::logmint`:
+                case `${this.config.atomicAssets.contract}::logburn`:
+                    if (data.collection_name !== this.config.atomicAssets.collection){
                         await this.amq.ack(job);
                         return;
                     }
@@ -425,7 +426,7 @@ class AlienAPIProcessor {
 
     async get_asset_data (asset_id, owner) {
         const res = await this.rpc.get_table_rows({
-            code: this.config.atomicassets.contract,
+            code: this.config.atomicAssets.contract,
             scope: owner,
             table: 'assets',
             lower_bound: asset_id,
@@ -443,7 +444,7 @@ class AlienAPIProcessor {
         data.template_id = res.rows[0].template_id;
 
         const template_res = await this.rpc.get_table_rows({
-            code: this.config.atomicassets.contract,
+            code: this.config.atomicAssets.contract,
             scope: data.collection_name,
             table: 'templates',
             lower_bound: data.template_id,
@@ -462,9 +463,9 @@ class AlienAPIProcessor {
 const deserializer = new AbiDeserializer(`${__dirname}/abis`);
 
 (async () => {
-    const config = require(`${__dirname}/config`);
+    //const config = require(`${__dirname}/config`);
 
-    const amq = new Amq(config.amq);
+    const amq = new Amq(config.amqConnectionString);
     await amq.init();
 
     const mongo = await connectMongo(config.mongo);
@@ -473,7 +474,7 @@ const deserializer = new AbiDeserializer(`${__dirname}/abis`);
 
 
     if (cluster.isMaster){
-        let threads = parseInt(config.processor_threads);
+        let threads = config.processorThreads;
         console.log(`Threads set to ${threads}`);
         if (threads === 0 || isNaN(threads)){
             const cpus = os.cpus().length;

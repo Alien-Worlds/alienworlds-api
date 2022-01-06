@@ -1,8 +1,9 @@
+import { Config } from "../config";
 import {StatsDisplay} from "../include/statsdisplay";
 const {Api, JsonRpc, Serialize} = require('eosjs');
 
 export class DeltaHandler {
-    config: any;
+    config: Config;
     amq: any;
     stats: StatsDisplay;
 
@@ -39,7 +40,7 @@ export class DeltaHandler {
                                 sb.get(); // ?
                                 code = sb.getName();
 
-                                if (code === this.config.atomicassets.contract){
+                                if (code === this.config.atomicAssets.contract){
                                     const scope = sb.getName();
                                     const table = sb.getName();
 
