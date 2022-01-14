@@ -63,3 +63,7 @@ metadata
 
 ~$*.pptx
 .DS_Store
+
+# Editor
+.idea
+

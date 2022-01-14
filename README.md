@@ -8,7 +8,8 @@ API to index and read Alien Worlds data
 
 ## Configuring
 
-Please edit `config.js`
+* Edit `config.js`
+* Copy `.env.example` to `.env` & configure as needed.
 
 # Running
 
@@ -29,3 +30,19 @@ This must be redone when the ABI changes
 ### Setup Mongo Indexes
 
 `docker compose run api yarn mongo-indexes`
+
+# Maintenance
+
+## Style check
+
+`docker compose run api yarn lint`
+
+## Style auto fix
+
+_Use with caution - not all style errors can be fixed._
+
+`docker compose run api yarn lint-fix`
+
+## Shell
+
+`docker compose run api sh`

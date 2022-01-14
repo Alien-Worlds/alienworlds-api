@@ -4,6 +4,8 @@
   "description": "API for AlienWorlds data",
   "main": "index.js",
   "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "lint-fix": "tslint -c tslint.json --fix 'src/**/*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn check-config && yarn clean && tsc && yarn copy-files && yarn abis",
     "clean": "rm -rf ./dist",
