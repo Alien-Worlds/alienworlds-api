@@ -11,7 +11,6 @@ services:
     command: ['sh', '-c', 'yarn test:api']
     depends_on:
       - db
-      - mongo-seed
 
   db:
     image: mongo
@@ -24,9 +23,11 @@ services:
   mongo-seed:
     build: 
       context: .
-      dockerfile: Dockerfile.mongo.seed
+      target: mongo-seed
+      dockerfile: Dockerfile.api.tests
     links:
-      - db    
-
+      - db
+    depends_on:
+      - db
 volumes:
   database:
