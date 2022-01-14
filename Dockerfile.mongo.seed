@@ -1,0 +1,4 @@
+FROM mongo
+
+COPY init.json /init.json
+CMD mongoimport --host db --db alienworlds_mainnet --collection mines --type json --file /init.json --jsonArray
