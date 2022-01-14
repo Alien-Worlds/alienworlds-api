@@ -1,4 +1,5 @@
 FROM mongo
 
-COPY init.json /init.json
-CMD mongoimport --host db --db alienworlds_mainnet --collection mines --type json --file /init.json --jsonArray
+COPY mines.seed.json /mines.seed.json
+## drop existing test db and reimport seed for fresh test
+CMD mongoimport --host db --db alienworlds_mainnet --collection mines --type json --file /mines.seed.json --jsonArray --drop
