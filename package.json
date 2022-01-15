@@ -17,7 +17,8 @@
     "blockrange": "node dist/blockrange.js",
     "filler": "node dist/filler.js",
     "processor": "node dist/processor.js",
-    "precommit": "eslint src/**/*"
+    "precommit": "eslint src/**/*",
+    "prepare": "husky install"
   },
   "author": "",
   "license": "ISC",
