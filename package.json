@@ -16,7 +16,8 @@
     "api": "node dist/api.js",
     "blockrange": "node dist/blockrange.js",
     "filler": "node dist/filler.js",
-    "processor": "node dist/processor.js"
+    "processor": "node dist/processor.js",
+    "precommit": "eslint src/**/*"
   },
   "author": "",
   "license": "ISC",
@@ -50,6 +51,7 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
+    "husky": "^7.0.4",
     "typescript": "^4.5.4"
   }
 }
