@@ -21,6 +21,10 @@ API to index and read Alien Worlds data
 
 `docker compose build`
 
+# Rebuild Local Dependencies
+
+`docker compose run api yarn`
+
 ### Fetch ABIs
 
 This must be redone when the ABI changes
