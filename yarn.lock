@@ -1245,7 +1245,7 @@ eslint-config-react-native@^4.1.0:
 
 eslint-config-recommended@^4.1.0:
   version "4.1.0"
-  resolved "https://registry.npmjs.org/eslint-config-recommended/-/eslint-config-recommended-4.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/eslint-config-recommended/-/eslint-config-recommended-4.1.0.tgz#1adff90e0716d439be471d192977f233de171a46"
   integrity sha512-2evA0SX1VqtyFiExmBI2WAO4XQCKlr7wmNELE8rcT5PyZY2ixsY881ofVZWKuI/dywpgLiES1gR/XUQcnVLRzQ==
   dependencies:
     eslint "^6.8.0"
@@ -3297,6 +3297,11 @@ type-fest@^0.8.1:
   version "0.8.1"
   resolved "https://registry.npmjs.org/type-fest/-/type-fest-0.8.1.tgz"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
+
+typescript@^4.5.4:
+  version "4.5.4"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-4.5.4.tgz"
+  integrity sha512-VgYs2A2QIRuGphtzFV7aQJduJ2gyfTljngLzjpfW9FoYZF6xuw1W0vW9ghCKLfcWrCFxK81CSGRAvS1pn4fIUg==
 
 unbox-primitive@^1.0.1:
   version "1.0.1"

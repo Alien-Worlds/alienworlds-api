@@ -13,7 +13,8 @@ const getMineLuck = async (fastify, request) => {
     const from = request.query.from || null
     const to = request.query.to || null
 
-    let res = null, query: any = {}, has_query = false
+    let res = null, query: any = {}
+    // let has_query = false
     const db = fastify.mongo.db
     const collection = db.collection('mines')
 
@@ -22,14 +23,14 @@ const getMineLuck = async (fastify, request) => {
             query.block_timestamp = {}
         }
         query.block_timestamp.$gte = new Date(parseDate(from))
-        has_query = true
+        // has_query = true
     }
     if (to){
         if (typeof query.block_timestamp === 'undefined'){
             query.block_timestamp = {}
         }
         query.block_timestamp.$lt = new Date(parseDate(to))
-        has_query = true
+        // has_query = true
     }
 
     const pipeline = [

@@ -1,5 +1,5 @@
 import {StatsDisplay} from "../include/statsdisplay";
-const {Api, JsonRpc, Serialize} = require('eosjs');
+const {Serialize} = require('eosjs');
 
 export class DeltaHandler {
     config: any;
@@ -40,7 +40,6 @@ export class DeltaHandler {
                                 code = sb.getName();
 
                                 if (code === this.config.atomicassets.contract){
-                                    const scope = sb.getName();
                                     const table = sb.getName();
 
                                     if (table === 'assets' || table === 'schemas' || table === 'templates'){

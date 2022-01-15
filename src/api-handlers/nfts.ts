@@ -15,13 +15,14 @@ const getNFTs = async (fastify, request) => {
         throw new Error('Limit maximum is 1000')
     }
 
-    let res = null, query: any = {}, has_query = false
+    let res = null, query: any = {}
+    // let has_query = false
     const db = fastify.mongo.db
     const collection = db.collection('nfts')
 
     if (miner){
         query.miner = miner
-        has_query = true
+        // has_query = true
     }
     if (land_id){
         if (land_id.indexOf(',') !== -1){
@@ -32,28 +33,28 @@ const getNFTs = async (fastify, request) => {
             query.land_id = land_id
         }
         console.log(query)
-        has_query = true
+        // has_query = true
     }
     if (rarity){
         if (!['Abundant', 'Common', 'Rare', 'Epic', 'Legendary', 'Mythical'].includes(rarity)){
             throw new Error('Rarity parameter must be Abundant, Common, Rare, Epic, Legendary or Mythical')
         }
         query['template_data.rarity'] = rarity
-        has_query = true
+        // has_query = true
     }
     if (from){
         if (typeof query.block_timestamp === 'undefined'){
             query.block_timestamp = {}
         }
         query.block_timestamp.$gte = new Date(Date.parse(from))
-        has_query = true
+        // has_query = true
     }
     if (to){
         if (typeof query.block_timestamp === 'undefined'){
             query.block_timestamp = {}
         }
         query.block_timestamp.$lt = new Date(Date.parse(to))
-        has_query = true
+        // has_query = true
     }
     let _sort = -1
     if (sort === 'asc' || sort === 'desc'){

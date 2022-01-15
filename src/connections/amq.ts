@@ -98,7 +98,7 @@ export class Amq {
             };
 
             if (!this.initialized){
-                this.init().then(i => {
+                this.init().then(() => {
                     this.channel.sendToQueue(queue_name, msg, {}, return_fn);
                 });
             }

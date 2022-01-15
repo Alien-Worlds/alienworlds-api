@@ -34,38 +34,37 @@ export class TraceHandler {
 
         for (const trace of traces) {
             switch (trace[0]) {
-                case 'transaction_trace_v0':
+                case 'transaction_trace_v0': {
                     const trx = trace[1];
                     this.stats.add('txs');
 
                     for (let action of trx.action_traces) {
                         switch (action[0]) {
                             case 'action_trace_v0':
-                                if (action[1].act.account === this.config.mining_contract || action[1].act.account === this.config.atomicassets.contract){
+                                if (action[1].act.account === this.config.mining_contract || action[1].act.account === this.config.atomicassets.contract) {
                                     this.stats.add('actions');
 
-                                    switch (action[1].act.name){
+                                    switch (action[1].act.name) {
                                         case 'logmine':
                                         case 'logrand':
                                         case 'logtransfer':
                                         case 'logburn':
-                                        case 'logmint':
-                                        // case 'logsetdata':
-                                        // case 'lognewtempl':
-                                        //     const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
-                                        //     const type = nodeAbieos.get_type_for_action(action[1].act.account, action[1].act.name);
-                                        //     const json = nodeAbieos.bin_to_json(action[1].act.account, type, Buffer.from(action[1].act.data));
-                                        //     console.log(action[1].act.name, json);
+                                        case 'logmint': {
+                                            // case 'logsetdata':
+                                            // case 'lognewtempl':
+                                            //     const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
+                                            //     const type = nodeAbieos.get_type_for_action(action[1].act.account, action[1].act.name);
+                                            //     const json = nodeAbieos.bin_to_json(action[1].act.account, type, Buffer.from(action[1].act.data));
+                                            //     console.log(action[1].act.name, json);
                                             // console.log(action[1].act.authorization)
                                             // if (action[1].receipt[1].global_sequence == '3024635758'){
-                                                // const data = await this.eos_api.deserializeActions([action[1].act])
-                                                // console.log(data[0], action[1], action[1].receipt[1].global_sequence)
-                                                // console.log(action[1])
-                                                // process.exit(0)
+                                            // const data = await this.eos_api.deserializeActions([action[1].act])
+                                            // console.log(data[0], action[1], action[1].receipt[1].global_sequence)
+                                            // console.log(action[1])
+                                            // process.exit(0)
                                             // }
 
-
-                                            if (action[1].receiver !== action[1].act.account){
+                                            if (action[1].receiver !== action[1].act.account) {
                                                 continue;
                                             }
                                             // console.log(action[1])
@@ -95,12 +94,14 @@ export class TraceHandler {
 
                                             this.stats.add(action[1].act.name);
                                             break;
+                                        }
                                     }
                                 }
 
                                 break;
                         }
                     }
+                }
             }
         }
     }
