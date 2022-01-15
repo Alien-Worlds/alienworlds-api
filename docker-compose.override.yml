@@ -6,14 +6,20 @@ services:
       - ./:/var/www/api
 
   processor:
+    depends_on:
+      - queue
     volumes:
       - ./:/var/www/api
 
   blockrange:
+    depends_on:
+      - queue
     volumes:
       - ./:/var/www/api
 
   filler:
+    depends_on:
+      - queue
     volumes:
       - ./:/var/www/api
 
