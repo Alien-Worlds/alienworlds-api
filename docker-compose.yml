@@ -22,26 +22,3 @@ services:
     build: .
     command: ["sh", "-c", "scripts/wq.sh && yarn filler ${FILLER_FLAGS}"]
     restart: on-failure
-
-  db:
-    image: mongo
-    restart: always
-    ports:
-      - "27017"
-    volumes:
-      - database:/data/db
-
-  queue: # login guest:guest
-    image: rabbitmq:management
-    restart: always
-    ports:
-      - "5672"
-      - "15672:15672"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:15672"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-volumes:
-  database:

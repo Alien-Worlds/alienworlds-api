@@ -1,7 +1,7 @@
 FROM node:17-alpine3.12
 
 RUN apk add curl
-RUN npm install -g typescript
+RUN npm install -g typescript eslint
 
 RUN mkdir -p /var/www/api
 
