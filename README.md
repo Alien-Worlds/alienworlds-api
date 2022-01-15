@@ -37,6 +37,10 @@ This must be redone when the ABI changes
 
 # Maintenance
 
+## Install Git Precommit Hooks
+
+`docker compose run api yarn husky`
+
 ## Style check
 
 `docker compose run api yarn lint`
@@ -48,5 +52,7 @@ _Use with caution - not all style errors can be fixed._
 `docker compose run api yarn lint-fix`
 
 ## Shell
+
+_Please always use `yarn` instead of `npm` to maintain `yarn.lock` file integrity.
 
 `docker compose run api sh`
