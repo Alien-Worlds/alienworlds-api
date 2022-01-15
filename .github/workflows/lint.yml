@@ -1,5 +1,9 @@
 name: lint
 
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ master ]
