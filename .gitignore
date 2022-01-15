@@ -67,3 +67,5 @@ metadata
 # Editor
 .idea
 
+# Distribution / Build
+dist

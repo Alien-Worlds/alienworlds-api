@@ -5,9 +5,8 @@ import { parseDate } from '../include/parsedate'
 // const {Api, JsonRpc} = require('@jafri/eosjs2');
 // const fetch = require('node-fetch');
 // const {getProfiles} = require('../profile-helper.js');
-//
-// const {loadConfig} = require('../functions');
 
+// const {loadConfig} = require('../functions');
 
 const getMines = async (fastify, request) => {
     const limit = request.query.limit || 20
@@ -26,13 +25,14 @@ const getMines = async (fastify, request) => {
         throw new Error('Limit maximum is 5000')
     }
 
-    let res = null, query: any = {}, has_query = false
+    let res = null, query: any = {}
+    // let has_query = false
     const db = fastify.mongo.db
     const collection = db.collection('mines')
 
     if (miner){
         query.miner = miner
-        has_query = true
+        // has_query = true
     }
     if (landowner){
         if (landowner.indexOf(',') !== -1){
@@ -42,7 +42,7 @@ const getMines = async (fastify, request) => {
         else {
             query.landowner = landowner
         }
-        has_query = true
+        // has_query = true
     }
     if (land_id){
         if (land_id.indexOf(',') !== -1){
@@ -53,25 +53,25 @@ const getMines = async (fastify, request) => {
             query.land_id = land_id
         }
         console.log(query)
-        has_query = true
+        // has_query = true
     }
     if (planet_name){
         query.planet_name = planet_name
-        has_query = true
+        // has_query = true
     }
     if (from){
         if (typeof query.block_timestamp === 'undefined'){
             query.block_timestamp = {}
         }
         query.block_timestamp.$gte = new Date(parseDate(from))
-        has_query = true
+        // has_query = true
     }
     if (to){
         if (typeof query.block_timestamp === 'undefined'){
             query.block_timestamp = {}
         }
         query.block_timestamp.$lt = new Date(parseDate(to))
-        has_query = true
+        // has_query = true
     }
     let _sort = -1
     if (sort === 'asc' || sort === 'desc'){
