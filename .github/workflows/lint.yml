@@ -29,3 +29,6 @@ jobs:
 
       - name: Running ESLint
         run: docker compose run api yarn lint
+
+      - name: Running Prettier
+        run: docker compose run api yarn lint-prettier

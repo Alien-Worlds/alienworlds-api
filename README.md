@@ -13,6 +13,8 @@ API to index and read Alien Worlds data
 
 # Running
 
+_Editing files in `src` folder will automatically recompile & reload changes is running services._
+
 `docker compose up`
 
 # Manual Procedures
@@ -24,6 +26,10 @@ API to index and read Alien Worlds data
 # Rebuild Local Dependencies
 
 `docker compose run api yarn`
+
+# Build All Services
+
+`docker compose run api yarn build`
 
 ### Fetch ABIs
 
@@ -37,6 +43,10 @@ This must be redone when the ABI changes
 
 # Maintenance
 
+## Install Git Pre-commit Hooks
+
+`docker compose run api yarn husky`
+
 ## Style check
 
 `docker compose run api yarn lint`
@@ -48,5 +58,7 @@ _Use with caution - not all style errors can be fixed._
 `docker compose run api yarn lint-fix`
 
 ## Shell
+
+_Please always use `yarn` instead of `npm` to maintain `yarn.lock` file integrity._
 
 `docker compose run api sh`
