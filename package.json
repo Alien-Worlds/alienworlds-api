@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
+    "pre-commit": "lint-staged",
     "lint": "yarn lint-prettier && yarn lint-es",
     "lint-fix": "yarn lint-prettier-fix && yarn lint-es-fix",
     "lint-es": "eslint src/**/*",
