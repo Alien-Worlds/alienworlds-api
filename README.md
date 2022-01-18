@@ -10,7 +10,7 @@
 
 1. Install Docker if you haven't done so
    `brew install docker` or [download it from the official docker website](https://www.docker.com/products/docker-desktop). 
-2. Fork the repository on git, and clone it locally
+2. Fork the repository on Github, and clone it locally
     ```bash
     git clone <your-git-account>/alienworlds-api.git
     cd alienworlds-api
