@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "API for AlienWorlds data",
   "main": "index.js",
+  "engines": {
+    "node": ">=17.3.0 <18.0.0",
+    "npm": ">=8.3.0 <9.0.0"
+  },
   "scripts": {
     "prepare": "husky install",
     "pre-commit": "lint-staged",
@@ -24,6 +28,16 @@
     "blockrange": "tsc-watch --onSuccess \"node dist/blockrange.js\"",
     "filler": "tsc-watch --onSuccess \"node dist/filler.js\"",
     "processor": "tsc-watch --onSuccess \"node dist/processor.js\""
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown",
+    "*.{ts,tsx,js,jsx}": "eslint --fix'"
   },
   "author": "",
   "license": "ISC",
