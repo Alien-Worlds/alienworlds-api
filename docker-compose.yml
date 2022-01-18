@@ -1,24 +1,35 @@
-version: "3"
+version: '3.7'
 services:
-
   api:
-    ports:
-      - "8800:8800"
-    build: .
-    command: ["sh", "-c", "yarn mongo-indexes && yarn api"]
+    image: ${DOCKER_REGISTRY}/alienworlds_api
+    build:
+      context: .
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_api
     restart: on-failure
+    ports:
+      - '8800:8800'
 
   processor:
-    build: .
-    command: ["sh", "-c", "scripts/wq.sh && yarn processor"]
+    image: ${DOCKER_REGISTRY}/alienworlds_processor
+    build:
+      context: .
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_processor
     restart: on-failure
 
   blockrange:
-    build: .
-    command: ["sh", "-c", "scripts/wq.sh && yarn blockrange"]
+    image: ${DOCKER_REGISTRY}/alienworlds_blockrange
+    build:
+      context: .
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_blockrange
     restart: on-failure
 
   filler:
-    build: .
-    command: ["sh", "-c", "scripts/wq.sh && yarn filler ${FILLER_FLAGS}"]
+    image: ${DOCKER_REGISTRY}/alienworlds_filler
+    build:
+      context: .
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_filler
     restart: on-failure
