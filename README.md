@@ -15,10 +15,10 @@
    git clone <your-git-account>/alienworlds-api.git
    cd alienworlds-api
    ```
-3. Edit local configuration (consult with an engineer if necessary)
+3. Edit local configuration (consult with an engineer from the team if needed)
    - Edit `config.js`
    - Copy `.env.example` to `.env` & configure as needed.
-4. Build all docker images & download all dependencies + initialize DBs
+4. Build all docker images, download all dependencies + initialize database
    ```bash
    docker compose build
    docker compose run api yarn
@@ -28,7 +28,7 @@
    docker compose run api yarn husky
    ```
    _Hint: each command is individually documented below the "Commands List" section._
-5. Start the API
+5. Start all services -> the API will be accessible at `localhost:8080`
    ```bash
    docker compose up
    ```
@@ -45,28 +45,32 @@ _Editing files in `src` folder will automatically recompile & reload changes is 
 
 ### Rebuild All Docker Containers Locally
 
-This command will build all the required dockent containers for all service locally.
-_Hint: If you can login to the docker repository, it will attempt to download pre-compiled images as a cache mechanism (CI is using it, not require for local development.)_
+This command will build all docker containers (each service runs in a separated container) locally.
+_Hint: Advanced use: [Use docker CLI to log in](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) to `ghcr.io` to access remote cached versions of the containers for faster startup. This is optional for local development - used by the CI._
 
 `docker compose build`
 
 ## Download all Node Dependencies
 
-This must be run every time when `package.json` changes.
+This must be run every time when `package.json` changes. It will download all node dependencies into the `node_modules` folder.
 
 `docker compose run api yarn`
 
 ## Build All Alien World Services
 
+Specific build command to initialize Alien World related configurations.
+
 `docker compose run api yarn build`
 
 #### Fetch ABIs
 
-This must be redone when the ABI changes
+This must be redone when the ABI changes.
 
 `docker compose run api yarn abis`
 
 #### Setup Mongo Indexes
+
+Only need to be run once, to set up the indexes in MongoDB.
 
 `docker compose run api yarn mongo-indexes`
 
@@ -74,20 +78,26 @@ This must be redone when the ABI changes
 
 ### Install Git Pre-commit Hooks
 
+Husky is a utility to automatically set up Git Hooks for local development.
+
 `docker compose run api yarn husky`
 
 ### Style check
+
+We're using ESLint & Prettier for sanity & style check. The following command win run both at once.
+Once Husky is initialized, these checks will run automatically before every commit & push.
 
 `docker compose run api yarn lint`
 
 ### Style auto fix
 
-_Use with caution - not all style errors can be fixed._
+The following command will attempt to fix all lint & style issues automatically.
 
 `docker compose run api yarn lint-fix`
 
 ### Shell
 
+The following command will let you log in inside the API container. The container contains an alpine linux with the exact required node & npm installations. Logging into the container can help debugging and you can also use all the tools required to run the app right inside the container, without even installing it on your own host machine.
 _Please always use `yarn` instead of `npm` to maintain `yarn.lock` file integrity._
 
 `docker compose run api sh`
