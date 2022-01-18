@@ -24,6 +24,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      #      - name: Set up Docker Buildx
+      #        uses: docker/setup-buildx-action@v1
+      #
+      #      - name: Docker meta
+      #        id: meta
+      #        uses: docker/metadata-action@v3
+      #        with:
+      #          images: ghcr.io/alien-worlds/alienworlds_api
+
       - name: Log in to the Container registry
         uses: docker/login-action@v1
         with:
@@ -31,8 +40,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Building Containers (using GHCR Registry as Cache)
-        run: docker compose build --pull
+      - name: Pull Docker Images
+        run: echo $DOCKER_REGISTRY
+
+      #      - name: Build and push
+      #        uses: docker/build-push-action@v2
+      #        with:
+      #          pull: true
+      #          push: true
+      #          tags: ${{ steps.meta.outputs.tags }}
+
+      # - name: Building Containers (using GHCR Registry as Cache)
+      #   run: docker compose build --pull
 
       - name: Building dependencies
         run: docker compose run api yarn
@@ -43,5 +62,8 @@ jobs:
       - name: Running Prettier
         run: docker compose run api yarn lint-prettier
 
-      - name: Uploading Containers to Registry
-        run: docker compose push
+      - name: List of Docker Images
+        run: docker images
+
+      # - name: Uploading Containers to Registry
+      #  run: docker compose push
