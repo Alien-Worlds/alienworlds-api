@@ -6,23 +6,33 @@ concurrency:
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
   workflow_dispatch:
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      DOCKER_REGISTRY: ghcr.io/alien-worlds
+      FILLER_FLAGS:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache node_modules
-        uses: actions/cache@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
         with:
-          path: node_modules
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Building Containers (using GHCR Registry as Cache)
+        run: docker compose build --pull
 
       - name: Building dependencies
         run: docker compose run api yarn
@@ -32,3 +42,6 @@ jobs:
 
       - name: Running Prettier
         run: docker compose run api yarn lint-prettier
+
+      - name: Uploading Containers to Registry
+        run: docker compose push
