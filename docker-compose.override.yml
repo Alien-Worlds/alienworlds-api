@@ -2,6 +2,8 @@ version: '3.7'
 services:
   api:
     command: ['sh', '-c', 'yarn mongo-indexes && yarn api']
+    depends_on:
+      - db
     volumes:
       - ./:/var/www/api
 
