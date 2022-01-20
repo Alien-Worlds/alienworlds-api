@@ -9,8 +9,6 @@
   },
   "scripts": {
     "prepare": "husky install",
-    "pre-commit": "lint-staged",
-    "pre-push": "lint-staged",
     "lint": "yarn lint-prettier && yarn lint-es",
     "lint-fix": "yarn lint-prettier-fix && yarn lint-es-fix",
     "lint-es": "eslint \"src/**/*\"",
@@ -26,7 +24,7 @@
     "mongo-indexes": "node dist/mongo_setup.js",
     "api": "tsc-watch --onSuccess \"node dist/api.js\"",
     "blockrange": "tsc-watch --onSuccess \"node dist/blockrange.js\"",
-    "filler": "tsc-watch --onSuccess \"node dist/filler.js $flags\"",
+    "filler": "tsc-watch --onSuccess \"node dist/filler.js ${flags}\"",
     "processor": "tsc-watch --onSuccess \"node dist/processor.js\""
   },
   "husky": {
