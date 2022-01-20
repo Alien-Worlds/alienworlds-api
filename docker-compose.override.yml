@@ -22,7 +22,8 @@ services:
       - ./:/var/www/api
 
   filler:
-    command: ['sh', '-c', 'scripts/wq.sh && yarn filler ${FILLER_FLAGS}']
+    command:
+      ['sh', '-c', 'scripts/wq.sh && flags="${FILLER_FLAGS}" yarn filler']
     depends_on:
       - queue
     volumes:

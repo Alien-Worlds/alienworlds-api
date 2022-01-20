@@ -24,7 +24,7 @@
     "mongo-indexes": "node dist/mongo_setup.js",
     "api": "tsc-watch --onSuccess \"node dist/api.js\"",
     "blockrange": "tsc-watch --onSuccess \"node dist/blockrange.js\"",
-    "filler": "tsc-watch --onSuccess \"node dist/filler.js\"",
+    "filler": "tsc-watch --onSuccess \"node dist/filler.js ${flags}\"",
     "processor": "tsc-watch --onSuccess \"node dist/processor.js\""
   },
   "husky": {
