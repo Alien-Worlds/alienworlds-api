@@ -117,3 +117,8 @@ This command is part of the CI chain and normally don't need to run locally.
 Requires a successful docker login to the registry first ([please read the official documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)), then you can pull the images (instead of building locally).
 
 `docker compose pull`
+
+# API Access
+
+- In local development mode the API is accessible at http://localhost:8900
+- For extending / updating our API documentation, please look into the official [fastify-oas](https://github.com/SkeLLLa/fastify-oas) documentation.
