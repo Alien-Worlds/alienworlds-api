@@ -48,5 +48,15 @@ services:
       timeout: 10s
       retries: 5
 
+  apidoc:
+    image: redocly/redoc
+    depends_on:
+      - api
+    environment:
+      - PAGE_TITLE="Alien Worlds API"
+      - SPEC_URL=http://localhost:8800/v1/alienworlds/docs/json
+    ports:
+      - '8900:80'
+
 volumes:
   database:
