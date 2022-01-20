@@ -1,3 +1,3 @@
-import NotFoundError from './notfounderror'
+import NotFoundError from './notfounderror';
 
-export { NotFoundError }
+export { NotFoundError };

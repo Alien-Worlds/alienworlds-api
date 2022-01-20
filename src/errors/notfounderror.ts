@@ -1,9 +1,8 @@
-
 export default class NotFoundError extends Error {
-    statusCode: Number
+  statusCode: Number;
 
-    constructor (msg) {
-        super(msg)
-        this.statusCode = 404
-    }
+  constructor(msg) {
+    super(msg);
+    this.statusCode = 404;
+  }
 }

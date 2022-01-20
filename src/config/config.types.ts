@@ -31,6 +31,6 @@ export type Config = {
   startBlock: number;
   amqConnectionString: string;
   atomicAssets: AtomicAssetsConfig;
-  mongo: MongoConfig
+  mongo: MongoConfig;
   docs: DocsConfig;
-}
+};

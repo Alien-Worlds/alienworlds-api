@@ -64,3 +64,9 @@ metadata
 
 ~$*.pptx
 .DS_Store
+
+# Editor
+.idea
+
+# Distribution / Build
+dist

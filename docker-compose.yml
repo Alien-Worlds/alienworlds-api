@@ -1,50 +1,55 @@
-version: "3"
+version: '3.7'
 services:
   api:
-    extends:
-      file: docker-compose.common.yml
-      service: common
+    image: ${DOCKER_REGISTRY}/alienworlds_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: '${NODE_ENV}'
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_api
+    environment:
+      NODE_ENV: '${NODE_ENV}'
+    restart: on-failure
     ports:
-      - "8800:8800"
-    command: ["sh", "-c", "yarn mongo-indexes && yarn api"]
+      - '8800:8800'
 
   processor:
-    extends:
-      file: docker-compose.common.yml
-      service: common
-    command: ["sh", "-c", "scripts/wq.sh && yarn processor"]
+    image: ${DOCKER_REGISTRY}/alienworlds_processor
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: '${NODE_ENV}'
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_processor
+    environment:
+      NODE_ENV: '${NODE_ENV}'
+    restart: on-failure
 
   blockrange:
-    extends:
-      file: docker-compose.common.yml
-      service: common
-    command: ["sh", "-c", "scripts/wq.sh && yarn blockrange"]
+    image: ${DOCKER_REGISTRY}/alienworlds_blockrange
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: '${NODE_ENV}'
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_blockrange
+    environment:
+      NODE_ENV: '${NODE_ENV}'
+    restart: on-failure
 
   filler:
-    extends:
-      file: docker-compose.common.yml
-      service: common
-    command: ["sh", "-c", "scripts/wq.sh && yarn filler ${FILLER_FLAGS}"]
-
-  db:
-    image: mongo
-    restart: always
-    ports:
-      - "27017"
-    volumes:
-      - database:/data/db
-
-  queue: # login guest:guest
-    image: rabbitmq:management
-    restart: always
-    ports:
-      - "5672"
-      - "15672:15672"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:15672"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-volumes:
-  database:
+    image: ${DOCKER_REGISTRY}/alienworlds_filler
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: '${NODE_ENV}'
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_filler
+    environment:
+      NODE_ENV: '${NODE_ENV}'
+    restart: on-failure
