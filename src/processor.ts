@@ -177,13 +177,13 @@ class AlienAPIProcessor {
 
       // testing
       /*const to_delete = [];
-            for (let d=0;d<documents.length;d++){
-                if (d % 2 === 0){
-                    // console.log(documents[d])
-                    to_delete.push(documents[d].global_sequence)
-                }
-            }
-            const delres = await col.deleteMany({global_sequence: {$in: to_delete}});*/
+      for (let d=0;d<documents.length;d++){
+          if (d % 2 === 0){
+              // console.log(documents[d])
+              to_delete.push(documents[d].global_sequence)
+          }
+      }
+      const delres = await col.deleteMany({global_sequence: {$in: to_delete}});*/
 
       col.insertMany(documents, { ordered: false }, (err, res) => {
         // console.log(err, res);
@@ -221,9 +221,9 @@ class AlienAPIProcessor {
           }
 
           /*for (let e = 0; e < err.result.result.writeErrors.length; e++){
-                        const write_error = err.result.result.writeErrors[e];
-                        console.log(write_error.err.op)
-                    }*/
+              const write_error = err.result.result.writeErrors[e];
+              console.log(write_error.err.op)
+          }*/
         } else if (res) {
           // console.log('SUCCESS', res)
           // all documents inserted
@@ -381,7 +381,8 @@ class AlienAPIProcessor {
     const block_timestamp = new Date(block_timestamp_int * 1000);
     const trx_id_arr = sb.getUint8Array(32);
     const trx_id = this.buffer_to_bigint(trx_id_arr).toString(16);
-    // const recv_sequence = this.buffer_to_bigint(sb.getUint8Array(8));
+    // eslint-disable-next-line no-unused-vars
+    const recv_sequence = this.buffer_to_bigint(sb.getUint8Array(8));
     const global_sequence = this.buffer_to_bigint(sb.getUint8Array(8));
     const account = sb.getName();
     const name = sb.getName();
