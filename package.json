@@ -58,7 +58,7 @@
     "file-exists": "^5.0.1",
     "http": "^0.0.1-security",
     "mongodb": "^3.6.3",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^3.1.1"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.9.1",
