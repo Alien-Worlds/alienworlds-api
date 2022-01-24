@@ -59,6 +59,11 @@ jobs:
       - name: Running Prettier
         run: docker compose run api yarn lint-prettier
 
+      - name: Danger
+        uses: danger/danger-js@9.1.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: List of Docker Images
         run: docker images
 
