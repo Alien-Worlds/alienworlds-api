@@ -4,5 +4,6 @@ module.exports = {
   ...config,
   collectCoverage: false,
   testEnvironment: 'jest-environment-node',
-  testMatch: ["**/tests/api/**/*.api.test.ts"]
+  testRegex: '^.*\\/tests\\/api\\/.*\\.api\\.test\\.ts$',
+  testPathIgnorePatterns: ['<rootDir>/src/'],
 };
