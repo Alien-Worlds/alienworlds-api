@@ -1,23 +1,14 @@
-version: '3'
+version: '3.7'
 services:
   api-tests-runner:
-    tty: true
     build:
       context: .
       target: api-tests-runner
       dockerfile: Dockerfile.api.tests
-    ports:
-      - '8800:8800'
     command: ['sh', '-c', 'yarn test:api']
     depends_on:
       - db
 
-  db:
-    image: mongo
-    ports:
-      - '27017'
-    volumes:
-      - database:/data/db
   mongo-seed:
     build:
       context: .
@@ -27,6 +18,13 @@ services:
       - db
     depends_on:
       - db
+
+  db:
+    image: mongo
+    ports:
+      - '27017'
+    volumes:
+      - database:/data/db
 
 volumes:
   database:
