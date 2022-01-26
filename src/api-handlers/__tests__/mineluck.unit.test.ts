@@ -66,10 +66,10 @@ describe('createMineLuckPipeline Unit tests', () => {
   });
 
   it('createMineLuckPipeline should create mine luck aggregation pipeline with block timestamp range when "from" and "to" are given', () => {
-    const from: string = '2022-01-20T19:29:41.294+00:00';
-    const to: string = '2022-01-21T19:29:41.294+00:00';
-    const fromTimestamp: number = 1642706981000;
-    const toTimestamp: number = 1642793381000;
+    const from = '2022-01-20T19:29:41.294+00:00';
+    const to = '2022-01-21T19:29:41.294+00:00';
+    const fromTimestamp = 1642706981000;
+    const toTimestamp = 1642793381000;
 
     expect(createMineLuckPipeline(from, to)).toEqual(
       pipelineWithBlockTimestamps(

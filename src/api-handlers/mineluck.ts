@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import { mineLuckSchema } from '../schemas';
 import { parseDate } from '../include/parsedate';
 
@@ -174,9 +172,14 @@ export const getMineLuckCollection = async (
   const db = fastify.mongo.db;
   const collection = db.collection('mines');
   const pipeline = createMineLuckPipeline(from, to);
-  const documents: MineLuckDocument[] = await collection.aggregate(pipeline);
+  const documents: MineLuck[] = [];
+  const cursor = collection.aggregate(pipeline);
 
-  return documents.map(dto => MineLuck.fromDto(dto));
+  for await (const dto of cursor) {
+    documents.push(MineLuck.fromDto(dto));
+  }
+
+  return documents;
 };
 
 /**
