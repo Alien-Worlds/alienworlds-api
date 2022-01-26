@@ -12,8 +12,8 @@ const getMineLuck = async (fastify, request) => {
   const from = request.query.from || null;
   const to = request.query.to || null;
 
-  let res = null,
-    query: any = {};
+  let res = null;
+  const query: any = {};
   // let has_query = false
   const db = fastify.mongo.db;
   const collection = db.collection('mines');

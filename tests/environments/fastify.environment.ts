@@ -1,6 +1,6 @@
-import { buildAPI } from "../../src/api";
-import { TestEnvironment, TestHooks } from "./test-environment";
-import { TestEnvironmentServer } from "./api-test-environment";
+import { buildAPI } from '../../src/api';
+import { TestEnvironment, TestHooks } from './test-environment';
+import { TestEnvironmentServer } from './api-test-environment';
 
 export class FastifyTestEnvironment implements TestEnvironment {
   private _server;
@@ -12,24 +12,24 @@ export class FastifyTestEnvironment implements TestEnvironment {
   initialize(hooks?: TestHooks) {
     beforeAll(async () => {
       this._server = await buildAPI();
-      if (!!hooks?.beforeAll) {
+      if (hooks?.beforeAll) {
         await hooks.beforeAll();
       }
     });
 
-    if (!!hooks?.beforeEach) {
+    if (hooks?.beforeEach) {
       beforeEach(async () => await hooks.beforeEach());
     }
 
-    if (!!hooks?.afterEach) {
+    if (hooks?.afterEach) {
       afterEach(async () => await hooks.afterEach());
     }
 
     afterAll(async () => {
-      if (!!hooks?.afterAll) {
+      if (hooks?.afterAll) {
         await hooks.afterAll();
       }
-      if (!!this._server) {
+      if (this._server) {
         await this._server.close();
       }
     });
