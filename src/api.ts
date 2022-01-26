@@ -35,6 +35,7 @@ export const buildAPI = async (): Promise<FastifyInstance> => {
 
   api.register(fastifyAutoload, {
     dir: path.join(__dirname, 'api-handlers'),
+    ignorePattern: /.*__tests__.*/,
     options: {
       prefix: '/v1/alienworlds',
     },
