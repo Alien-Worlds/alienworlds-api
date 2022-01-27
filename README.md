@@ -2,6 +2,8 @@
 
 ### API to index and read Alien Worlds data
 
+[![Visual Source](https://img.shields.io/badge/visual-source-orange)](https://www.visualsource.net/repo/github.com/alien-Worlds/alienworlds-api)
+
 # First Time Installation & Configuration
 
 ### Please read & follow the steps before first installation
