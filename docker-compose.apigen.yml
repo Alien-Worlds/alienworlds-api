@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  apigen:
+    command: ['sh', '-c', 'scripts/apigen.sh']
+    restart: 'no'
+    build:
+      context: .
+    depends_on:
+      - api
+    volumes:
+      - ./openapi:/var/www/api/openapi
+
+  api:
+    command: ['sh', '-c', 'yarn mongo-indexes && yarn api']
+    restart: 'no'
+    depends_on:
+      - db
+
+  db:
+    image: mongo
+    restart: 'no'
+    ports:
+      - '27017'
