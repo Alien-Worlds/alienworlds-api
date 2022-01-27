@@ -1,9 +1,10 @@
 FROM mongo AS mongo-seed
 
-COPY tests/api/fixtures/mines.seed.json /mines.seed.json
-## drop existing test db and reimport seed for fresh test
-CMD mongoimport --host db --db alienworlds_mainnet --collection mines --type json --file /mines.seed.json --jsonArray --drop
+COPY tests/api/fixtures/* /
 
+## drop existing test db and reimport seed for fresh test
+CMD mongoimport --host db --db alienworlds_mainnet --collection mines --type json --file /mines.seed.json --jsonArray --drop && \ 
+    mongoimport --host db --db alienworlds_mainnet --collection nfts --type json --file /nfts.seed.json --jsonArray --drop
 
 FROM node:17-alpine3.12 AS api-tests-runner
 
