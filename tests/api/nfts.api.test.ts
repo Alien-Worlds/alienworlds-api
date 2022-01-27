@@ -5,7 +5,7 @@ environment.initialize();
 
 jest.mock('mongodb');
 
-describe('Mines API Test', () => {
+describe('NFTS API Test', () => {
 
     it('should return 200', async () => {
         const response = await environment.server.inject({
