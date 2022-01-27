@@ -1,10 +1,12 @@
+export type HookCallback = (...args: unknown[]) => void;
+
 export type TestHooks = {
-    beforeAll?: Function,
-    beforeEach?: Function,
-    afterAll?: Function,
-    afterEach?: Function,
-}
+  beforeAll?: HookCallback;
+  beforeEach?: HookCallback;
+  afterAll?: HookCallback;
+  afterEach?: HookCallback;
+};
 
 export interface TestEnvironment {
-    initialize(hooks?: TestHooks): void;
+  initialize(hooks?: TestHooks): void;
 }

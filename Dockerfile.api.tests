@@ -19,7 +19,7 @@ ADD src /var/www/api/src
 ADD tests/environments /var/www/api/tests/environments
 ADD tests/api /var/www/api/tests/api
 
-COPY package.json tsconfig.json yarn.lock babel.config.js jest.config.js jest.config.api.js /var/www/api/
+COPY package.json tsconfig.json yarn.lock jest.config.js jest.config.api.js /var/www/api/
 
 WORKDIR /var/www/api
 
