@@ -1,36 +1,109 @@
+/* eslint-disable no-unused-vars */
 import { mineLuckSchema } from '../schemas';
 import { parseDate } from '../include/parsedate';
 
-// const {TextDecoder, TextEncoder} = require('text-encoding');
-// const {Api, JsonRpc} = require('@jafri/eosjs2');
-// const fetch = require('node-fetch');
-// const {getProfiles} = require('../profile-helper.js');
-//
-// const {loadConfig} = require('../functions');
+/**
+ * Represents the data structure of the MineLuck mongoDB document
+ * @type
+ */
+export type MineLuckDocument = {
+  total_luck: number;
+  total_mines: number;
+  planets: string[];
+  tools: number[];
+  avg_luck: number;
+  rarities: string[];
+  _id: string;
+};
 
-const getMineLuck = async (fastify, request) => {
-  const from = request.query.from || null;
-  const to = request.query.to || null;
+/**
+ * Represents computed mine luck data.
+ *
+ * @class
+ */
+export class MineLuck {
+  private constructor(
+    public readonly totalLuck: number,
+    public readonly totalMines: number,
+    public readonly planets: string[],
+    public readonly tools: number[],
+    public readonly avgLuck: number,
+    public readonly rarities: string[],
+    public readonly miner: string
+  ) {}
 
-  let res = null;
-  const query: any = {};
-  // let has_query = false
-  const db = fastify.mongo.db;
-  const collection = db.collection('mines');
+  /**
+   * Creates instances of the class MineLuck based on given MineLuckDocument.
+   *
+   * @static
+   * @public
+   * @param {MineLuckDocument} dto
+   * @returns {MineLuck} instance of MineLuck
+   */
+  public static fromDto(dto: MineLuckDocument): MineLuck {
+    const { _id, total_luck, total_mines, planets, tools, avg_luck, rarities } =
+      dto;
+
+    return new MineLuck(
+      total_luck,
+      total_mines,
+      planets,
+      tools,
+      avg_luck,
+      rarities,
+      _id
+    );
+  }
+}
+
+/**
+ * Represents the response (DTO) of the /mineluck route.
+ * A serialized object of this class is returned as result of calling /mineluck route.
+ *
+ * @class
+ */
+export class MineLuckResponse {
+  private constructor(
+    public readonly results: MineLuck[],
+    public readonly count: number
+  ) {}
+
+  /**
+   * Creates instances of the class MineLuckResponse
+   *
+   * @static
+   * @public
+   * @param {MineLuck[]} mineLuckCollection
+   * @returns {MineLuckResponse} instance of `MineLuckResponse`
+   */
+  public static create(mineLuckCollection: MineLuck[]): MineLuckResponse {
+    return new MineLuckResponse(mineLuckCollection, mineLuckCollection.length);
+  }
+}
+
+/**
+ * The function returns the aggregation pipeline - in the form of an object array -
+ * used to retrieve the MineLuck data
+ *
+ * @param {string=} from block timestmap start date
+ * @param {string=} to block timestmap end date
+ * @returns {Boject[]} aggregation pipeline to retrieve MineLuck documents
+ */
+export const createMineLuckPipeline = (from?: string, to?: string) => {
+  const query: { block_timestamp?: { $gte?: Date; $lt?: Date } } = {};
 
   if (from) {
     if (typeof query.block_timestamp === 'undefined') {
       query.block_timestamp = {};
     }
     query.block_timestamp.$gte = new Date(parseDate(from));
-    // has_query = true
   }
+
   if (to) {
     if (typeof query.block_timestamp === 'undefined') {
       query.block_timestamp = {};
     }
     query.block_timestamp.$lt = new Date(parseDate(to));
-    // has_query = true
   }
 
   const pipeline = [
@@ -77,25 +150,46 @@ const getMineLuck = async (fastify, request) => {
       },
     },
   ];
-  // console.log(pipeline[0]['$match'])
 
-  res = collection.aggregate(pipeline);
-
-  const results = [];
-  await res.forEach(r => {
-    r.miner = r._id;
-    delete r._id;
-    results.push(r);
-  });
-  // const count_query = query
-  // if (count_query.global_sequence){
-  //     delete count_query.global_sequence
-  // }
-
-  // return {results, count: await collection.find(count_query).count()}
-  return { results, count: results.length };
+  return pipeline;
 };
 
+/**
+ * Inside the function, the client connects to the MongoDB database and fetch
+ * modified (using an aggregation pipeline) documents from the "mines" collection.
+ *
+ * @async
+ * @param fastify Fastify instance
+ * @param request request object
+ * @returns {Promise<MineLuck[]>} Collection of the `MineLuck` objects
+ */
+export const getMineLuckCollection = async (
+  fastify,
+  request
+): Promise<MineLuck[]> => {
+  const { query: { from = null, to = null } = {} } = request;
+
+  const db = fastify.mongo.db;
+  const collection = db.collection('mines');
+  const pipeline = createMineLuckPipeline(from, to);
+  const documents: MineLuck[] = [];
+  const cursor = collection.aggregate(pipeline);
+
+  for await (const dto of cursor) {
+    documents.push(MineLuck.fromDto(dto));
+  }
+
+  return documents;
+};
+
+/**
+ * GET "/mineluck" route declaration method
+ *
+ * @default
+ * @param fastify Fastify instance
+ * @param opts route options
+ * @param next
+ */
 export default function (fastify, opts, next) {
   fastify.get(
     '/mineluck',
@@ -103,8 +197,8 @@ export default function (fastify, opts, next) {
       schema: mineLuckSchema.GET,
     },
     async (request, reply) => {
-      const res = await getMineLuck(fastify, request);
-      reply.send(res);
+      const collection = await getMineLuckCollection(fastify, request);
+      reply.send(MineLuckResponse.create(collection));
     }
   );
   next();
