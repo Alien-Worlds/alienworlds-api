@@ -25,7 +25,8 @@
     "api": "tsc-watch --onSuccess \"node dist/api.js\"",
     "blockrange": "tsc-watch --onSuccess \"node dist/blockrange.js\"",
     "filler": "tsc-watch --onSuccess \"node dist/filler.js ${flags}\"",
-    "processor": "tsc-watch --onSuccess \"node dist/processor.js\""
+    "processor": "tsc-watch --onSuccess \"node dist/processor.js\"",
+    "test-docker": "sh scripts/run-api-tests.sh"
   },
   "husky": {
     "hooks": {
