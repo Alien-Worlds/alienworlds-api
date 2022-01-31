@@ -2,6 +2,8 @@
 
 ### API to index and read Alien Worlds data
 
+[![Visual Source](https://img.shields.io/badge/visual-source-orange)](https://www.visualsource.net/repo/github.com/alien-Worlds/alienworlds-api)
+
 # First Time Installation & Configuration
 
 ### Please read & follow the steps before first installation
@@ -135,6 +137,7 @@ Requires a successful docker login to the registry first ([please read the offic
 # API Access
 
 - In local development mode the API is accessible at http://localhost:8900
+- Production API documentation is available at https://alien-worlds.github.io/alienworlds-api
 - For extending / updating our API documentation, please look into the official [fastify-oas](https://github.com/SkeLLLa/fastify-oas) documentation.
 
 # Run API tests

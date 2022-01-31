@@ -22,7 +22,7 @@
     "clean": "rm -rf ./dist",
     "abis": "mkdir -p ./dist/abis && node dist/fetch_abis.js ./dist/abis",
     "mongo-indexes": "node dist/mongo_setup.js",
-    "api": "tsc-watch --onSuccess \"node dist/api.js\"",
+    "api": "tsc-watch --onSuccess \"node dist/index.js\"",
     "blockrange": "tsc-watch --onSuccess \"node dist/blockrange.js\"",
     "filler": "tsc-watch --onSuccess \"node dist/filler.js ${flags}\"",
     "processor": "tsc-watch --onSuccess \"node dist/processor.js\""
@@ -78,6 +78,7 @@
     "jest": "^27.4.5",
     "lint-staged": "^12.1.7",
     "prettier": "2.5.1",
+    "redoc-cli": "^0.13.6",
     "ts-jest": "^27.1.3",
     "tsc-watch": "^4.6.0",
     "typescript": "^4.5.4"
