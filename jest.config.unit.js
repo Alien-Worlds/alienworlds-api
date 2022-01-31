@@ -7,4 +7,12 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jest-environment-node',
   testMatch: ['**/__tests__/**/*.unit.test.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!**/*.fixture.ts',
+    '!**/*.mock.ts',
+    '!**/__tests__/**',
+    '!**/__mocks__/**',
+    '!**/schemas/**',
+  ],
 };

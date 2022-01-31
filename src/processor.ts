@@ -387,7 +387,6 @@ class AlienAPIProcessor {
     const block_timestamp = new Date(block_timestamp_int * 1000);
     const trx_id_arr = sb.getUint8Array(32);
     const trx_id = this.buffer_to_bigint(trx_id_arr).toString(16);
-    // eslint-disable-next-line no-unused-vars
     const recv_sequence = this.buffer_to_bigint(sb.getUint8Array(8));
     const global_sequence = this.buffer_to_bigint(sb.getUint8Array(8));
     const account = sb.getName();
