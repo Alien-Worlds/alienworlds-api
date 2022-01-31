@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { minesSchema } from '../schemas';
 import { parseDate } from '../include/parsedate';
 
@@ -25,8 +26,8 @@ const getMines = async (fastify, request) => {
     throw new Error('Limit maximum is 5000');
   }
 
-  let res = null,
-    query: any = {};
+  let res = null;
+  let query: any = {};
   // let has_query = false
   const db = fastify.mongo.db;
   const collection = db.collection('mines');
@@ -51,7 +52,7 @@ const getMines = async (fastify, request) => {
     } else {
       query.land_id = land_id;
     }
-    console.log(query);
+    // console.log(query);
     // has_query = true
   }
   if (planet_name) {
