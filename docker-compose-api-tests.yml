@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.api.tests
     command: ['sh', '-c', 'yarn test:api']
     depends_on:
-      - db
+      - mongo-seed
 
   mongo-seed:
     build:
