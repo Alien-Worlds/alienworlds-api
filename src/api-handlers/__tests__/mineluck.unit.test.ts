@@ -6,7 +6,13 @@ import {
   pipelineWithoutBlockTimestamps,
 } from './fixtures/mineluck-aggregation-pipeline.fixture';
 import { blankMineluckDocument, magorWorldCompleteMineluckDocument } from './fixtures/mineluck-document.fixture';
-import { blankMineluck, magorWorldCompleteMineluck, magorWorldWithoutRaritiesMineluck } from './fixtures/mineluck.fixture';
+import {
+  blankMineluck,
+  magorWorldCompleteMineluck,
+  magorWorldCompleteMineluckResult,
+  magorWorldWithoutRaritiesMineluck,
+  magorWorldWithoutRaritiesMineluckResult,
+} from './fixtures/mineluck.fixture';
 
 describe('"getMineLuckCollection" tool unit tests', () => {
   it('Should return collection of MineLuck objects', async () => {
@@ -46,7 +52,7 @@ describe('MineLuckResponse unit tests', () => {
 
   it('MineLuckResponse.create should create instance of the MineLuckResponse class based on given MineLuck collection', () => {
     expect(MineLuckResponse.create([magorWorldCompleteMineluck, magorWorldWithoutRaritiesMineluck])).toEqual({
-      results: [magorWorldCompleteMineluck, magorWorldWithoutRaritiesMineluck],
+      results: [magorWorldCompleteMineluckResult, magorWorldWithoutRaritiesMineluckResult],
       count: 2,
     });
   });
