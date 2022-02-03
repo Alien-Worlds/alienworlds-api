@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { mineLuckSchema } from '../schemas';
 import { parseDate } from '../include/parsedate';
 
@@ -211,7 +210,6 @@ export const getMineLuckCollection = async (
   request
 ): Promise<MineLuck[]> => {
   const { query: { from = null, to = null } = {} } = request;
-
   const db = fastify.mongo.db;
   const collection = db.collection('mines');
   const pipeline = createMineLuckPipeline(from, to);
