@@ -1,72 +1,70 @@
-{
-  "results": [
-    {
-      "$oid": "61eee6039181c700422ef773",
-      "miner": "fakeminer1.wam",
-      "land_id": "1099512961112",
-      "params": {
-        "invalid": 0,
-        "error": "",
-        "delay": 540,
-        "difficulty": 3,
-        "ease": 150,
-        "luck": 25,
-        "commission": 0
-      },
-      "rand1": 1.1764705882352942,
-      "rand2": 1.9058518348973832,
-      "rand3": 10.349019607843136,
-      "template_id": 19558,
-      "block_num": 124900087,
-      "block_timestamp": "2021-06-17T01:05:38.000Z",
-      "global_sequence": 8775201844,
-      "template_data": {
-        "cardid": 7,
-        "name": "Standard Capacitor",
-        "img": "QmaFe19mBfZWn2tvEN7Ea8xjdirnQQRisUGGBzBPb",
-        "backimg": "QmaUNXHee4vPCC3vpGTr77tJvBHjh1ndUm4J7o4tP",
-        "rarity": "Abundant",
-        "shine": "Stone",
-        "type": "Manipulator",
-        "delay": 75,
-        "difficulty": 1,
-        "ease": 10,
-        "luck": 5
-      }
+[
+  {
+    "$oid": "61eee6039181c700422ef773",
+    "miner": "fakeminer1.wam",
+    "land_id": "1099512961112",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 540,
+      "difficulty": 3,
+      "ease": 150,
+      "luck": 25,
+      "commission": 0
     },
-    {
-      "$oid": "61fee6039181c700422ef773",
-      "miner": "fakeminer2.wam",
-      "land_id": "1099512958544",
-      "params": {
-        "invalid": 0,
-        "error": "",
-        "delay": 160,
-        "difficulty": 0,
-        "ease": 30,
-        "luck": 15,
-        "commission": 0
-      },
-      "rand1": 0.7843137254901961,
-      "rand2": 0.7797360189211872,
-      "rand3": 11.062745098039215,
-      "template_id": 19553,
-      "block_num": 124900085,
-      "block_timestamp": "2021-06-17T01:05:37.000Z",
-      "global_sequence": 8775201476,
-      "template_data": {
-        "cardid": 2,
-        "name": "Standard Drill",
-        "img": "QmVUZHc3PuLkJ7BDvJ3S3AgDySjsqWQib1sVKziHCbS",
-        "backimg": "QmaUNX4vPCC3vpGTr77tJvBHjh1ndUm4J7o4tP",
-        "rarity": "Abundant",
-        "shine": "Stone",
-        "type": "Extractor",
-        "delay": 120,
-        "difficulty": 1,
-        "ease": 20,
-        "luck": 7
-      }
+    "rand1": 1.1764705882352942,
+    "rand2": 1.9058518348973832,
+    "rand3": 10.349019607843136,
+    "template_id": 19558,
+    "block_num": 124900087,
+    "block_timestamp": "2021-06-17T01:05:38.000Z",
+    "global_sequence": 8775201844,
+    "template_data": {
+      "cardid": 7,
+      "name": "Standard Capacitor",
+      "img": "QmaFe19mBfZWn2tvEN7Ea8xjdirnQQRisUGGBzBPb",
+      "backimg": "QmaUNXHee4vPCC3vpGTr77tJvBHjh1ndUm4J7o4tP",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "type": "Manipulator",
+      "delay": 75,
+      "difficulty": 1,
+      "ease": 10,
+      "luck": 5
     }
-  ]
-}
+  },
+  {
+    "$oid": "61fee6039181c700422ef773",
+    "miner": "fakeminer2.wam",
+    "land_id": "1099512958544",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 160,
+      "difficulty": 0,
+      "ease": 30,
+      "luck": 15,
+      "commission": 0
+    },
+    "rand1": 0.7843137254901961,
+    "rand2": 0.7797360189211872,
+    "rand3": 11.062745098039215,
+    "template_id": 19553,
+    "block_num": 124900085,
+    "block_timestamp": "2021-06-17T01:05:37.000Z",
+    "global_sequence": 8775201476,
+    "template_data": {
+      "cardid": 2,
+      "name": "Standard Drill",
+      "img": "QmVUZHc3PuLkJ7BDvJ3S3AgDySjsqWQib1sVKziHCbS",
+      "backimg": "QmaUNX4vPCC3vpGTr77tJvBHjh1ndUm4J7o4tP",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "type": "Extractor",
+      "delay": 120,
+      "difficulty": 1,
+      "ease": 20,
+      "luck": 7
+    }
+  }
+]
