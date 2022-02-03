@@ -17,7 +17,9 @@ import {
 import {
   blankMineluck,
   magorWorldCompleteMineluck,
+  magorWorldCompleteMineluckResult,
   magorWorldWithoutRaritiesMineluck,
+  magorWorldWithoutRaritiesMineluckResult,
 } from './fixtures/mineluck.fixture';
 
 describe('"getMineLuckCollection" tool unit tests', () => {
@@ -76,7 +78,10 @@ describe('MineLuckResponse unit tests', () => {
         magorWorldWithoutRaritiesMineluck,
       ])
     ).toEqual({
-      results: [magorWorldCompleteMineluck, magorWorldWithoutRaritiesMineluck],
+      results: [
+        magorWorldCompleteMineluckResult,
+        magorWorldWithoutRaritiesMineluckResult,
+      ],
       count: 2,
     });
   });
