@@ -1,35 +1,17 @@
 import { getMineLuckFastifyMock } from './mocks/mineluck.fastify.mock';
-import {
-  createMineLuckPipeline,
-  getMineLuckCollection,
-  MineLuck,
-  MineLuckResponse,
-} from '../mineluck';
+import { createMineLuckPipeline, getMineLuckCollection, MineLuck, MineLuckResponse } from '../mineluck';
 import {
   pipelineWithBlockTimestamps,
   pipelineWithEndBlockTimestamp,
   pipelineWithoutBlockTimestamps,
-} from './fixtures/aggregation-pipeline.fixture';
-import {
-  blankMineluckDocument,
-  magorWorldCompleteMineluckDocument,
-} from './fixtures/mineluck-document.fixture';
-import {
-  blankMineluck,
-  magorWorldCompleteMineluck,
-  magorWorldWithoutRaritiesMineluck,
-} from './fixtures/mineluck.fixture';
+} from './fixtures/mineluck-aggregation-pipeline.fixture';
+import { blankMineluckDocument, magorWorldCompleteMineluckDocument } from './fixtures/mineluck-document.fixture';
+import { blankMineluck, magorWorldCompleteMineluck, magorWorldWithoutRaritiesMineluck } from './fixtures/mineluck.fixture';
 
 describe('"getMineLuckCollection" tool unit tests', () => {
   it('Should return collection of MineLuck objects', async () => {
-    const aggregateResult = [
-      blankMineluckDocument,
-      magorWorldCompleteMineluckDocument,
-    ];
-    const collection = await getMineLuckCollection(
-      getMineLuckFastifyMock({ aggregateResult }),
-      {}
-    );
+    const aggregateResult = [blankMineluckDocument, magorWorldCompleteMineluckDocument];
+    const collection = await getMineLuckCollection(getMineLuckFastifyMock({ aggregateResult }), {});
 
     expect(collection).toEqual([blankMineluck, magorWorldCompleteMineluck]);
   });
@@ -58,24 +40,12 @@ describe('MineLuckResponse unit tests', () => {
   });
 
   it('MineLuckResponse "count" should be equal to results.length', () => {
-    expect(MineLuckResponse.create([magorWorldCompleteMineluck]).count).toEqual(
-      1
-    );
-    expect(
-      MineLuckResponse.create([
-        magorWorldCompleteMineluck,
-        magorWorldWithoutRaritiesMineluck,
-      ]).count
-    ).toEqual(2);
+    expect(MineLuckResponse.create([magorWorldCompleteMineluck]).count).toEqual(1);
+    expect(MineLuckResponse.create([magorWorldCompleteMineluck, magorWorldWithoutRaritiesMineluck]).count).toEqual(2);
   });
 
   it('MineLuckResponse.create should create instance of the MineLuckResponse class based on given MineLuck collection', () => {
-    expect(
-      MineLuckResponse.create([
-        magorWorldCompleteMineluck,
-        magorWorldWithoutRaritiesMineluck,
-      ])
-    ).toEqual({
+    expect(MineLuckResponse.create([magorWorldCompleteMineluck, magorWorldWithoutRaritiesMineluck])).toEqual({
       results: [magorWorldCompleteMineluck, magorWorldWithoutRaritiesMineluck],
       count: 2,
     });
@@ -91,9 +61,7 @@ describe('"createMineLuckPipeline" tool unit tests', () => {
     const to = '2022-01-21T19:29:41.29  4+00:00';
     const toTimestamp = 1642793381000;
 
-    expect(createMineLuckPipeline(null, to)).toEqual(
-      pipelineWithEndBlockTimestamp(new Date(toTimestamp))
-    );
+    expect(createMineLuckPipeline(null, to)).toEqual(pipelineWithEndBlockTimestamp(new Date(toTimestamp)));
   });
 
   it('Should create mine luck aggregation pipeline with block timestamp range when "from" and "to" are given', () => {
@@ -102,11 +70,6 @@ describe('"createMineLuckPipeline" tool unit tests', () => {
     const fromTimestamp = 1642706981000;
     const toTimestamp = 1642793381000;
 
-    expect(createMineLuckPipeline(from, to)).toEqual(
-      pipelineWithBlockTimestamps(
-        new Date(fromTimestamp),
-        new Date(toTimestamp)
-      )
-    );
+    expect(createMineLuckPipeline(from, to)).toEqual(pipelineWithBlockTimestamps(new Date(fromTimestamp), new Date(toTimestamp)));
   });
 });

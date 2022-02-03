@@ -44,6 +44,16 @@ export type AssetDataSubDocument = {
 };
 
 /**
+ * Represents the MongoDB Long
+ * @type
+ */
+export type Long = {
+  _bsontype: string;
+  high_: number;
+  low_: number;
+};
+
+/**
  * Represents the data structure of the Asset mongoDB document
  * @type
  */
@@ -222,10 +232,18 @@ export class AssetResponse {
 /**
  * Pars the given string into an array of integer values
  *
+ * @example <caption>buildLongIntListFromString('1099535583633')</caption>
+ * // returns
+ * // {
+ * //   _bsontype: 'Long',
+ * //   high_: 256,
+ * //   low_: 23955857
+ * // }
  * @param {string} value
- * @returns an array of 64-bit two’s-complement integer value
+ * @returns {Long[]} an array of Long Objects
+ * @see {@link https://mongodb.github.io/node-mongodb-native/api-bson-generated/long.html} for further information about Long class.
  */
-export const buildLongIntListFromString = (value: string) => value.split(',').map(item => Long.fromString(item));
+export const buildLongIntListFromString = (value: string): Long[] => value.split(',').map(item => Long.fromString(item));
 
 /**
  * Connects to the MongoDB database and retrieves Asset documents based on the request options provided.
@@ -239,7 +257,7 @@ export const buildLongIntListFromString = (value: string) => value.split(',').ma
  * @returns {Promise<Asset[]>} Collection of the `Asset` objects
  */
 export const getAssetsCollection = async (fastify, request): Promise<Asset[]> => {
-  const { limit = 20, offset = 0, id, owner, schema }: AssetRequestQueryOptions = request.query;
+  const { limit = 20, offset = 0, id, owner, schema }: AssetRequestQueryOptions = request.query || {};
   const collection = fastify.mongo.db.collection('assets');
   const assets: Asset[] = [];
   let cursor;
@@ -260,8 +278,10 @@ export const getAssetsCollection = async (fastify, request): Promise<Asset[]> =>
     cursor = await collection.find(query, { skip: offset }).limit(limit);
   }
 
-  for await (const dto of cursor) {
-    assets.push(Asset.fromDto(dto));
+  if (cursor) {
+    for await (const dto of cursor) {
+      assets.push(Asset.fromDto(dto));
+    }
   }
 
   return assets;
