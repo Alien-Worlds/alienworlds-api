@@ -56,6 +56,46 @@ export class MineLuck {
 }
 
 /**
+ * Represents mineluck (view) model.
+ *
+ * @class
+ */
+export class MineLuckResult {
+  private constructor(
+    public readonly total_luck: number,
+    public readonly total_mines: number,
+    public readonly planets: string[],
+    public readonly tools: number[],
+    public readonly avg_luck: number,
+    public readonly rarities: string[],
+    public readonly miner: string
+  ) {}
+
+  /**
+   * Creates instances of the class MineLuck based on given MineLuckDocument.
+   *
+   * @static
+   * @public
+   * @param {MineLuck} dto
+   * @returns {MineLuckResult} instance of MineLuck
+   */
+  public static fromEntity(entity: MineLuck): MineLuckResult {
+    const { totalLuck, totalMines, planets, tools, avgLuck, rarities, miner } =
+      entity;
+
+    return new MineLuckResult(
+      totalLuck,
+      totalMines,
+      planets,
+      tools,
+      avgLuck,
+      rarities,
+      miner
+    );
+  }
+}
+
+/**
  * Represents the response (DTO) of the /mineluck route.
  * A serialized object of this class is returned as result of calling /mineluck route.
  *
@@ -63,7 +103,7 @@ export class MineLuck {
  */
 export class MineLuckResponse {
   private constructor(
-    public readonly results: MineLuck[],
+    public readonly results: MineLuckResult[],
     public readonly count: number
   ) {}
 
@@ -76,7 +116,10 @@ export class MineLuckResponse {
    * @returns {MineLuckResponse} instance of `MineLuckResponse`
    */
   public static create(mineLuckCollection: MineLuck[]): MineLuckResponse {
-    return new MineLuckResponse(mineLuckCollection, mineLuckCollection.length);
+    return new MineLuckResponse(
+      mineLuckCollection.map(entity => MineLuckResult.fromEntity(entity)),
+      mineLuckCollection.length
+    );
   }
 }
 

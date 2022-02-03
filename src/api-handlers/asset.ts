@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { assetSchema } from '../schemas';
 import { NotFoundError } from '../errors';
 const { Long } = require('mongodb');
@@ -52,6 +54,7 @@ const getAsset = async (fastify, request) => {
     if (schema_name) {
       query['data.schema_name'] = schema_name;
     }
+
     const assets = await collection.find(query, { skip: offset }).limit(limit);
     // console.log(query, await assets.count())
 
