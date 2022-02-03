@@ -1,12 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { minesSchema } from '../schemas';
 import { parseDate } from '../include/parsedate';
-
-// const {TextDecoder, TextEncoder} = require('text-encoding');
-// const {Api, JsonRpc} = require('@jafri/eosjs2');
-// const fetch = require('node-fetch');
-// const {getProfiles} = require('../profile-helper.js');
-
-// const {loadConfig} = require('../functions');
 
 const getMines = async (fastify, request) => {
   const limit = request.query.limit || 20;
@@ -25,15 +19,13 @@ const getMines = async (fastify, request) => {
     throw new Error('Limit maximum is 5000');
   }
 
-  let res = null,
-    query: any = {};
-  // let has_query = false
+  let res = null;
+  let query: any = {};
   const db = fastify.mongo.db;
   const collection = db.collection('mines');
 
   if (miner) {
     query.miner = miner;
-    // has_query = true
   }
   if (landowner) {
     if (landowner.indexOf(',') !== -1) {
@@ -42,7 +34,6 @@ const getMines = async (fastify, request) => {
     } else {
       query.landowner = landowner;
     }
-    // has_query = true
   }
   if (land_id) {
     if (land_id.indexOf(',') !== -1) {
@@ -51,26 +42,21 @@ const getMines = async (fastify, request) => {
     } else {
       query.land_id = land_id;
     }
-    console.log(query);
-    // has_query = true
   }
   if (planet_name) {
     query.planet_name = planet_name;
-    // has_query = true
   }
   if (from) {
     if (typeof query.block_timestamp === 'undefined') {
       query.block_timestamp = {};
     }
     query.block_timestamp.$gte = new Date(parseDate(from));
-    // has_query = true
   }
   if (to) {
     if (typeof query.block_timestamp === 'undefined') {
       query.block_timestamp = {};
     }
     query.block_timestamp.$lt = new Date(parseDate(to));
-    // has_query = true
   }
   let _sort = -1;
   if (sort === 'asc' || sort === 'desc') {
@@ -79,7 +65,6 @@ const getMines = async (fastify, request) => {
     throw new Error('Sort must be either "asc" or "desc"');
   }
 
-  // perform the query
   if (global_sequence_from) {
     if (typeof query.global_sequence === 'undefined') {
       query.global_sequence = {};
@@ -102,12 +87,7 @@ const getMines = async (fastify, request) => {
   await res.forEach(r => {
     results.push(r);
   });
-  // const count_query = query
-  // if (count_query.global_sequence){
-  //     delete count_query.global_sequence
-  // }
 
-  // return {results, count: await collection.find(count_query).count()}
   return { results, count: -1 };
 };
 

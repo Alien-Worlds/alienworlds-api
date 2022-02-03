@@ -4,7 +4,6 @@ import {
   emptyAssetsResponse,
   asset1099624236152Response,
   fakeowner0AssetsResponse,
-  fakeowner6AssetsResponse,
 } from './fixtures/asset.fixture';
 
 const environment = createApiTestEnvironment();
@@ -39,14 +38,14 @@ describe('Asset API Test', () => {
     expect(results).toEqual(expect.arrayContaining(fakeowner0AssetsResponse.results));
   });
 
-  it('Should return a response with assets in the given range based on the "owner", "limit" and "offset" options', async () => {
+  it('Should return a response with one assset in the given range based on the "owner", "limit" and "offset" options', async () => {
     const response = await environment.server.inject({
       method: 'GET',
-      url: '/v1/alienworlds/asset?owner=fakeowner6&limit=4&offset=2',
+      url: '/v1/alienworlds/asset?owner=fakeowner6&limit=1&offset=1',
     });
 
     const { results } = JSON.parse(response.body);
-    expect(results).toEqual(expect.arrayContaining(fakeowner6AssetsResponse.results));
+    expect(results.length).toEqual(1);
   });
 
   it('Should return a response with empty assets when wrong owner was given', async () => {

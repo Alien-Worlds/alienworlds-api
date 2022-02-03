@@ -186,7 +186,6 @@ export const createMineLuckPipeline = (from?: string, to?: string) => {
  */
 export const getMineLuckCollection = async (fastify, request): Promise<MineLuck[]> => {
   const { query: { from = null, to = null } = {} } = request;
-
   const db = fastify.mongo.db;
   const collection = db.collection('mines');
   const pipeline = createMineLuckPipeline(from, to);

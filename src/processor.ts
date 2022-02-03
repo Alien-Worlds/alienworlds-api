@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
 /* eslint-disable no-var */
 /* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-case-declarations */
+
 import { StatsDisplay } from './include/statsdisplay';
 
 import { Amq } from './connections/amq';
@@ -85,10 +86,7 @@ class AlienAPIProcessor {
   }
 
   async get_schema(schema_name, collection_name) {
-    if (
-      typeof this.schema_cache[`${schema_name}::${collection_name}`] !==
-      'undefined'
-    ) {
+    if (typeof this.schema_cache[`${schema_name}::${collection_name}`] !== 'undefined') {
       return this.schema_cache[`${schema_name}::${collection_name}`];
     }
 
@@ -102,9 +100,7 @@ class AlienAPIProcessor {
     });
 
     if (!schema_res.rows.length) {
-      console.error(
-        `Could not find schema with name ${schema_name} in collection ${collection_name}`
-      );
+      console.error(`Could not find schema with name ${schema_name} in collection ${collection_name}`);
       return null;
     }
 
@@ -134,26 +130,18 @@ class AlienAPIProcessor {
     }
 
     const schema_name = template_res.rows[0].schema_name;
-    const schema = await this.get_schema(
-      schema_name,
-      this.config.atomicAssets.collection
-    );
+    const schema = await this.get_schema(schema_name, this.config.atomicAssets.collection);
 
     if (schema) {
       try {
-        const template_data = deserialize(
-          template_res.rows[0].immutable_serialized_data,
-          schema
-        );
+        const template_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
 
         this.template_cache[template_id] = template_data;
 
         return template_data;
       } catch (e) {
         console.error(`Could not deserialize atomic data ${e.message}`);
-        delete this.schema_cache[
-          `${schema_name}::${this.config.atomicAssets.collection}`
-        ];
+        delete this.schema_cache[`${schema_name}::${this.config.atomicAssets.collection}`];
         throw e;
       }
     } else {
@@ -200,9 +188,7 @@ class AlienAPIProcessor {
 
           // loop through everything and see if the index errored
           for (let i = 0; i < inserts[col_name].length; i++) {
-            const write_error = err.result.result.writeErrors.find(
-              we => we.err.index === i
-            );
+            const write_error = err.result.result.writeErrors.find(we => we.err.index === i);
             if (write_error) {
               if (write_error.err.code === 11000) {
                 // console.log('duplicate')
@@ -240,16 +226,7 @@ class AlienAPIProcessor {
     }
   }
 
-  async save_action_data(
-    account,
-    name,
-    data,
-    block_num,
-    block_timestamp,
-    global_sequence,
-    tx_id,
-    job
-  ) {
+  async save_action_data(account, name, data, block_num, block_timestamp, global_sequence, tx_id, job) {
     const combined = `${account}::${name}`;
     // console.log(combined);
     let queued = false;
@@ -262,9 +239,7 @@ class AlienAPIProcessor {
           store_data.bounty = parseInt(bounty_str.replace('.', ''));
           store_data.block_num = Long.fromString(block_num.toString());
           store_data.block_timestamp = block_timestamp;
-          store_data.global_sequence = Long.fromString(
-            global_sequence.toString()
-          );
+          store_data.global_sequence = Long.fromString(global_sequence.toString());
           store_data.bag_items = data.bag_items.map(b => Long.fromString(b));
           store_data.tx_id = tx_id;
 
@@ -283,14 +258,10 @@ class AlienAPIProcessor {
         case 'm.federation::logrand':
           store_data.block_num = Long.fromString(block_num.toString());
           store_data.block_timestamp = block_timestamp;
-          store_data.global_sequence = Long.fromString(
-            global_sequence.toString()
-          );
+          store_data.global_sequence = Long.fromString(global_sequence.toString());
 
           if (store_data.template_id > 0) {
-            store_data.template_data = await this.template_data(
-              store_data.template_id
-            );
+            store_data.template_data = await this.template_data(store_data.template_id);
 
             const col = this.mongo.collection('nfts');
             await col.insertOne(store_data);
@@ -307,32 +278,24 @@ class AlienAPIProcessor {
           store_data = {};
           store_data.block_num = Long.fromString(block_num.toString());
           store_data.block_timestamp = block_timestamp;
-          store_data.global_sequence = Long.fromString(
-            global_sequence.toString()
-          );
+          store_data.global_sequence = Long.fromString(global_sequence.toString());
 
           store_data.type = name.replace('log', '');
           switch (store_data.type) {
             case 'transfer':
               store_data.from = data.from;
               store_data.to = data.to;
-              store_data.asset_ids = data.asset_ids.map(a =>
-                Long.fromString(a.toString())
-              );
+              store_data.asset_ids = data.asset_ids.map(a => Long.fromString(a.toString()));
               break;
             case 'mint':
               store_data.from = null;
               store_data.to = data.new_asset_owner;
-              store_data.asset_ids = [
-                Long.fromString(data.asset_id.toString()),
-              ];
+              store_data.asset_ids = [Long.fromString(data.asset_id.toString())];
               break;
             case 'burn':
               store_data.from = data.asset_owner;
               store_data.to = null;
-              store_data.asset_ids = [
-                Long.fromString(data.asset_id.toString()),
-              ];
+              store_data.asset_ids = [Long.fromString(data.asset_id.toString())];
               break;
           }
 
@@ -341,10 +304,7 @@ class AlienAPIProcessor {
 
           for (let a = 0; a < store_data.asset_ids.length; a++) {
             const asset_id = Buffer.allocUnsafe(8);
-            asset_id.writeBigInt64BE(
-              BigInt(store_data.asset_ids[a].toString()),
-              0
-            );
+            asset_id.writeBigInt64BE(BigInt(store_data.asset_ids[a].toString()), 0);
             this.amq.send('recalc_asset', Buffer.concat([asset_id]));
           }
           break;
@@ -393,32 +353,13 @@ class AlienAPIProcessor {
     const data_arr = sb.getBytes();
 
     try {
-      const data = await this.deserializer.deserialize_action(
-        account,
-        name,
-        Buffer.from(data_arr),
-        block_num
-      );
-      await this.save_action_data(
-        account,
-        name,
-        data,
-        block_num,
-        block_timestamp,
-        global_sequence,
-        trx_id,
-        job
-      );
+      const data = await this.deserializer.deserialize_action(account, name, Buffer.from(data_arr), block_num);
+      await this.save_action_data(account, name, data, block_num, block_timestamp, global_sequence, trx_id, job);
 
       // await this.amq.ack(job);
     } catch (e) {
-      console.error(
-        `Error processing job for ${account}::${name} - ${e.message} in block ${block_num} (${trx_id})`
-      );
-      if (
-        e.message.indexOf('key') !== -1 &&
-        e.message.indexOf('must not contain') !== -1
-      ) {
+      console.error(`Error processing job for ${account}::${name} - ${e.message} in block ${block_num} (${trx_id})`);
+      if (e.message.indexOf('key') !== -1 && e.message.indexOf('must not contain') !== -1) {
         // ignore errors in data like one in https://wax.bloks.io/transaction/8a054d3fb4d0fdfe7141d4be3f59250539aa3d65ef82b6a0c0fef8a6118e7580
         await this.amq.ack(job);
       } else {
@@ -489,9 +430,7 @@ class AlienAPIProcessor {
     });
 
     if (!res.rows.length) {
-      throw new Error(
-        `NOTFOUND : Could not find asset ${asset_id} owned by ${owner}`
-      );
+      throw new Error(`NOTFOUND : Could not find asset ${asset_id} owned by ${owner}`);
     }
 
     const data: any = {};
@@ -508,14 +447,8 @@ class AlienAPIProcessor {
       limit: 1,
     });
 
-    const schema = await this.get_schema(
-      data.schema_name,
-      data.collection_name
-    );
-    data.immutable_serialized_data = deserialize(
-      template_res.rows[0].immutable_serialized_data,
-      schema
-    );
+    const schema = await this.get_schema(data.schema_name, data.collection_name);
+    data.immutable_serialized_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
 
     return data;
   }
@@ -572,13 +505,7 @@ const deserializer = new AbiDeserializer(`${__dirname}/abis`);
       switch (msg.type) {
         case 'processor':
           const stats = new StatsDisplay();
-          const api = new AlienAPIProcessor(
-            config,
-            deserializer,
-            amq,
-            mongo,
-            stats
-          );
+          const api = new AlienAPIProcessor(config, deserializer, amq, mongo, stats);
           api.start();
           break;
         case 'recalc':
