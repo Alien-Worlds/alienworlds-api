@@ -35,9 +35,7 @@ describe('Asset API Test', () => {
     });
 
     const { results } = JSON.parse(response.body);
-    expect(results).toEqual(
-      expect.arrayContaining(fakeowner0AssetsResponse.results)
-    );
+    expect(results).toEqual(expect.arrayContaining(fakeowner0AssetsResponse.results));
   });
 
   it('Should return a response with one assset in the given range based on the "owner", "limit" and "offset" options', async () => {
@@ -66,8 +64,6 @@ describe('Asset API Test', () => {
     });
 
     const { results } = JSON.parse(response.body);
-    expect(results).toEqual(
-      expect.arrayContaining(fakeowner1ToolWorldsSchemaAssetsResponse.results)
-    );
+    expect(results).toEqual(expect.arrayContaining(fakeowner1ToolWorldsSchemaAssetsResponse.results));
   });
 });

@@ -1,9 +1,5 @@
 import { createApiTestEnvironment } from '../environments';
-import {
-  emptyMineluckResponse,
-  mineluckOnlyJanuary2022Response,
-  mineluckResponse,
-} from './fixtures/mineluck.fixture';
+import { emptyMineluckResponse, mineluckOnlyJanuary2022Response, mineluckResponse } from './fixtures/mineluck.fixture';
 import { MineLuckResponse } from '../../src/api-handlers/mineluck';
 
 const environment = createApiTestEnvironment();
@@ -25,13 +21,9 @@ describe('Mineluck check', () => {
     });
 
     const data: MineLuckResponse = JSON.parse(response.body);
-    expect(data.results).toEqual(
-      expect.arrayContaining(mineluckResponse.results)
-    );
+    expect(data.results).toEqual(expect.arrayContaining(mineluckResponse.results));
     expect(data.count).toEqual(mineluckResponse.count);
-    expect(Object.keys(data).length).toEqual(
-      Object.keys(mineluckResponse).length
-    );
+    expect(Object.keys(data).length).toEqual(Object.keys(mineluckResponse).length);
   });
 
   it('Should return empty response when block timestamp is out of time range and "from" date was given', async () => {
@@ -58,12 +50,8 @@ describe('Mineluck check', () => {
       url: '/v1/alienworlds/mineluck?from=2022-01-01T00:00:00&to=2022-01-31T00:00:00',
     });
     const data: MineLuckResponse = JSON.parse(response.body);
-    expect(data.results).toEqual(
-      expect.arrayContaining(mineluckOnlyJanuary2022Response.results)
-    );
+    expect(data.results).toEqual(expect.arrayContaining(mineluckOnlyJanuary2022Response.results));
     expect(data.count).toEqual(mineluckOnlyJanuary2022Response.count);
-    expect(Object.keys(data).length).toEqual(
-      Object.keys(mineluckOnlyJanuary2022Response).length
-    );
+    expect(Object.keys(data).length).toEqual(Object.keys(mineluckOnlyJanuary2022Response).length);
   });
 });
