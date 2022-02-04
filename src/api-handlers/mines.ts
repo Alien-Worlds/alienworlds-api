@@ -8,12 +8,12 @@ import { parseDate } from '../include/parsedate';
 export type MinesSearchQuery = {
   block_timestamp?: { $gte?: Date; $lt?: Date };
   global_sequence?: { $gte?: number; $lt?: number };
-  miner?: any;
+  miner?: string;
   landowner?: { $in: string[] };
   land_id?: { $in: string[] };
   planet_name?: string;
-  tx_id?: any;
-  sort?: any;
+  tx_id?: string;
+  sort?: string;
 };
 
 /**
@@ -131,7 +131,8 @@ export class Mine {
       tx_id,
     } = dto;
 
-    const { invalid, error, delay, difficulty, ease, luck, commission } = params || {};
+    const { invalid, error, delay, difficulty, ease, luck, commission } =
+      params || {};
 
     return new Mine(
       _id,
@@ -249,7 +250,10 @@ export class MinesResponse {
    * @param {MineResult[]} results
    * @param {number} count
    */
-  private constructor(public readonly results: MineResult[], public readonly count: number = -1) {}
+  private constructor(
+    public readonly results: MineResult[],
+    public readonly count: number = -1
+  ) {}
 
   /**
    * Creates instances of the class MinesResponse
@@ -274,8 +278,20 @@ export class MinesResponse {
  * @param {MinesRequestQueryOptions} options query options
  * @returns {MinesSearchQuery}
  */
-export const buildQuery = (options: MinesRequestQueryOptions): MinesSearchQuery => {
-  const { from, to, global_sequence_from, global_sequence_to, miner, landowner, land_id, planet_name, tx_id } = options;
+export const buildQuery = (
+  options: MinesRequestQueryOptions
+): MinesSearchQuery => {
+  const {
+    from,
+    to,
+    global_sequence_from,
+    global_sequence_to,
+    miner,
+    landowner,
+    land_id,
+    planet_name,
+    tx_id,
+  } = options;
   let query: MinesSearchQuery = {};
 
   if (miner) {
@@ -357,7 +373,10 @@ export const getMinesCollection = async (fastify, request): Promise<Mine[]> => {
   const sort = getSortingDirectionByString(queryOptions.sort);
   const query = buildQuery(queryOptions);
   const mines: Mine[] = [];
-  const cursor = collection.find(query).sort({ global_sequence: sort }).limit(limit);
+  const cursor = collection
+    .find(query)
+    .sort({ global_sequence: sort })
+    .limit(limit);
 
   for await (const dto of cursor) {
     mines.push(Mine.fromDto(dto));
