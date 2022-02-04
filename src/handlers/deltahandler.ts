@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Config } from '../config';
 import { StatsDisplay } from '../include/statsdisplay';
 const { Serialize } = require('eosjs');

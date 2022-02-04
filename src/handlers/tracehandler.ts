@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-case-declarations */
 import { Config } from '../config';
 import { StatsDisplay } from '../include/statsdisplay';
@@ -7,7 +9,7 @@ export class TraceHandler {
   eos_rpc: typeof JsonRpc;
   eos_api: typeof Api;
   abis: Array<any>;
-  current_abi: String;
+  current_abi: string;
   amq: any;
   stats: StatsDisplay;
 
@@ -43,7 +45,7 @@ export class TraceHandler {
           const trx = trace[1];
           this.stats.add('txs');
 
-          for (let action of trx.action_traces) {
+          for (const action of trx.action_traces) {
             switch (action[0]) {
               case 'action_trace_v0':
                 if (

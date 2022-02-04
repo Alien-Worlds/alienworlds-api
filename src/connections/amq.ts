@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const Amqp = require('amqplib');
 
 export class Amq {
   logger: any;
   channel: any;
-  initialized: Boolean;
+  initialized: boolean;
   connection_errors: number;
   max_connection_errors: number;
   listeners: any;

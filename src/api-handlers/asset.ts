@@ -123,19 +123,26 @@ export class AssetResult {
       ease,
       luck,
     } = entity;
-    return new AssetResult(assetId, owner, collectionName, schemaName, templateId, {
-      cardid: cardId,
-      name,
-      img,
-      backimg: backImg,
-      rarity,
-      shine,
-      type,
-      delay,
-      difficulty,
-      ease,
-      luck,
-    });
+    return new AssetResult(
+      assetId,
+      owner,
+      collectionName,
+      schemaName,
+      templateId,
+      {
+        cardid: cardId,
+        name,
+        img,
+        backimg: backImg,
+        rarity,
+        shine,
+        type,
+        delay,
+        difficulty,
+        ease,
+        luck,
+      }
+    );
   }
 }
 
@@ -178,7 +185,19 @@ export class Asset {
       asset_id,
       owner,
       data: {
-        immutable_serialized_data: { cardid, name, img, backimg, rarity, shine, type, delay, difficulty, ease, luck },
+        immutable_serialized_data: {
+          cardid,
+          name,
+          img,
+          backimg,
+          rarity,
+          shine,
+          type,
+          delay,
+          difficulty,
+          ease,
+          luck,
+        },
         collection_name,
         schema_name,
         template_id,
@@ -225,7 +244,9 @@ export class AssetResponse {
    * @returns {AssetResponse} instance of `AssetResponse`
    */
   public static create(assets: Asset[]): AssetResponse {
-    return new AssetResponse(assets.map(asset => AssetResult.fromEntity(asset)));
+    return new AssetResponse(
+      assets.map(asset => AssetResult.fromEntity(asset))
+    );
   }
 }
 
@@ -243,7 +264,8 @@ export class AssetResponse {
  * @returns {Long[]} an array of Long Objects
  * @see {@link https://mongodb.github.io/node-mongodb-native/api-bson-generated/long.html} for further information about Long class.
  */
-export const buildLongIntListFromString = (value: string): Long[] => value.split(',').map(item => Long.fromString(item));
+export const buildLongIntListFromString = (value: string): Long[] =>
+  value.split(',').map(item => Long.fromString(item));
 
 /**
  * Connects to the MongoDB database and retrieves Asset documents based on the request options provided.
@@ -256,8 +278,17 @@ export const buildLongIntListFromString = (value: string): Long[] => value.split
  * @param request request object
  * @returns {Promise<Asset[]>} Collection of the `Asset` objects
  */
-export const getAssetsCollection = async (fastify, request): Promise<Asset[]> => {
-  const { limit = 20, offset = 0, id, owner, schema }: AssetRequestQueryOptions = request.query || {};
+export const getAssetsCollection = async (
+  fastify,
+  request
+): Promise<Asset[]> => {
+  const {
+    limit = 20,
+    offset = 0,
+    id,
+    owner,
+    schema,
+  }: AssetRequestQueryOptions = request.query || {};
   const collection = fastify.mongo.db.collection('assets');
   const assets: Asset[] = [];
   let cursor;

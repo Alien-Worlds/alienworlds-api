@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const MongoClient = require('mongodb').MongoClient;
 
 export async function connectMongo(config) {

@@ -1,4 +1,10 @@
-import { Asset, AssetDocument, AssetResponse, AssetResult, Long } from '../../asset';
+import {
+  Asset,
+  AssetDocument,
+  AssetResponse,
+  AssetResult,
+  Long,
+} from '../../asset';
 
 export const long_0: Long = {
   _bsontype: 'Long',

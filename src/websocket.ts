@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-case-declarations */
 import axon from 'axon';
 const sock = axon.socket('pub-emitter');
@@ -31,14 +33,14 @@ class WSTraceHandler {
         case 'transaction_trace_v0':
           const trx = trace[1];
 
-          for (let action of trx.action_traces) {
+          for (const action of trx.action_traces) {
             switch (action[0]) {
               case 'action_trace_v0':
                 if (
                   action[1].act.account === this.config.atomicAssets.contract
                 ) {
                   const data: any = {};
-                  let account: String = '';
+                  let account = '';
                   if (action[1].act.name === 'logmint') {
                     data.action = 'mint';
                     data.block_num = block_num;
