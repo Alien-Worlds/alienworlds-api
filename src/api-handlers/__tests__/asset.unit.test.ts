@@ -1,5 +1,11 @@
 import { getAssetsFastifyMock } from './mocks/asset.fastify.mock';
-import { Asset, AssetResponse, AssetResult, buildLongIntListFromString, getAssetsCollection } from '../asset';
+import {
+  Asset,
+  AssetResponse,
+  AssetResult,
+  buildLongIntListFromString,
+  getAssetsCollection,
+} from '../asset';
 import {
   emptyAssetResponse,
   long_0,
@@ -37,11 +43,16 @@ describe('AssetResponse unit tests', () => {
 
 describe('"buildLongIntListFromString" unit tests', () => {
   it('Should return AssetResponse object based on given Asset collection', async () => {
-    expect(buildLongIntListFromString('1099535583633,1099624236152')).toEqual([long_1099535583633, long_1099624236152]);
+    expect(buildLongIntListFromString('1099535583633,1099624236152')).toEqual([
+      long_1099535583633,
+      long_1099624236152,
+    ]);
   });
 
   it('Should return single', async () => {
-    expect(buildLongIntListFromString('1099624236152')).toEqual([long_1099624236152]);
+    expect(buildLongIntListFromString('1099624236152')).toEqual([
+      long_1099624236152,
+    ]);
   });
 
   it('Should throw error when null given', async () => {
@@ -59,25 +70,31 @@ describe('"buildLongIntListFromString" unit tests', () => {
 describe('"getAssetsCollection" unit tests', () => {
   it('Should return empty collection when no options were given', async () => {
     const findResult = [];
-    const collection = await getAssetsCollection(getAssetsFastifyMock({ findResult }), {});
+    const collection = await getAssetsCollection(
+      getAssetsFastifyMock({ findResult }),
+      {}
+    );
 
     expect(collection).toEqual([]);
   });
 
   it('Should return empty Asset collection when no documents were found', async () => {
     const findResult = [];
-    const collection = await getAssetsCollection(getAssetsFastifyMock({ findResult }), {
-      query: {
-        owner: 'fakeowner0',
-      },
-    });
+    const collection = await getAssetsCollection(
+      getAssetsFastifyMock({ findResult }),
+      {
+        query: {
+          owner: 'fakeowner0',
+        },
+      }
+    );
 
     expect(collection).toEqual([]);
   });
 
   it('Should throw an error when no document with the given "id" was found', async () => {
     const findResult = [];
-    const collection = await getAssetsCollection(getAssetsFastifyMock({ findResult }), {
+    await getAssetsCollection(getAssetsFastifyMock({ findResult }), {
       query: {
         id: '61f7f245a92817601180e8eb',
       },
@@ -88,48 +105,62 @@ describe('"getAssetsCollection" unit tests', () => {
 
   it('Should return the asset collection of the given "owner"', async () => {
     const findResult = [standardShovelAssetDocument, sampleAssetDocument];
-    const collection = await getAssetsCollection(getAssetsFastifyMock({ findResult }), {
-      query: {
-        owner: 'fakeowner0',
-      },
-    });
+    const collection = await getAssetsCollection(
+      getAssetsFastifyMock({ findResult }),
+      {
+        query: {
+          owner: 'fakeowner0',
+        },
+      }
+    );
 
-    expect(collection).toEqual(expect.arrayContaining([standardShovelAsset, sampleAsset]));
+    expect(collection).toEqual(
+      expect.arrayContaining([standardShovelAsset, sampleAsset])
+    );
   });
 
   it('Should return one asset of the given "owner" when a "limit" is given', async () => {
     const findResult = [standardShovelAssetDocument, sampleAssetDocument];
-    const collection = await getAssetsCollection(getAssetsFastifyMock({ findResult }), {
-      query: {
-        owner: 'fakeowner0',
-        limit: 1,
-      },
-    });
+    const collection = await getAssetsCollection(
+      getAssetsFastifyMock({ findResult }),
+      {
+        query: {
+          owner: 'fakeowner0',
+          limit: 1,
+        },
+      }
+    );
 
     expect(collection).toEqual([standardShovelAsset]);
   });
 
   it('Should return second asset of the given "owner" when a "limit" and "offset" are given', async () => {
     const findResult = [standardShovelAssetDocument, sampleAssetDocument];
-    const collection = await getAssetsCollection(getAssetsFastifyMock({ findResult }), {
-      query: {
-        owner: 'fakeowner0',
-        limit: 1,
-        offset: 1,
-      },
-    });
+    const collection = await getAssetsCollection(
+      getAssetsFastifyMock({ findResult }),
+      {
+        query: {
+          owner: 'fakeowner0',
+          limit: 1,
+          offset: 1,
+        },
+      }
+    );
 
     expect(collection).toEqual([sampleAsset]);
   });
 
   it('Should return the collection of assets of the given "owner" matching the given "schema"', async () => {
     const findResult = [sampleAssetDocument];
-    const collection = await getAssetsCollection(getAssetsFastifyMock({ findResult }), {
-      query: {
-        owner: 'fakeowner0',
-        schema: 'tools.worlds',
-      },
-    });
+    const collection = await getAssetsCollection(
+      getAssetsFastifyMock({ findResult }),
+      {
+        query: {
+          owner: 'fakeowner0',
+          schema: 'tools.worlds',
+        },
+      }
+    );
 
     expect(collection).toEqual([sampleAsset]);
   });

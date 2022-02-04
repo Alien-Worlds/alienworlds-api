@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { tokenSchema } from '../schemas';
 import fetch from 'node-fetch';
 import { ethers } from 'ethers';
@@ -131,13 +132,13 @@ const getTokenSupplies = async (fastify, request) => {
 
   let circulating = parseFloat(supply);
   const balance_promises = [];
-  for (let exclude_account of exclude_accounts_wax) {
+  for (const exclude_account of exclude_accounts_wax) {
     balance_promises.push(get_wax_balance(exclude_account));
   }
-  for (let exclude_account of exclude_accounts_eth) {
+  for (const exclude_account of exclude_accounts_eth) {
     balance_promises.push(get_eth_balance(exclude_account));
   }
-  for (let exclude_account of exclude_accounts_bsc) {
+  for (const exclude_account of exclude_accounts_bsc) {
     balance_promises.push(get_bsc_balance(exclude_account));
   }
 

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
 import { StatsDisplay } from './include/statsdisplay';
@@ -27,7 +29,7 @@ class AlienAPIBlockRange {
     const u8 = Uint8Array.from(buf);
 
     u8.forEach(function (i) {
-      var h = i.toString(16);
+      let h = i.toString(16);
       if (h.length % 2) {
         h = '0' + h;
       }

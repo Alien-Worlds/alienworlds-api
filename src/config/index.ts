@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { existsSync, statSync } from 'fs';
 import AppConfig from './app-config';
 

@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AssetDocument } from '../../asset';
 
-export const getAssetsFastifyMock = (options: { findResult: AssetDocument[] }) => {
+export const getAssetsFastifyMock = (options: {
+  findResult: AssetDocument[];
+}) => {
   const { findResult } = options;
   const assets = [...findResult];
 
@@ -8,7 +11,10 @@ export const getAssetsFastifyMock = (options: { findResult: AssetDocument[] }) =
     mongo: {
       db: {
         collection: (name: string) => ({
-          find: (query: { id?: string; owner?: string }, rest?: { skip?: number }) => {
+          find: (
+            query: { id?: string; owner?: string },
+            rest?: { skip?: number }
+          ) => {
             if (query?.id) {
               return {
                 count: async () => assets.length,
