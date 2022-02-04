@@ -72,7 +72,7 @@ describe('"createMineLuckPipeline" tool unit tests', () => {
 
   it('Should create mine luck aggregation pipeline with block timestamp range when "from" and "to" are given', () => {
     const from = '2022-01-20T19:29:41.294+00:00';
-    const to = '2022-01-21T19:29:41.29  4+00:00';
+    const to = '2022-01-21T19:29:41.294+00:00';
     const fromTimestamp = 1642706981000;
     const toTimestamp = 1642793381000;
 
