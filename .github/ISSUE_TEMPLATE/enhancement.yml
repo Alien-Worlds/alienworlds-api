@@ -6,8 +6,8 @@ body:
   - type: dropdown
     id: enhancement_type
     attributes:
-      label: Version
-      description: What version of our software are you running?
+      label: Type
+      description: What type of enhancement would you like to post?
       options:
         - Feature Request
         - Quality of Life Enhancement
