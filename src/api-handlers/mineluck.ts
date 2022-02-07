@@ -40,18 +40,9 @@ export class MineLuck {
    * @returns {MineLuck} instance of MineLuck
    */
   public static fromDto(dto: MineLuckDocument): MineLuck {
-    const { _id, total_luck, total_mines, planets, tools, avg_luck, rarities } =
-      dto;
+    const { _id, total_luck, total_mines, planets, tools, avg_luck, rarities } = dto;
 
-    return new MineLuck(
-      total_luck,
-      total_mines,
-      planets,
-      tools,
-      avg_luck,
-      rarities,
-      _id
-    );
+    return new MineLuck(total_luck, total_mines, planets, tools, avg_luck, rarities, _id);
   }
 }
 
@@ -80,18 +71,9 @@ export class MineLuckResult {
    * @returns {MineLuckResult} instance of MineLuck
    */
   public static fromEntity(entity: MineLuck): MineLuckResult {
-    const { totalLuck, totalMines, planets, tools, avgLuck, rarities, miner } =
-      entity;
+    const { totalLuck, totalMines, planets, tools, avgLuck, rarities, miner } = entity;
 
-    return new MineLuckResult(
-      totalLuck,
-      totalMines,
-      planets,
-      tools,
-      avgLuck,
-      rarities,
-      miner
-    );
+    return new MineLuckResult(totalLuck, totalMines, planets, tools, avgLuck, rarities, miner);
   }
 }
 
@@ -102,10 +84,7 @@ export class MineLuckResult {
  * @class
  */
 export class MineLuckResponse {
-  private constructor(
-    public readonly results: MineLuckResult[],
-    public readonly count: number
-  ) {}
+  private constructor(public readonly results: MineLuckResult[], public readonly count: number) {}
 
   /**
    * Creates instances of the class MineLuckResponse
@@ -205,10 +184,7 @@ export const createMineLuckPipeline = (from?: string, to?: string) => {
  * @param request request object
  * @returns {Promise<MineLuck[]>} List of the `MineLuck` objects
  */
-export const getMineLuckCollection = async (
-  fastify,
-  request
-): Promise<MineLuck[]> => {
+export const getMineLuckCollection = async (fastify, request): Promise<MineLuck[]> => {
   const { query: { from = null, to = null } = {} } = request;
   const db = fastify.mongo.db;
   const collection = db.collection('mines');
