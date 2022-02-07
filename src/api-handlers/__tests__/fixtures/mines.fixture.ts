@@ -1,8 +1,15 @@
-import { MineDocument, Mine, MineResult, MinesResponse, MinesSearchQuery, MinesRequestQueryOptions } from '../../mines';
+import {
+  MineDocument,
+  Mine,
+  MineResult,
+  MinesResponse,
+  MinesSearchQuery,
+  MinesRequestQueryOptions,
+} from '../../mines';
 
 export const sampleMineDocument: MineDocument = {
-  _id: '61fd3a3bcc6d81005d135799',
-  miner: '4uzia.wam',
+  _id: '62fd3a3bcc6d81005d135799',
+  miner: 'fake.wam',
   params: {
     invalid: 0,
     error: '',
@@ -15,7 +22,7 @@ export const sampleMineDocument: MineDocument = {
   bounty: 837,
   land_id: '1099512958747',
   planet_name: 'neri.world',
-  landowner: 'xkubg.wam',
+  landowner: 'fakeowner.wam',
   bag_items: [1099575138963, 1099571561418, 1099572783734],
   offset: 125,
   block_num: 165058267,
@@ -23,12 +30,12 @@ export const sampleMineDocument: MineDocument = {
     date: '2022-02-04T14:34:53Z',
   },
   global_sequence: 37593403954,
-  tx_id: '91f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
+  tx_id: '92f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
 };
 
 export const sampleMine: Mine = {
-  id: '61fd3a3bcc6d81005d135799',
-  miner: '4uzia.wam',
+  id: '62fd3a3bcc6d81005d135799',
+  miner: 'fake.wam',
   invalid: 0,
   error: '',
   delay: 560,
@@ -40,18 +47,18 @@ export const sampleMine: Mine = {
   bounty: 837,
   landId: '1099512958747',
   planetName: 'neri.world',
-  landowner: 'xkubg.wam',
+  landowner: 'fakeowner.wam',
   bagItems: [1099575138963, 1099571561418, 1099572783734],
   offset: 125,
   blockNum: 165058267,
   blockTimestamp: '2022-02-04T14:34:53Z',
   globalSequence: 37593403954,
-  txId: '91f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
+  txId: '92f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
 };
 
 export const sampleMineResult: MineResult = {
-  _id: '61fd3a3bcc6d81005d135799',
-  miner: '4uzia.wam',
+  _id: '62fd3a3bcc6d81005d135799',
+  miner: 'fake.wam',
   params: {
     invalid: 0,
     error: '',
@@ -64,13 +71,13 @@ export const sampleMineResult: MineResult = {
   bounty: 837,
   land_id: '1099512958747',
   planet_name: 'neri.world',
-  landowner: 'xkubg.wam',
+  landowner: 'fakeowner.wam',
   bag_items: [1099575138963, 1099571561418, 1099572783734],
   offset: 125,
   block_num: 165058267,
   block_timestamp: '2022-02-04T14:34:53Z',
   global_sequence: 37593403954,
-  tx_id: '91f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
+  tx_id: '92f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
 };
 
 export const sampleMinesResponse: MinesResponse = {
@@ -86,9 +93,9 @@ export const global_sequence_from = 37593403953;
 export const global_sequence_to = 37593403955;
 
 export const noTxIdMinesRequestQueryOptions: MinesRequestQueryOptions = {
-  miner: '4uzia.wam',
+  miner: 'fake.wam',
   planet_name: 'neri.world',
-  landowner: 'xkubg.wam',
+  landowner: 'fakeowner.wam',
   land_id: '1099512958747',
   from: block_timestamp_from,
   to: block_timestamp_to,
@@ -97,18 +104,21 @@ export const noTxIdMinesRequestQueryOptions: MinesRequestQueryOptions = {
 };
 
 export const noTxIdMinerSearchQuery: MinesSearchQuery = {
-  miner: '4uzia.wam',
+  miner: 'fake.wam',
   planet_name: 'neri.world',
-  landowner: { $in: ['xkubg.wam'] },
+  landowner: { $in: ['fakeowner.wam'] },
   land_id: { $in: ['1099512958747'] },
-  block_timestamp: { $gte: new Date(block_timestamp_fromTimestamp), $lt: new Date(block_timestamp_toTimestamp) },
+  block_timestamp: {
+    $gte: new Date(block_timestamp_fromTimestamp),
+    $lt: new Date(block_timestamp_toTimestamp),
+  },
   global_sequence: { $gte: global_sequence_from, $lt: global_sequence_to },
 };
 
 export const onlyTxIdMinesRequestQueryOptions: MinesRequestQueryOptions = {
-  tx_id: '91f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
+  tx_id: '92f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
 };
 
 export const onlyTxIdMinerSearchQuery: MinesSearchQuery = {
-  tx_id: '91f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
+  tx_id: '92f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
 };
