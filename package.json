@@ -58,6 +58,7 @@
     "file-exists": "^5.0.1",
     "http": "^0.0.1-security",
     "mongodb": "^3.6.3",
+    "newrelic": "^8.7.1",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
