@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-constant-condition */
+=======
+const newrelic = require('newrelic');
+>>>>>>> 9383bec (New Relic APM added)
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
 import { connectMongo } from './connections/mongo';
@@ -36,6 +40,8 @@ class AlienAPIFiller {
   async start() {
     let startBlock = this.config.start_block;
     let endBlock = 0xffffffff;
+
+    console.log('New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']');
 
     if (this.options.startBlock === -1) {
       console.log(`Finding start block from DB`);

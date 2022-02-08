@@ -1,5 +1,9 @@
 #!/usr/bin/env node
+<<<<<<< HEAD
 /* eslint-disable no-unused-vars */
+=======
+const newrelic = require('newrelic');
+>>>>>>> 9383bec (New Relic APM added)
 
 process.title = 'eosdac-api';
 
@@ -64,6 +68,7 @@ const server_port = config.api.port || '8800';
 
 server.ready().then(
   async () => {
+    console.log('New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']');
     console.log(`Started API server on ${server_address}:${server_port}`);
     await server.oas();
   },
