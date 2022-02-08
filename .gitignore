@@ -4,6 +4,10 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+newrelic_agent.log
+scripts/nrdiag-filelist.txt
+scripts/nrdiag-output.json
+scripts/nrdiag-output.zip
 
 # Runtime data
 pids

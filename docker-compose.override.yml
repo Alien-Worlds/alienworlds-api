@@ -1,6 +1,11 @@
 version: '3.7'
 services:
   api:
+    environment:
+      - NEW_RELIC_APP_NAME="Alien Worlds API Local Development"
+      - NEW_RELIC_LICENSE_KEY
+      - NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+      - NEW_RELIC_NO_CONFIG_FILE=true
     command: ['sh', '-c', 'yarn mongo-indexes && yarn api']
     depends_on:
       - db
@@ -8,6 +13,11 @@ services:
       - ./:/var/www/api
 
   processor:
+    environment:
+      - NEW_RELIC_APP_NAME="Alien Worlds Processor Local Development"
+      - NEW_RELIC_LICENSE_KEY
+      - NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+      - NEW_RELIC_NO_CONFIG_FILE=true
     command: ['sh', '-c', 'scripts/wq.sh && yarn processor']
     depends_on:
       - queue
@@ -15,6 +25,11 @@ services:
       - ./:/var/www/api
 
   blockrange:
+    environment:
+      - NEW_RELIC_APP_NAME="Alien Worlds Blockrange Local Development"
+      - NEW_RELIC_LICENSE_KEY
+      - NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+      - NEW_RELIC_NO_CONFIG_FILE=true
     command: ['sh', '-c', 'scripts/wq.sh && yarn blockrange']
     depends_on:
       - queue
@@ -22,6 +37,11 @@ services:
       - ./:/var/www/api
 
   filler:
+    environment:
+      - NEW_RELIC_APP_NAME="Alien Worlds Filler Local Development"
+      - NEW_RELIC_LICENSE_KEY
+      - NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+      - NEW_RELIC_NO_CONFIG_FILE=true
     command:
       ['sh', '-c', 'scripts/wq.sh && flags="${FILLER_FLAGS}" yarn filler']
     depends_on:
