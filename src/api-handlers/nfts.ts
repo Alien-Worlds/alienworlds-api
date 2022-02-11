@@ -69,7 +69,7 @@ export type NFTsRequestQueryOptions = {
   global_sequence_to?: number;
   sort?: 'asc' | 'desc';
   miner?: string;
-  rarity?: Rarity;
+  rarity?: string;
   land_id?: string;
   from?: string;
   to?: string;
@@ -84,9 +84,7 @@ export type NFTSearchQuery = {
   global_sequence?: { $gte?: number; $lt?: number };
   miner?: string;
   land_id?: { $in: string[] };
-  planet_name?: string;
-  rarity?: string;
-  sort?: string;
+  'template_data.rarity'?: string;
 };
 
 /**
@@ -214,14 +212,29 @@ export class NFT {
     const nftParams: NFTParams = {};
     const nftTemplateData: NFTTemplateData = {};
     const paramsKeys = Object.keys(params || {});
-    const templateDataKeys = Object.keys(template_data || {});
 
     for (const key of paramsKeys) {
       nftParams[key] = params[key];
     }
 
+    const { cardid, backimg, movecost, ...restTemplateData } =
+      template_data || {};
+    const templateDataKeys = Object.keys(restTemplateData || {});
+
     for (const key of templateDataKeys) {
       nftTemplateData[key] = template_data[key];
+    }
+
+    if (cardid) {
+      nftTemplateData.cardId = cardid;
+    }
+
+    if (backimg) {
+      nftTemplateData.backImg = backimg;
+    }
+
+    if (movecost) {
+      nftTemplateData.moveCost = movecost;
     }
 
     return new NFT(
@@ -289,14 +302,29 @@ export class NFTResult {
     const resultParams: NFTResultParams = {};
     const resultTemplateData: NFTResultTemplateData = {};
     const paramsKeys = Object.keys(params || {});
-    const templateDataKeys = Object.keys(templateData || {});
 
     for (const key of paramsKeys) {
       resultParams[key] = params[key];
     }
 
+    const { cardId, backImg, moveCost, ...restTemplateData } =
+      templateData || {};
+    const templateDataKeys = Object.keys(restTemplateData || {});
+
     for (const key of templateDataKeys) {
-      resultTemplateData[key] = templateData[key];
+      resultTemplateData[key] = restTemplateData[key];
+    }
+
+    if (cardId) {
+      resultTemplateData.cardid = cardId;
+    }
+
+    if (backImg) {
+      resultTemplateData.backimg = backImg;
+    }
+
+    if (moveCost) {
+      resultTemplateData.movecost = moveCost;
     }
 
     return new NFTResult(
