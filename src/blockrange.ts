@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 /* eslint-disable no-unused-vars */
-=======
 const newrelic = require('newrelic');
->>>>>>> 9383bec (New Relic APM added)
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
 // import { connectMongo } from './connections/mongo';

@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-case-declarations */
-=======
 const newrelic = require('newrelic');
->>>>>>> 9383bec (New Relic APM added)
 import { StatsDisplay } from './include/statsdisplay';
 
 import { Amq } from './connections/amq';
