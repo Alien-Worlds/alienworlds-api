@@ -31,8 +31,8 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: dacococi
-          password: ${{ secrets.DACOCOBOT_PAT }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Building dependencies
         run: docker compose run api yarn
