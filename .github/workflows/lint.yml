@@ -31,8 +31,8 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: dacococi
+          password: ${{ secrets.DACOCOBOT_PAT }}
 
       - name: Building dependencies
         run: docker compose run api yarn
@@ -49,6 +49,6 @@ jobs:
       - name: Generating Redoc
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          personal_token: ${{ secrets.DACOCOBOT_PAT }}
           publish_dir: ./openapi
           publish_branch: docs
