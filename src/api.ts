@@ -1,9 +1,6 @@
 #!/usr/bin/env node
-<<<<<<< HEAD
 /* eslint-disable no-unused-vars */
-=======
 const newrelic = require('newrelic');
->>>>>>> 9383bec (New Relic APM added)
 
 process.title = 'eosdac-api';
 
