@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import path from 'path';
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyOas from 'fastify-oas';

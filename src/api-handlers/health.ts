@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import healthSchema from '../schemas/health';
 
 // very basic health check
