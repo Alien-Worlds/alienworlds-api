@@ -1,7 +1,9 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable no-unused-vars */
 import axon from 'axon';
 const sock = axon.socket('pub-emitter');
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
-const { Api, JsonRpc, Serialize } = require('eosjs');
+const { Api, JsonRpc } = require('eosjs');
 const fetch = require('node-fetch');
 
 class WSTraceHandler {
