@@ -3,7 +3,7 @@ description: "File a bug/issue"
 title: "[BUG] <title>"
 labels: [bug, triage]
 body:
-  - type: Markdown
+    type: markdown
     attributes:
       value: |
         ![What if I told you ... that you have a software bug](https://memecreator.org/static/images/memes/5253066.jpg)
