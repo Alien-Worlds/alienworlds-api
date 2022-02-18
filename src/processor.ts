@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-case-declarations */
 import { StatsDisplay } from './include/statsdisplay';
 
 import { Amq } from './connections/amq';
@@ -9,8 +11,8 @@ const { Long } = require('mongodb');
 import { deserialize, ObjectSchema } from 'atomicassets';
 import * as cluster from 'cluster';
 import * as os from 'os';
-const crypto = require('crypto');
-const fetch = require('node-fetch');
+// const crypto = require('crypto');
+// const fetch = require('node-fetch');
 
 class AlienAPIProcessor {
   config: any;

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-unused-vars */
 
 process.title = 'eosdac-api';
 
@@ -6,7 +7,7 @@ process.title = 'eosdac-api';
 // const {loadConfig} = require('./functions');
 // const path = require('path');
 import path from 'path';
-import fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import fastifyOas from 'fastify-oas';
 import fastifyCors from 'fastify-cors';
 import fastifyAutoload from 'fastify-autoload';
