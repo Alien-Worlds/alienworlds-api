@@ -1,0 +1,29 @@
+name: ✨ Enhancement
+description: Submit a request for something to improve.
+title: "[ENHANCEMENT] <title>"
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: enhancement_type
+    attributes:
+      label: Type
+      description: What type of enhancement would you like to post?
+      options:
+        - Feature Request
+        - Quality of Life Enhancement
+        - CI/CD Enhancement
+        - Documentation Enhancement
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What is the motivation behind this improvement?
+      description: Explain why you want this enhancement
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe your Improvement
+      description: Provide a detailed description of what you would like to see enhanced.
+    validations:
+      required: true
