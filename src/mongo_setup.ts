@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-unused-vars */
 
 import { connectMongo } from './connections/mongo';
 
