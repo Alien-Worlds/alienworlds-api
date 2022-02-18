@@ -33,6 +33,7 @@ bower_components
 build/Release
 build/contracts
 build
+dist
 
 # Dependency directories
 node_modules/
@@ -58,7 +59,7 @@ metadata
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+.env*
 .secret
 
 ~$*.pptx

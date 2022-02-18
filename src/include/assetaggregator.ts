@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { Config } from '../config';
+
 const { Long } = require('mongodb');
 
 export class AssetAggregator {
-  config: any;
+  config: Config;
   mongo: any;
 
   constructor(config, mongo) {

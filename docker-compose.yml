@@ -4,8 +4,13 @@ services:
     image: ${DOCKER_REGISTRY}/alienworlds_api
     build:
       context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: '${NODE_ENV}'
       cache_from:
         - ${DOCKER_REGISTRY}/alienworlds_api
+    environment:
+      NODE_ENV: '${NODE_ENV}'
     restart: on-failure
     ports:
       - '8800:8800'
@@ -14,22 +19,37 @@ services:
     image: ${DOCKER_REGISTRY}/alienworlds_processor
     build:
       context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: '${NODE_ENV}'
       cache_from:
         - ${DOCKER_REGISTRY}/alienworlds_processor
+    environment:
+      NODE_ENV: '${NODE_ENV}'
     restart: on-failure
 
   blockrange:
     image: ${DOCKER_REGISTRY}/alienworlds_blockrange
     build:
       context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: '${NODE_ENV}'
       cache_from:
         - ${DOCKER_REGISTRY}/alienworlds_blockrange
+    environment:
+      NODE_ENV: '${NODE_ENV}'
     restart: on-failure
 
   filler:
     image: ${DOCKER_REGISTRY}/alienworlds_filler
     build:
       context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: '${NODE_ENV}'
       cache_from:
         - ${DOCKER_REGISTRY}/alienworlds_filler
+    environment:
+      NODE_ENV: '${NODE_ENV}'
     restart: on-failure

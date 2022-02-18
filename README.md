@@ -18,21 +18,35 @@
    cd alienworlds-api
    ```
 3. Edit local configuration (consult with an engineer from the team if needed)
-   - Edit `config.js`
-   - Copy `.env.example` to `.env` & configure as needed.
+   - Please edit `./src/config/config.ts`
 4. Build all docker images, download all dependencies + initialize database
+
    ```bash
    docker compose build
+
+   // or with a custom NODE_ENV that was used during build
+
+   NODE_ENV=your_environment docker compose build
+   ```
+
+   ```bash
    docker compose run api yarn
    docker compose run api yarn build
    docker compose run api yarn abis
    docker compose run api yarn mongo-indexes
    docker compose run api yarn husky
    ```
+
    _Hint: each command is individually documented below the "Commands List" section._
+
 5. Start all services -> the API will be accessible at `localhost:8080`
+
    ```bash
    docker compose up
+
+   // or with a custom NODE_ENV
+
+   NODE_ENV=your_environment docker compose up
    ```
 
 # Commands List
@@ -125,3 +139,11 @@ Requires a successful docker login to the registry first ([please read the offic
 - In local development mode the API is accessible at http://localhost:8900
 - Production API documentation is available at https://alien-worlds.github.io/alienworlds-api
 - For extending / updating our API documentation, please look into the official [fastify-oas](https://github.com/SkeLLLa/fastify-oas) documentation.
+
+# Run API tests
+
+```bash
+sh scripts/run-api-tests.sh
+```
+
+Keep in mind that this is a temporary solution.

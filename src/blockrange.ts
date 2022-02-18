@@ -1,18 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
-import { connectMongo } from './connections/mongo';
 import { StatsDisplay } from './include/statsdisplay';
 import { TraceHandler } from './handlers/tracehandler';
-import { DeltaHandler } from './handlers/deltahandler';
-import { program } from 'commander';
-import fetch from 'node-fetch';
 import * as cluster from 'cluster';
 import * as os from 'os';
+import config, { Config } from './config';
+
 const { Serialize } = require('eosjs');
 
 class AlienAPIBlockRange {
   state_receiver: typeof StateReceiver;
-  config: any;
+  config: Config;
   stats: any;
   amq: any;
 
@@ -29,7 +29,7 @@ class AlienAPIBlockRange {
     const u8 = Uint8Array.from(buf);
 
     u8.forEach(function (i) {
-      var h = i.toString(16);
+      let h = i.toString(16);
       if (h.length % 2) {
         h = '0' + h;
       }
@@ -56,8 +56,8 @@ class AlienAPIBlockRange {
 
     const statereceiver_config = {
       eos: {
-        wsEndpoint: this.config.ship_endpoints[0],
-        chainId: this.config.chain_id,
+        wsEndpoint: this.config.shipEndpoints[0],
+        chainId: this.config.chainId,
         endpoint: this.config.endpoints[0],
       },
     };
@@ -67,11 +67,11 @@ class AlienAPIBlockRange {
       amq: this.amq,
       stats: this.stats,
     });
-    const delta_handler = new DeltaHandler({
-      config: this.config,
-      amq: this.amq,
-      stats: this.stats,
-    });
+    // const delta_handler = new DeltaHandler({
+    //   config: this.config,
+    //   amq: this.amq,
+    //   stats: this.stats,
+    // });
 
     this.state_receiver = new StateReceiver({
       startBlock: from.toString(),
@@ -96,13 +96,11 @@ class AlienAPIBlockRange {
 }
 
 (async () => {
-  const config = require(`./config`);
-
-  const amq = new Amq(config.amq);
+  const amq = new Amq(config.amqConnectionString);
   await amq.init();
 
   if (cluster.isMaster) {
-    let threads = parseInt(config.blockrange_threads);
+    let threads = config.blockrangeThreads;
     if (threads === 0 || isNaN(threads)) {
       const cpus = os.cpus().length;
       threads = cpus - 4;

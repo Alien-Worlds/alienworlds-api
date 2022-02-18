@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { Config } from '../config';
 import { StatsDisplay } from '../include/statsdisplay';
 const { Serialize } = require('eosjs');
 
 export class DeltaHandler {
-  config: any;
+  config: Config;
   amq: any;
   stats: StatsDisplay;
 
@@ -38,7 +41,8 @@ export class DeltaHandler {
                 sb.get(); // ?
                 code = sb.getName();
 
-                if (code === this.config.atomicassets.contract) {
+                if (code === this.config.atomicAssets.contract) {
+                  // const scope = sb.getName();
                   const table = sb.getName();
 
                   if (

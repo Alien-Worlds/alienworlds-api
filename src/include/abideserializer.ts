@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const nodeAbieos = require('@eosrio/node-abieos');
 
 export class AbiDeserializer {
   abis: Array<any>;
-  dir: String;
-  loaded: Boolean;
-  current_abi: String;
+  dir: string;
+  loaded: boolean;
+  current_abi: string;
 
   constructor(dir) {
     this.dir = dir;

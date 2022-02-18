@@ -1,11 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-case-declarations */
 import axon from 'axon';
 const sock = axon.socket('pub-emitter');
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
-const { Api, JsonRpc, Serialize } = require('eosjs');
+const { Api, JsonRpc } = require('eosjs');
 const fetch = require('node-fetch');
+import config, { Config } from './config';
 
 class WSTraceHandler {
-  config: any;
+  config: Config;
   sock: any;
   eos_rpc: typeof JsonRpc;
   eos_api: typeof Api;
@@ -23,20 +27,20 @@ class WSTraceHandler {
     });
   }
 
-  async processTrace(block_num, traces, block_timestamp) {
+  async processTrace(block_num, traces) {
     for (const trace of traces) {
       switch (trace[0]) {
         case 'transaction_trace_v0':
           const trx = trace[1];
 
-          for (let action of trx.action_traces) {
+          for (const action of trx.action_traces) {
             switch (action[0]) {
               case 'action_trace_v0':
                 if (
-                  action[1].act.account === this.config.atomicassets.contract
+                  action[1].act.account === this.config.atomicAssets.contract
                 ) {
                   const data: any = {};
-                  let account: String = '';
+                  let account = '';
                   if (action[1].act.name === 'logmint') {
                     data.action = 'mint';
                     data.block_num = block_num;
@@ -76,16 +80,14 @@ class WSTraceHandler {
 }
 
 (async () => {
-  const config = require(`./config`);
-
   const eos_rpc = new JsonRpc(config.endpoints[0], { fetch });
   const info = await eos_rpc.get_info();
   const startBlock = info.head_block_num;
 
   const statereceiver_config = {
     eos: {
-      wsEndpoint: config.ship_endpoints[0],
-      chainId: config.chain_id,
+      wsEndpoint: config.shipEndpoints[0],
+      chainId: config.chainId,
       endpoint: config.endpoints[0],
     },
   };

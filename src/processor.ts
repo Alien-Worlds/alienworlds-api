@@ -1,3 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prefer-const */
+/* eslint-disable no-var */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-case-declarations */
+
 import { StatsDisplay } from './include/statsdisplay';
 
 import { Amq } from './connections/amq';
@@ -9,11 +16,10 @@ const { Long } = require('mongodb');
 import { deserialize, ObjectSchema } from 'atomicassets';
 import * as cluster from 'cluster';
 import * as os from 'os';
-const crypto = require('crypto');
-const fetch = require('node-fetch');
+import config, { Config } from './config';
 
 class AlienAPIProcessor {
-  config: any;
+  config: Config;
   amq: Amq;
   deserializer: AbiDeserializer;
   mongo: any;
@@ -45,7 +51,7 @@ class AlienAPIProcessor {
     this.api = new Api({
       rpc: this.rpc,
       signatureProvider: null,
-      chainId: this.config.chain_id,
+      chainId: this.config.chainId,
       textDecoder: new TextDecoder(),
       textEncoder: new TextEncoder(),
     });
@@ -80,15 +86,12 @@ class AlienAPIProcessor {
   }
 
   async get_schema(schema_name, collection_name) {
-    if (
-      typeof this.schema_cache[`${schema_name}::${collection_name}`] !==
-      'undefined'
-    ) {
+    if (typeof this.schema_cache[`${schema_name}::${collection_name}`] !== 'undefined') {
       return this.schema_cache[`${schema_name}::${collection_name}`];
     }
 
     const schema_res = await this.rpc.get_table_rows({
-      code: this.config.atomicassets.contract,
+      code: this.config.atomicAssets.contract,
       scope: collection_name,
       table: 'schemas',
       lower_bound: schema_name,
@@ -97,9 +100,7 @@ class AlienAPIProcessor {
     });
 
     if (!schema_res.rows.length) {
-      console.error(
-        `Could not find schema with name ${schema_name} in collection ${collection_name}`
-      );
+      console.error(`Could not find schema with name ${schema_name} in collection ${collection_name}`);
       return null;
     }
 
@@ -116,8 +117,8 @@ class AlienAPIProcessor {
     }
 
     const template_res = await this.rpc.get_table_rows({
-      code: this.config.atomicassets.contract,
-      scope: this.config.atomicassets.collection,
+      code: this.config.atomicAssets.contract,
+      scope: this.config.atomicAssets.collection,
       table: 'templates',
       lower_bound: template_id,
       upper_bound: template_id,
@@ -129,26 +130,18 @@ class AlienAPIProcessor {
     }
 
     const schema_name = template_res.rows[0].schema_name;
-    const schema = await this.get_schema(
-      schema_name,
-      this.config.atomicassets.collection
-    );
+    const schema = await this.get_schema(schema_name, this.config.atomicAssets.collection);
 
     if (schema) {
       try {
-        const template_data = deserialize(
-          template_res.rows[0].immutable_serialized_data,
-          schema
-        );
+        const template_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
 
         this.template_cache[template_id] = template_data;
 
         return template_data;
       } catch (e) {
         console.error(`Could not deserialize atomic data ${e.message}`);
-        delete this.schema_cache[
-          `${schema_name}::${this.config.atomicassets.collection}`
-        ];
+        delete this.schema_cache[`${schema_name}::${this.config.atomicAssets.collection}`];
         throw e;
       }
     } else {
@@ -177,13 +170,13 @@ class AlienAPIProcessor {
 
       // testing
       /*const to_delete = [];
-            for (let d=0;d<documents.length;d++){
-                if (d % 2 === 0){
-                    // console.log(documents[d])
-                    to_delete.push(documents[d].global_sequence)
-                }
-            }
-            const delres = await col.deleteMany({global_sequence: {$in: to_delete}});*/
+      for (let d=0;d<documents.length;d++){
+          if (d % 2 === 0){
+              // console.log(documents[d])
+              to_delete.push(documents[d].global_sequence)
+          }
+      }
+      const delres = await col.deleteMany({global_sequence: {$in: to_delete}});*/
 
       col.insertMany(documents, { ordered: false }, (err, res) => {
         // console.log(err, res);
@@ -195,9 +188,7 @@ class AlienAPIProcessor {
 
           // loop through everything and see if the index errored
           for (let i = 0; i < inserts[col_name].length; i++) {
-            const write_error = err.result.result.writeErrors.find(
-              we => we.err.index === i
-            );
+            const write_error = err.result.result.writeErrors.find(we => we.err.index === i);
             if (write_error) {
               if (write_error.err.code === 11000) {
                 // console.log('duplicate')
@@ -221,9 +212,9 @@ class AlienAPIProcessor {
           }
 
           /*for (let e = 0; e < err.result.result.writeErrors.length; e++){
-                        const write_error = err.result.result.writeErrors[e];
-                        console.log(write_error.err.op)
-                    }*/
+              const write_error = err.result.result.writeErrors[e];
+              console.log(write_error.err.op)
+          }*/
         } else if (res) {
           // console.log('SUCCESS', res)
           // all documents inserted
@@ -235,16 +226,7 @@ class AlienAPIProcessor {
     }
   }
 
-  async save_action_data(
-    account,
-    name,
-    data,
-    block_num,
-    block_timestamp,
-    global_sequence,
-    tx_id,
-    job
-  ) {
+  async save_action_data(account, name, data, block_num, block_timestamp, global_sequence, tx_id, job) {
     const combined = `${account}::${name}`;
     // console.log(combined);
     let queued = false;
@@ -257,13 +239,11 @@ class AlienAPIProcessor {
           store_data.bounty = parseInt(bounty_str.replace('.', ''));
           store_data.block_num = Long.fromString(block_num.toString());
           store_data.block_timestamp = block_timestamp;
-          store_data.global_sequence = Long.fromString(
-            global_sequence.toString()
-          );
+          store_data.global_sequence = Long.fromString(global_sequence.toString());
           store_data.bag_items = data.bag_items.map(b => Long.fromString(b));
           store_data.tx_id = tx_id;
 
-          const col = this.mongo.collection('mines');
+          // const col = this.mongo.collection('mines');
           // console.log(`Saving data for ${account}::${name}`, data);
           // console.log(`Insert queue`)
           this.insert_queue.push({
@@ -278,23 +258,19 @@ class AlienAPIProcessor {
         case 'm.federation::logrand':
           store_data.block_num = Long.fromString(block_num.toString());
           store_data.block_timestamp = block_timestamp;
-          store_data.global_sequence = Long.fromString(
-            global_sequence.toString()
-          );
+          store_data.global_sequence = Long.fromString(global_sequence.toString());
 
           if (store_data.template_id > 0) {
-            store_data.template_data = await this.template_data(
-              store_data.template_id
-            );
+            store_data.template_data = await this.template_data(store_data.template_id);
 
             const col = this.mongo.collection('nfts');
-            const res = await col.insertOne(store_data);
+            await col.insertOne(store_data);
           }
           break;
-        case `${this.config.atomicassets.contract}::logtransfer`:
-        case `${this.config.atomicassets.contract}::logmint`:
-        case `${this.config.atomicassets.contract}::logburn`:
-          if (data.collection_name !== this.config.atomicassets.collection) {
+        case `${this.config.atomicAssets.contract}::logtransfer`:
+        case `${this.config.atomicAssets.contract}::logmint`:
+        case `${this.config.atomicAssets.contract}::logburn`:
+          if (data.collection_name !== this.config.atomicAssets.collection) {
             await this.amq.ack(job);
             return;
           }
@@ -302,44 +278,33 @@ class AlienAPIProcessor {
           store_data = {};
           store_data.block_num = Long.fromString(block_num.toString());
           store_data.block_timestamp = block_timestamp;
-          store_data.global_sequence = Long.fromString(
-            global_sequence.toString()
-          );
+          store_data.global_sequence = Long.fromString(global_sequence.toString());
 
           store_data.type = name.replace('log', '');
           switch (store_data.type) {
             case 'transfer':
               store_data.from = data.from;
               store_data.to = data.to;
-              store_data.asset_ids = data.asset_ids.map(a =>
-                Long.fromString(a.toString())
-              );
+              store_data.asset_ids = data.asset_ids.map(a => Long.fromString(a.toString()));
               break;
             case 'mint':
               store_data.from = null;
               store_data.to = data.new_asset_owner;
-              store_data.asset_ids = [
-                Long.fromString(data.asset_id.toString()),
-              ];
+              store_data.asset_ids = [Long.fromString(data.asset_id.toString())];
               break;
             case 'burn':
               store_data.from = data.asset_owner;
               store_data.to = null;
-              store_data.asset_ids = [
-                Long.fromString(data.asset_id.toString()),
-              ];
+              store_data.asset_ids = [Long.fromString(data.asset_id.toString())];
               break;
           }
 
           const col_t = this.mongo.collection('atomictransfers');
-          const res_t = await col_t.insertOne(store_data);
+          await col_t.insertOne(store_data);
 
           for (let a = 0; a < store_data.asset_ids.length; a++) {
             const asset_id = Buffer.allocUnsafe(8);
-            asset_id.writeBigInt64BE(
-              BigInt(store_data.asset_ids[a].toString()),
-              0
-            );
+            asset_id.writeBigInt64BE(BigInt(store_data.asset_ids[a].toString()), 0);
             this.amq.send('recalc_asset', Buffer.concat([asset_id]));
           }
           break;
@@ -388,32 +353,13 @@ class AlienAPIProcessor {
     const data_arr = sb.getBytes();
 
     try {
-      const data = await this.deserializer.deserialize_action(
-        account,
-        name,
-        Buffer.from(data_arr),
-        block_num
-      );
-      await this.save_action_data(
-        account,
-        name,
-        data,
-        block_num,
-        block_timestamp,
-        global_sequence,
-        trx_id,
-        job
-      );
+      const data = await this.deserializer.deserialize_action(account, name, Buffer.from(data_arr), block_num);
+      await this.save_action_data(account, name, data, block_num, block_timestamp, global_sequence, trx_id, job);
 
       // await this.amq.ack(job);
     } catch (e) {
-      console.error(
-        `Error processing job for ${account}::${name} - ${e.message} in block ${block_num} (${trx_id})`
-      );
-      if (
-        e.message.indexOf('key') !== -1 &&
-        e.message.indexOf('must not contain') !== -1
-      ) {
+      console.error(`Error processing job for ${account}::${name} - ${e.message} in block ${block_num} (${trx_id})`);
+      if (e.message.indexOf('key') !== -1 && e.message.indexOf('must not contain') !== -1) {
         // ignore errors in data like one in https://wax.bloks.io/transaction/8a054d3fb4d0fdfe7141d4be3f59250539aa3d65ef82b6a0c0fef8a6118e7580
         await this.amq.ack(job);
       } else {
@@ -475,7 +421,7 @@ class AlienAPIProcessor {
 
   async get_asset_data(asset_id, owner) {
     const res = await this.rpc.get_table_rows({
-      code: this.config.atomicassets.contract,
+      code: this.config.atomicAssets.contract,
       scope: owner,
       table: 'assets',
       lower_bound: asset_id,
@@ -484,9 +430,7 @@ class AlienAPIProcessor {
     });
 
     if (!res.rows.length) {
-      throw new Error(
-        `NOTFOUND : Could not find asset ${asset_id} owned by ${owner}`
-      );
+      throw new Error(`NOTFOUND : Could not find asset ${asset_id} owned by ${owner}`);
     }
 
     const data: any = {};
@@ -495,7 +439,7 @@ class AlienAPIProcessor {
     data.template_id = res.rows[0].template_id;
 
     const template_res = await this.rpc.get_table_rows({
-      code: this.config.atomicassets.contract,
+      code: this.config.atomicAssets.contract,
       scope: data.collection_name,
       table: 'templates',
       lower_bound: data.template_id,
@@ -503,14 +447,8 @@ class AlienAPIProcessor {
       limit: 1,
     });
 
-    const schema = await this.get_schema(
-      data.schema_name,
-      data.collection_name
-    );
-    data.immutable_serialized_data = deserialize(
-      template_res.rows[0].immutable_serialized_data,
-      schema
-    );
+    const schema = await this.get_schema(data.schema_name, data.collection_name);
+    data.immutable_serialized_data = deserialize(template_res.rows[0].immutable_serialized_data, schema);
 
     return data;
   }
@@ -519,9 +457,9 @@ class AlienAPIProcessor {
 const deserializer = new AbiDeserializer(`${__dirname}/abis`);
 
 (async () => {
-  const config = require(`${__dirname}/config`);
+  //const config = require(`${__dirname}/config`);
 
-  const amq = new Amq(config.amq);
+  const amq = new Amq(config.amqConnectionString);
   await amq.init();
 
   const mongo = await connectMongo(config.mongo);
@@ -529,7 +467,7 @@ const deserializer = new AbiDeserializer(`${__dirname}/abis`);
   await deserializer.load();
 
   if (cluster.isMaster) {
-    let threads = parseInt(config.processor_threads);
+    let threads = config.processorThreads;
     console.log(`Threads set to ${threads}`);
     if (threads === 0 || isNaN(threads)) {
       const cpus = os.cpus().length;
@@ -567,13 +505,7 @@ const deserializer = new AbiDeserializer(`${__dirname}/abis`);
       switch (msg.type) {
         case 'processor':
           const stats = new StatsDisplay();
-          const api = new AlienAPIProcessor(
-            config,
-            deserializer,
-            amq,
-            mongo,
-            stats
-          );
+          const api = new AlienAPIProcessor(config, deserializer, amq, mongo, stats);
           api.start();
           break;
         case 'recalc':

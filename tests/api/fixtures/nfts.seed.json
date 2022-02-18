@@ -1,0 +1,356 @@
+[
+  {
+    "_id": "60ca9fe119db468901f30cb0",
+    "miner": "fakeminer0.wm",
+    "land_id": "109951296110",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 540,
+      "difficulty": 3,
+      "ease": 150,
+      "luck": 25,
+      "commission": 0
+    },
+    "rand1": 1.1764705882352942,
+    "rand2": 1.9058518348973832,
+    "rand3": 10.349019607843136,
+    "template_id": 19558,
+    "block_num": 124900087,
+    "block_timestamp": {
+      "$date": "2021-06-17T01:05:38.000Z"
+    },
+    "global_sequence": 8775201844,
+    "template_data": {
+      "cardid": 7,
+      "name": "Standard Capacitor",
+      "img": "QmaFe19mLD911BfZWn2tvEN7Ea8xjdirnQQRisUGGBzBPb",
+      "backimg": "QmaUNXHeeFvMGD4vPCC3vpGTr77tJvBHjh1ndUm4J7o4tP",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "type": "Manipulator",
+      "delay": 75,
+      "difficulty": 1,
+      "ease": 10,
+      "luck": 5
+    }
+  },
+  {
+    "_id": "60ca9fe08023a488c1de6141",
+    "miner": "fakeminer0.wm",
+    "land_id": "1099512958541",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 160,
+      "difficulty": 0,
+      "ease": 30,
+      "luck": 15,
+      "commission": 0
+    },
+    "rand1": 0.7843137254901961,
+    "rand2": 0.7797360189211872,
+    "rand3": 11.062745098039215,
+    "template_id": 19553,
+    "block_num": 124900085,
+    "block_timestamp": {
+      "$date": "2021-06-17T01:05:37.000Z"
+    },
+    "global_sequence": 8775201476,
+    "template_data": {
+      "cardid": 2,
+      "name": "Standard Drill",
+      "img": "QmVUZHpUkc3PuLkJ7BDvJ3S3AgDySjsqWQib1sVKziHCbS",
+      "backimg": "QmaUNXHeeFvMGD4vPCC3vpGTr77tJvBHjh1ndUm4J7o4tP",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "type": "Extractor",
+      "delay": 120,
+      "difficulty": 1,
+      "ease": 20,
+      "luck": 7
+    }
+  },
+  {
+    "_id": "60ca9fd8477fe9891b492c14",
+    "miner": "fakeminer1.wm",
+    "land_id": "1099512960442",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 1320,
+      "difficulty": 1,
+      "ease": 210,
+      "luck": 12,
+      "commission": 0
+    },
+    "rand1": 0,
+    "rand2": 2.050812542915999,
+    "rand3": 12.43921568627451,
+    "template_id": 19552,
+    "block_num": 124900069,
+    "block_timestamp": {
+      "$date": "2021-06-17T01:05:29.000Z"
+    },
+    "global_sequence": 8775199734,
+    "template_data": {
+      "cardid": 1,
+      "name": "Standard Shovel",
+      "img": "QmYm1FG7LxhF3mFUaVmVEVqRztEmByVbHwL6ZWXwVY2dvb",
+      "backimg": "QmaUNXHeeFvMGD4vPCC3vpGTr77tJvBHjh1ndUm4J7o4tP",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "type": "Extractor",
+      "delay": 80,
+      "difficulty": 0,
+      "ease": 10,
+      "luck": 5
+    }
+  },
+  {
+    "_id": "60ca9fd22458f58866e3f949",
+    "miner": "fakeminer1.wm",
+    "land_id": "1099512960442",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 2400,
+      "difficulty": 0,
+      "ease": 540,
+      "luck": 15,
+      "commission": 0
+    },
+    "rand1": 0,
+    "rand2": 0.857557030594339,
+    "rand3": 8.870588235294118,
+    "template_id": 19609,
+    "block_num": 124900056,
+    "block_timestamp": {
+      "$date": "2021-06-17T01:05:22.000Z"
+    },
+    "global_sequence": 8775198380,
+    "template_data": {
+      "cardid": 28,
+      "name": "Rock Cudgel",
+      "img": "QmWaWj1K2yvVbQWMiePHR5scbpus3hXYHEwWi5wJDjhTVf",
+      "backimg": "QmTorcZbdarHPssCWeXJgyUso3sWzGKQabvnEujE8i9yMw",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "description": "Hit it with a rock ... and then we'll eat it ...",
+      "class": "Nature",
+      "attack": 8,
+      "defense": 8
+    }
+  },
+  {
+    "_id": "60ca9fce1f5951885c887f18",
+    "miner": "fakeminer0.wm",
+    "land_id": "1099512958374",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 240,
+      "difficulty": 3,
+      "ease": 60,
+      "luck": 19,
+      "commission": 0
+    },
+    "rand1": 0,
+    "rand2": 0.857557030594339,
+    "rand3": 8.870588235294118,
+    "template_id": 19609,
+    "block_num": 124900047,
+    "block_timestamp": {
+      "$date": "2021-06-17T01:05:18.000Z"
+    },
+    "global_sequence": 8775197199,
+    "template_data": {
+      "cardid": 28,
+      "name": "Rock Cudgel",
+      "img": "QmWaWj1K2yvVbQWMiePHR5scbpus3hXYHEwWi5wJDjhTVf",
+      "backimg": "QmTorcZbdarHPssCWeXJgyUso3sWzGKQabvnEujE8i9yMw",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "description": "Hit it with a rock ... and then we'll eat it ...",
+      "class": "Nature",
+      "attack": 8,
+      "defense": 8
+    }
+  },
+  {
+    "_id": "60ca9fbdf020ef886c98015e",
+    "miner": "fakeminer1.wm",
+    "land_id": "1099512960175",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 150,
+      "difficulty": 3,
+      "ease": 30,
+      "luck": 13,
+      "commission": 0
+    },
+    "rand1": 0.39215686274509803,
+    "rand2": 1.2375066758220798,
+    "rand3": 12.43921568627451,
+    "template_id": 19552,
+    "block_num": 124900015,
+    "block_timestamp": {
+      "$date": "2021-06-17T01:05:02.000Z"
+    },
+    "global_sequence": 8775193275,
+    "template_data": {
+      "cardid": 1,
+      "name": "Standard Shovel",
+      "img": "QmYm1FG7LxhF3mFUaVmVEVqRztEmByVbHwL6ZWXwVY2dvb",
+      "backimg": "QmaUNXHeeFvMGD4vPCC3vpGTr77tJvBHjh1ndUm4J7o4tP",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "type": "Extractor",
+      "delay": 80,
+      "difficulty": 0,
+      "ease": 10,
+      "luck": 5
+    }
+  },
+  {
+    "_id": "60ca9fbde2f0bf88a5254782",
+    "miner": "fakeminer2.wm",
+    "land_id": "1099512961076",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 160,
+      "difficulty": 0,
+      "ease": 30,
+      "luck": 15,
+      "commission": 0
+    },
+    "rand1": 0,
+    "rand2": 1.9501029983978027,
+    "rand3": 7.494117647058823,
+    "template_id": 19610,
+    "block_num": 124900014,
+    "block_timestamp": {
+      "$date": "2021-06-17T01:05:01.000Z"
+    },
+    "global_sequence": 8775193212,
+    "template_data": {
+      "cardid": 29,
+      "name": "Standard Issue Axe",
+      "img": "QmPSjMKxC6aZYJiKxSVtb6yVRB7CYC327zUt7dpEbMXot2",
+      "backimg": "QmTorcZbdarHPssCWeXJgyUso3sWzGKQabvnEujE8i9yMw",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "description": "You get an Axe .. Everyone gets an Axe!",
+      "class": "Neutral",
+      "attack": 10,
+      "defense": 6
+    }
+  },
+  {
+    "_id": "60ca9fb11f5951885c887f17",
+    "miner": "fakeminer2.wm",
+    "land_id": "1099512958187",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 80,
+      "difficulty": 0,
+      "ease": 10,
+      "luck": 5,
+      "commission": 0
+    },
+    "rand1": 0,
+    "rand2": 1.9501029983978027,
+    "rand3": 7.494117647058823,
+    "template_id": 19610,
+    "block_num": 124899991,
+    "block_timestamp": {
+      "$date": "2022-02-17T01:04:50.000Z"
+    },
+    "global_sequence": 8775190480,
+    "template_data": {
+      "cardid": 29,
+      "name": "Standard Issue Axe",
+      "img": "QmPSjMKxC6aZYJiKxSVtb6yVRB7CYC327zUt7dpEbMXot2",
+      "backimg": "QmTorcZbdarHPssCWeXJgyUso3sWzGKQabvnEujE8i9yMw",
+      "rarity": "Abundant",
+      "shine": "Stone",
+      "description": "You get an Axe .. Everyone gets an Axe!",
+      "class": "Neutral",
+      "attack": 10,
+      "defense": 6
+    }
+  },
+  {
+    "_id": "60ca9faf6de77488b04d34d9",
+    "miner": "fakeminer2.wm",
+    "land_id": "1099512961368",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 200,
+      "difficulty": 2,
+      "ease": 40,
+      "luck": 16,
+      "commission": 0
+    },
+    "rand1": 1.1764705882352942,
+    "rand2": 0.9948882276646066,
+    "rand3": 9.941176470588236,
+    "template_id": 19583,
+    "block_num": 124899987,
+    "block_timestamp": {
+      "$date": "2022-02-17T01:04:48.000Z"
+    },
+    "global_sequence": 8775190140,
+    "template_data": {
+      "cardid": 2,
+      "name": "Standard Sword",
+      "img": "QmYfMb6jv4fAkYKCYn36kHeXE1PpPhqwCuh5jP9KbJs8jC",
+      "backimg": "QmTorcZbdarHPssCWeXJgyUso3sWzGKQabvnEujE8i9yMw",
+      "rarity": "Rare",
+      "shine": "Stone",
+      "description": "The Standard Sword Company was the first non-mining company on Eyeke",
+      "class": "Neutral",
+      "attack": 11,
+      "defense": 5
+    }
+  },
+  {
+    "_id": "60ca9f951f5951885c887f16",
+    "miner": "fakeminer3.wm",
+    "land_id": "1099512959279",
+    "params": {
+      "invalid": 0,
+      "error": "",
+      "delay": 720,
+      "difficulty": 3,
+      "ease": 180,
+      "luck": 28,
+      "commission": 0
+    },
+    "rand1": 0,
+    "rand2": 1.9165331502250706,
+    "rand3": 8.309803921568626,
+    "template_id": 19609,
+    "block_num": 124899935,
+    "block_timestamp": {
+      "$date": "2022-02-17T01:04:22.000Z"
+    },
+    "global_sequence": 8775183949,
+    "template_data": {
+      "cardid": 28,
+      "name": "Rock Cudgel",
+      "img": "QmWaWj1K2yvVbQWMiePHR5scbpus3hXYHEwWi5wJDjhTVf",
+      "backimg": "QmTorcZbdarHPssCWeXJgyUso3sWzGKQabvnEujE8i9yMw",
+      "rarity": "Rare",
+      "shine": "Stone",
+      "description": "Hit it with a rock ... and then we'll eat it ...",
+      "class": "Nature",
+      "attack": 8,
+      "defense": 8
+    }
+  }
+]

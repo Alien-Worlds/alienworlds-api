@@ -1,22 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
 import { connectMongo } from './connections/mongo';
 import { StatsDisplay } from './include/statsdisplay';
 import { TraceHandler } from './handlers/tracehandler';
-import { DeltaHandler } from './handlers/deltahandler';
 import { program } from 'commander';
 import fetch from 'node-fetch';
+import config, { Config } from './config';
 
 class AlienAPIFiller {
   state_receiver: typeof StateReceiver;
-  config: any;
+  config: Config;
   options: any;
   mongo: any;
   stats: any;
   amq: any;
 
   constructor(
-    config: any,
+    config: Config,
     options: any,
     amq: Amq,
     mongo: unknown,
@@ -32,7 +34,7 @@ class AlienAPIFiller {
   }
 
   async start() {
-    let startBlock = this.config.start_block;
+    let startBlock = this.config.startBlock;
     let endBlock = 0xffffffff;
 
     if (this.options.startBlock === -1) {
@@ -76,8 +78,8 @@ class AlienAPIFiller {
 
     const statereceiver_config = {
       eos: {
-        wsEndpoint: this.config.ship_endpoints[0],
-        chainId: this.config.chain_id,
+        wsEndpoint: this.config.shipEndpoints[0],
+        chainId: this.config.chainId,
         endpoint: this.config.endpoints[0],
       },
     };
@@ -112,6 +114,7 @@ class AlienAPIFiller {
 
     const send_promises = [];
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       // console.log(`adding job for ${from} to ${to}`);
       // let from_buffer = Buffer.from(from); //new Int64BE(from).toBuffer();
@@ -167,7 +170,7 @@ class AlienAPIFiller {
   }
 }
 
-const commanderParseInt = (value: string, _: any) => {
+const commanderParseInt = (value: string) => {
   // parseInt takes a string and a radix
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
@@ -177,11 +180,9 @@ const commanderParseInt = (value: string, _: any) => {
 };
 
 (async () => {
-  const config = require(`./config`);
-
   const stats = new StatsDisplay();
 
-  const amq = new Amq(config.amq);
+  const amq = new Amq(config.amqConnectionString);
   await amq.init();
 
   const mongo = await connectMongo(config.mongo);

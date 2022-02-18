@@ -18,11 +18,9 @@
     "build": "yarn check-config && yarn clean && tsc && yarn copy-files && yarn abis",
     "copy-files": "cp ./config.js ./dist/",
     "clean": "rm -rf ./dist",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "abis": "mkdir -p ./dist/abis && node dist/fetch_abis.js ./dist/abis",
-    "check-config": "node ./scripts/check-config.js || (echo \"Create the config file by copying config.example.js to config.js\" && exit 1)",
     "mongo-indexes": "node dist/mongo_setup.js",
-    "api": "tsc-watch --onSuccess \"node dist/api.js\"",
+    "api": "tsc-watch --onSuccess \"node dist/index.js\"",
     "blockrange": "tsc-watch --onSuccess \"node dist/blockrange.js\"",
     "filler": "tsc-watch --onSuccess \"node dist/filler.js ${flags}\"",
     "processor": "tsc-watch --onSuccess \"node dist/processor.js\""
@@ -30,7 +28,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "lint-staged"
+      "pre-push": "lint-staged && yarn test:unit"
     }
   },
   "lint-staged": {
@@ -48,12 +46,13 @@
     "axon": "^2.0.3",
     "commander": "^7.0.0",
     "crypto": "^1.0.1",
+    "dotenv": "^10.0.0",
     "eosjs": "^21.0.3",
     "ethers": "^5.1.0",
-    "fastify": "^3.11.0",
-    "fastify-autoload": "^3.4.2",
-    "fastify-cors": "^5.2.0",
-    "fastify-mongodb": "^2.0.1",
+    "fastify": "^3.25.0",
+    "fastify-autoload": "^3.9.0",
+    "fastify-cors": "^6.0.2",
+    "fastify-mongodb": "^4.1.1",
     "fastify-oas": "^3.0.8",
     "file-exists": "^5.0.1",
     "http": "^0.0.1-security",
@@ -61,6 +60,7 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
+    "@types/jest": "^27.0.3",
     "@typescript-eslint/eslint-plugin": "^5.9.1",
     "@typescript-eslint/parser": "^5.9.1",
     "eslint": "^7.32.0",
@@ -68,10 +68,12 @@
     "eslint-config-recommended": "^4.1.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^25.7.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^5.2.0",
     "husky": "^7.0.4",
+    "jest": "^27.4.5",
     "lint-staged": "^12.1.7",
     "prettier": "2.5.1",
     "redoc-cli": "^0.13.6",

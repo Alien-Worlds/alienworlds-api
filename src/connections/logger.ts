@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const winston = require('winston');
 // const DatadogTransport = require('winston-datadog');
 const DatadogTransport = require('@shelf/winston-datadog-logs-transport');

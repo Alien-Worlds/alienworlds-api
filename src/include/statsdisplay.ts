@@ -19,7 +19,7 @@ export class StatsDisplay {
 
   display() {
     const items = [];
-    for (let name in this.buckets) {
+    for (const name in this.buckets) {
       const rate = (this.buckets[name] / this.interval).toFixed(2);
       items.push(`${name} : ${rate}/s`);
       this.buckets[name] = 0;

@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-case-declarations */
+import { Config } from '../config';
 import { StatsDisplay } from '../include/statsdisplay';
 const { Api, JsonRpc, Serialize } = require('eosjs');
-// const nodeAbieos = require('@eosrio/node-abieos');
-
 export class TraceHandler {
-  config: any;
+  config: Config;
   eos_rpc: typeof JsonRpc;
   eos_api: typeof Api;
   abis: Array<any>;
-  current_abi: String;
+  current_abi: string;
   amq: any;
   stats: StatsDisplay;
 
@@ -39,16 +41,16 @@ export class TraceHandler {
 
     for (const trace of traces) {
       switch (trace[0]) {
-        case 'transaction_trace_v0': {
+        case 'transaction_trace_v0':
           const trx = trace[1];
           this.stats.add('txs');
 
-          for (let action of trx.action_traces) {
+          for (const action of trx.action_traces) {
             switch (action[0]) {
               case 'action_trace_v0':
                 if (
-                  action[1].act.account === this.config.mining_contract ||
-                  action[1].act.account === this.config.atomicassets.contract
+                  action[1].act.account === this.config.miningContract ||
+                  action[1].act.account === this.config.atomicAssets.contract
                 ) {
                   this.stats.add('actions');
 
@@ -57,7 +59,7 @@ export class TraceHandler {
                     case 'logrand':
                     case 'logtransfer':
                     case 'logburn':
-                    case 'logmint': {
+                    case 'logmint':
                       // case 'logsetdata':
                       // case 'lognewtempl':
                       //     const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
@@ -120,14 +122,12 @@ export class TraceHandler {
 
                       this.stats.add(action[1].act.name);
                       break;
-                    }
                   }
                 }
 
                 break;
             }
           }
-        }
       }
     }
   }
