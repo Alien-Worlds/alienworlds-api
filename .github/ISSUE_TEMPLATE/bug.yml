@@ -1,9 +1,9 @@
 name: 🐞 Bug Report
-description: "File a bug/issue"
-title: "[BUG] <title>"
+description: 'File a bug/issue'
+title: '[BUG] <title>'
 labels: [bug, triage]
 body:
-  - type: Markdown
+  - type: markdown
     attributes:
       value: |
         ![What if I told you ... that you have a software bug](https://memecreator.org/static/images/memes/5253066.jpg)
@@ -46,10 +46,10 @@ body:
           - **Node**: 13.14.0
           - **npm**: 7.6.3
       placeholder: |
-          - OS:
-          - Node:
-          - npm:
-      render: markdown
+        - OS:
+        - Node:
+        - npm:
+      render: Markdown
     validations:
       required: false
   - type: textarea
@@ -65,6 +65,6 @@ body:
     attributes:
       label: Log output
       description: If applicable, provide relevant log output. Backticks not required
-      render: shell
+      render: Shell
     validations:
       required: false

@@ -21,7 +21,7 @@ jobs:
       pull-requests: read
     env:
       DOCKER_REGISTRY: ghcr.io/alien-worlds
-      FILLER_FLAGS:
+      FILLER_FLAGS: ''
     steps:
       - uses: actions/checkout@v2
 
