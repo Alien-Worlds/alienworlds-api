@@ -45,11 +45,11 @@ jobs:
       - name: Generating OpenAPI definition
         run: docker compose -f docker-compose.yml -f docker-compose.apigen.yml run apigen && docker compose down
 
-      - name: Generating Redoc
+      - name: Deploying Redoc
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./openapi
           publish_branch: docs
 
-# Todo Deploy API :D 
+# Todo Deploy API :D
