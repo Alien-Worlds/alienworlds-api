@@ -96,7 +96,7 @@ class AlienAPIBlockRange {
 }
 
 (async () => {
-  const amq = new Amq(config.amqConnectionString);
+  const amq = new Amq(config.amqConnectionString, console);
   await amq.init();
 
   if (cluster.isMaster) {
