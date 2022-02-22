@@ -1,19 +1,19 @@
-name: lint
+name: Lint
 
 concurrency:
-  group: lint-${{ github.ref }}
+  group: build-${{ github.ref }}
   cancel-in-progress: true
 
 on:
   push:
-    branches: [master]
+    branches: [master, develop]
   pull_request:
-    branches: [master]
-
+    branches: [master, develop]
   workflow_dispatch:
 
 jobs:
-  lint:
+  docker:
+    name: "Build Docker"
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,18 +35,17 @@ jobs:
       - name: Building dependencies
         run: docker compose run api yarn
 
+  formatting:
+    name: "Code Formatting"
+    depends_on: [docker]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: read
+    steps:
       - name: Running ESLint
         run: docker compose run api yarn lint-es
 
       - name: Running Prettier
         run: docker compose run api yarn lint-prettier
-
-      - name: Generating OpenAPI definition
-        run: docker compose -f docker-compose.yml -f docker-compose.apigen.yml run apigen && docker compose down
-
-      - name: Generating Redoc
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./openapi
-          publish_branch: docs
