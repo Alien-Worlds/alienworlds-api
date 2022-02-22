@@ -7,21 +7,19 @@ concurrency:
 env:
   DOCKER_REGISTRY: ghcr.io/alien-worlds
   FILLER_FLAGS:
-  PROD_BRANCH: master
 
 on:
   push:
-    branches: [${{ PROD_BRANCH }}]
+    branches: [master]
   pull_request:
-    branches: [${{ PROD_BRANCH }}]
+    branches: [master]
     types: [closed]
-  workflow_dispatch:
 
 jobs:
   docker:
     name: "Build Docker"
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == '${{ PROD_BRANCH }}'
+    if: ((github.event_name == 'push') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true))
     permissions:
       contents: write
       packages: write
