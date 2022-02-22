@@ -5,6 +5,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  DOCKER_REGISTRY: ghcr.io/alien-worlds
+  FILLER_FLAGS:
   PROD_BRANCH: master
 
 on:
@@ -23,9 +25,6 @@ jobs:
       contents: write
       packages: read
       pull-requests: read
-    env:
-      DOCKER_REGISTRY: ghcr.io/alien-worlds
-      FILLER_FLAGS:
     steps:
       - uses: actions/checkout@v2
 
@@ -69,5 +68,12 @@ jobs:
       packages: write
       pull-requests: read
     steps:
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Pushing Images to Registry
         run: docker compose push

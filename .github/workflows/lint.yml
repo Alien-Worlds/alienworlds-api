@@ -1,7 +1,7 @@
 name: Lint
 
 concurrency:
-  group: build-${{ github.ref }}
+  group: lint-${{ github.ref }}
   cancel-in-progress: true
 
 on:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
+      packages: read
       pull-requests: read
     env:
       DOCKER_REGISTRY: ghcr.io/alien-worlds
