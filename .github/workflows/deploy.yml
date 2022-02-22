@@ -21,9 +21,10 @@ jobs:
   docker:
     name: "Build Docker"
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == '${{ PROD_BRANCH }}'
     permissions:
       contents: write
-      packages: read
+      packages: write
       pull-requests: read
     steps:
       - uses: actions/checkout@v2
@@ -38,16 +39,9 @@ jobs:
       - name: Building dependencies
         run: docker compose run api yarn
 
-  ghp_deploy:
-    name: "Deploy to GHP"
-    depends_on: [docker]
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == '${{ PROD_BRANCH }}'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: read
-      pull-requests: read
-    steps:
+      - name: Pushing Images to Registry
+        run: docker compose push
+
       - name: Generating OpenAPI definition
         run: docker compose -f docker-compose.yml -f docker-compose.apigen.yml run apigen && docker compose down
 
@@ -58,22 +52,4 @@ jobs:
           publish_dir: ./openapi
           publish_branch: docs
 
-  packages_deploy:
-    name: "Deploy to GHP"
-    depends_on: [docker]
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == '${{ PROD_BRANCH }}'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-      pull-requests: read
-    steps:
-      - name: Log in to the Container registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Pushing Images to Registry
-        run: docker compose push
+# Todo Deploy API :D 

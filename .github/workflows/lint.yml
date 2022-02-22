@@ -13,7 +13,7 @@ on:
 
 jobs:
   docker:
-    name: "Build Docker"
+    name: "Build and Lint"
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,15 +35,6 @@ jobs:
       - name: Building dependencies
         run: docker compose run api yarn
 
-  formatting:
-    name: "Code Formatting"
-    depends_on: [docker]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-      pull-requests: read
-    steps:
       - name: Running ESLint
         run: docker compose run api yarn lint-es
 
