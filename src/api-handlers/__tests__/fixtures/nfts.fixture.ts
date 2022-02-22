@@ -5,7 +5,6 @@ import {
   NFTSearchQuery,
   NFTsRequestQueryOptions,
   NFTsResponse,
-  Rarity,
 } from '../../nfts';
 
 export const sampleNFTDocument: NFTDocument = {
