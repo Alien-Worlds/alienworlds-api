@@ -25,7 +25,7 @@ export const sampleNFTDocument: NFTDocument = {
   rand3: 10.349019607843136,
   template_id: 19558,
   block_num: 124900087,
-  block_timestamp: { date: '2022-02-17T01:05:38.000Z' },
+  block_timestamp: '2022-02-17T01:05:38.000Z',
   global_sequence: 8775201844,
   template_data: {
     cardid: 7,
