@@ -147,3 +147,19 @@ sh scripts/run-api-tests.sh
 ```
 
 Keep in mind that this is a temporary solution.
+
+# Collection of API requests
+
+The `.postman` directory contains Json files for the environment settings, variables and a collection of requests for the endpoints available in this API.
+
+In their configuration, requests have references to global variables and environments, so you need to download and import all files. More details on postman configuration can be found [here](https://app.clickup.com/18330827/v/dc/hfd6b-9788/hfd6b-5282).
+
+Available environments (instances to which the request can be sent)
+
+- localhost
+- api.alienworlds.io (Load balanced)
+- Kavian
+- Naron
+- Magor
+- Neri
+- Veles
