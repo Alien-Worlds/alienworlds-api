@@ -57,9 +57,7 @@ export type MineDocument = {
   bag_items: number[];
   offset: number;
   block_num: number;
-  block_timestamp: {
-    date: string;
-  };
+  block_timestamp: string;
   global_sequence: number;
   tx_id: string;
 };
@@ -151,7 +149,7 @@ export class Mine {
       bag_items,
       offset,
       block_num,
-      block_timestamp?.date,
+      block_timestamp,
       global_sequence,
       tx_id
     );

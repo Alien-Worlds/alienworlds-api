@@ -26,9 +26,7 @@ export const sampleMineDocument: MineDocument = {
   bag_items: [1099575138963, 1099571561418, 1099572783734],
   offset: 125,
   block_num: 165058267,
-  block_timestamp: {
-    date: '2022-02-04T14:34:53Z',
-  },
+  block_timestamp: '2022-02-04T14:34:53Z',
   global_sequence: 37593403954,
   tx_id: '92f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
 };

@@ -33,9 +33,7 @@ export type NFTDocument = {
   rand3: number;
   template_id: number;
   block_num: number;
-  block_timestamp: {
-    date: string;
-  };
+  block_timestamp: string;
   global_sequence: number;
   template_data: {
     cardid?: number;
@@ -247,7 +245,7 @@ export class NFT {
       rand3,
       template_id,
       block_num,
-      block_timestamp.date,
+      block_timestamp,
       global_sequence,
       nftTemplateData
     );
