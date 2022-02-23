@@ -1,0 +1,1892 @@
+{
+	"info": {
+		"_postman_id": "ce60805c-7844-449d-ae62-3f5c03fefb08",
+		"name": "alienworlds-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "asset",
+			"item": [
+				{
+					"name": "Get asset by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?id=1099624236152",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"asset"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1099624236152"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get assets by owner",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?owner={{owner}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"asset"
+							],
+							"query": [
+								{
+									"key": "owner",
+									"value": "{{owner}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get assets by tatakiemcom5",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?owner=tatakiemcom5",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"asset"
+									],
+									"query": [
+										{
+											"key": "owner",
+											"value": "tatakiemcom5"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get assets by owner & schema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?owner={{owner}}&schema={{schema}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"asset"
+							],
+							"query": [
+								{
+									"key": "owner",
+									"value": "{{owner}}"
+								},
+								{
+									"key": "schema",
+									"value": "{{schema}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get assets by owner & tool.worlds",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?owner=tatakiemcom5&schema=tool.worlds",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"asset"
+									],
+									"query": [
+										{
+											"key": "owner",
+											"value": "tatakiemcom5"
+										},
+										{
+											"key": "schema",
+											"value": "tool.worlds"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get assets by owner & limit & offset",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?owner={{owner}}&limit={{limit}}&offset={{offset}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"asset"
+							],
+							"query": [
+								{
+									"key": "owner",
+									"value": "{{owner}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								},
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get next two assets by user",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?owner=tatakiemcom5&limit=2&offset=2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"asset"
+									],
+									"query": [
+										{
+											"key": "owner",
+											"value": "tatakiemcom5"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										},
+										{
+											"key": "offset",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get assets by owner & limit & offset & schema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?owner={{owner}}&limit={{limit}}&offset={{offset}}&schema={{schema}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"asset"
+							],
+							"query": [
+								{
+									"key": "owner",
+									"value": "{{owner}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								},
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "schema",
+									"value": "{{schema}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get 10 assets by user and schema",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/asset?owner=tatakiemcom5&limit=10&offset=0&schema=tool.worlds",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"asset"
+									],
+									"query": [
+										{
+											"key": "owner",
+											"value": "tatakiemcom5"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										},
+										{
+											"key": "schema",
+											"value": "tool.worlds"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "mineluck",
+			"item": [
+				{
+					"name": "Get mineluck | no time frame set | 504",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mineluck",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mineluck"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get mineluck & from",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mineluck?from={{from}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mineluck"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "{{from}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get mineluck from last hour",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mineluck?from={{last_hour_iso_date}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mineluck"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "{{last_hour_iso_date}}"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Get mineluck from last ten minutes",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mineluck?from={{last_ten_minutes_iso_date}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mineluck"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "{{last_ten_minutes_iso_date}}"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get mineluck & from & to",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mineluck?from={{from}}&to={{to}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mineluck"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "{{from}}"
+								},
+								{
+									"key": "to",
+									"value": "{{to}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get mineluck from time range",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mineluck?from=2022-02-23T11:00:02.869Z&to=2022-02-23T11:18:02.869Z",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mineluck"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "2022-02-23T11:00:02.869Z"
+										},
+										{
+											"key": "to",
+											"value": "2022-02-23T11:18:02.869Z"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "mines",
+			"item": [
+				{
+					"name": "Get mines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get mines & limit",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?limit={{limit}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get 10 mines",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?limit=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get mines & sort",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?sort={{sort}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "{{sort}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Sort ASC",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?sort=desc&limit=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "sort",
+											"value": "desc"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Sort DESC",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?sort=asc&limit=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "sort",
+											"value": "asc"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Wrong sorting",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?sort=wrong&limit=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "sort",
+											"value": "wrong"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get mines by miner",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?miner={{miner}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							],
+							"query": [
+								{
+									"key": "miner",
+									"value": "{{miner}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get mines by mryeateshere",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?miner=mryeateshere",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "miner",
+											"value": "mryeateshere"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get mines by land id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?land_id={{land_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							],
+							"query": [
+								{
+									"key": "land_id",
+									"value": "{{land_id}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get mines by mryeateshere",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?land_id=1099512958747",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "land_id",
+											"value": "1099512958747"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get mines by planet name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?planet_name={{planet_name}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							],
+							"query": [
+								{
+									"key": "planet_name",
+									"value": "{{planet_name}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get mines by neri.world",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?planet_name=neri.world",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "planet_name",
+											"value": "neri.world"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get mines from a specific time period",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('from', new Date(new Date().getTime() - 1 * 60000));",
+									"pm.variables.set('to', new Date().toISOString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?from={{from}}&to={{to}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "{{from}}"
+								},
+								{
+									"key": "to",
+									"value": "{{to}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get mines from a specific time period",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?from=2022-02-23T14:20:39.000Z&to=2022-02-23T15:20:39.000Z",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "2022-02-23T14:20:39.000Z"
+										},
+										{
+											"key": "to",
+											"value": "2022-02-23T15:20:39.000Z"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get mines by landowner",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('from', new Date(new Date().getTime() - 1 * 60000));",
+									"pm.variables.set('to', new Date().toISOString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?landowner={{landowner}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							],
+							"query": [
+								{
+									"key": "landowner",
+									"value": "{{landowner}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get mines by landowner",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?landowner=qkzf2.wam",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "landowner",
+											"value": "qkzf2.wam"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get mines & global_sequence",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('from', new Date(new Date().getTime() - 1 * 60000));",
+									"pm.variables.set('to', new Date().toISOString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?global_sequence_from={{global_sequence_from}}&global_sequence_to={{global_sequence_to}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"mines"
+							],
+							"query": [
+								{
+									"key": "global_sequence_from",
+									"value": "{{global_sequence_from}}"
+								},
+								{
+									"key": "global_sequence_to",
+									"value": "{{global_sequence_to}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get mines with global_sequence_from and global_sequence_to",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/mines?global_sequence_from=39600742016&global_sequence_to=39600782010",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"mines"
+									],
+									"query": [
+										{
+											"key": "global_sequence_from",
+											"value": "39600742016"
+										},
+										{
+											"key": "global_sequence_to",
+											"value": "39600782010"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "token",
+			"item": [
+				{
+					"name": "get tokens value",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/token?type={{token_type}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"token"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "{{token_type}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get circulating tokens value",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/token?type=circulating",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"token"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "circulating"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "get supply tokens value",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/token?type=supply",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"token"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "supply"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "nfts",
+			"item": [
+				{
+					"name": "Get nfts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"nfts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get nfts & limit",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?limit={{limit}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"nfts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get 10 nfts",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?limit=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get nfts & sort",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?sort={{sort}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"nfts"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "{{sort}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Sort ASC",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?sort=desc&limit=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "sort",
+											"value": "desc"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Sort DESC",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?sort=asc&limit=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "sort",
+											"value": "asc"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Wrong sorting",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?sort=wrong&limit=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "sort",
+											"value": "wrong"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get nfts by miner",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?miner={{other_miner}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"nfts"
+							],
+							"query": [
+								{
+									"key": "miner",
+									"value": "{{other_miner}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get nfts by leusq.wam",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?miner=leusq.wam",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "miner",
+											"value": "leusq.wam"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get nfts by land id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?land_id={{land_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"nfts"
+							],
+							"query": [
+								{
+									"key": "land_id",
+									"value": "{{land_id}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get nfts by mryeateshere",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?land_id=1099512958747",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "land_id",
+											"value": "1099512958747"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get nfts from a specific time period",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('from', new Date(new Date().getTime() - 24 * 3600000));",
+									"pm.variables.set('to', new Date().toISOString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?from={{from}}&to={{to}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"nfts"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "{{from}}"
+								},
+								{
+									"key": "to",
+									"value": "{{to}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get nfts from a specific time period",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?from=2022-02-23T14:20:39.000Z&to=2022-02-23T15:20:39.000Z",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "2022-02-23T14:20:39.000Z"
+										},
+										{
+											"key": "to",
+											"value": "2022-02-23T15:20:39.000Z"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get nfts by template id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?template_id={{template_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"nfts"
+							],
+							"query": [
+								{
+									"key": "template_id",
+									"value": "{{template_id}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get nfts by mryeateshere",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?template_id=19648",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "template_id",
+											"value": "19648"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get nfts by rarity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?rarity={{rarity}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"alienworlds",
+								"nfts"
+							],
+							"query": [
+								{
+									"key": "rarity",
+									"value": "{{rarity}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get abundant nfts",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?rarity=Abundant",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "rarity",
+											"value": "Abundant"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Get rare nfts",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?rarity=Rare",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "rarity",
+											"value": "Rare"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Get common nfts",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?rarity=Common",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "rarity",
+											"value": "Common"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Get epic nfts",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?rarity=Epic",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "rarity",
+											"value": "Epic"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Get legendary nfts",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?rarity=Legendary",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "rarity",
+											"value": "Legendary"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Get mythical nfts",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{api_version}}/alienworlds/nfts?rarity=Mythical",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_version}}",
+										"alienworlds",
+										"nfts"
+									],
+									"query": [
+										{
+											"key": "rarity",
+											"value": "Mythical"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const subHours = (hours) => new Date(new Date().getTime() - hours * 3600000);",
+					"const subMinutes = (minutes) => new Date(new Date().getTime() - minutes * 60000);",
+					"",
+					"pm.globals.set(\"last_minute_iso_date\", subMinutes(1).toISOString());",
+					"pm.globals.set(\"last_ten_minutes_iso_date\", subMinutes(10).toISOString());",
+					"pm.globals.set(\"last_hour_iso_date\", subHours(1).toISOString());",
+					"pm.globals.set(\"last_two_hours_iso_date\", subHours(2).toISOString());",
+					"pm.globals.set(\"now_iso_date\", new Date().toISOString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "last_two_hours",
+			"value": ""
+		},
+		{
+			"key": "owner",
+			"value": "tatakiemcom5"
+		},
+		{
+			"key": "schema",
+			"value": "tool.worlds",
+			"type": "default"
+		},
+		{
+			"key": "limit",
+			"value": "10",
+			"type": "default"
+		},
+		{
+			"key": "offset",
+			"value": "1",
+			"type": "default"
+		},
+		{
+			"key": "from",
+			"value": "2022-01-01T00:00:00",
+			"type": "default"
+		},
+		{
+			"key": "to",
+			"value": "2022-01-01T01:00:00",
+			"type": "default"
+		},
+		{
+			"key": "sort",
+			"value": "asc"
+		},
+		{
+			"key": "miner",
+			"value": "miner"
+		},
+		{
+			"key": "land_id",
+			"value": "1099512958747"
+		},
+		{
+			"key": "planet_name",
+			"value": "neri.world"
+		},
+		{
+			"key": "landowner",
+			"value": "qkzf2.wam"
+		},
+		{
+			"key": "global_sequence_from",
+			"value": "39600741044"
+		},
+		{
+			"key": "global_sequence_to",
+			"value": "39600742044"
+		},
+		{
+			"key": "token_type",
+			"value": "circulating"
+		},
+		{
+			"key": "other_miner",
+			"value": "leusq.wam"
+		},
+		{
+			"key": "template_id",
+			"value": "19648"
+		},
+		{
+			"key": "rarity",
+			"value": "Abundant"
+		}
+	]
+}
