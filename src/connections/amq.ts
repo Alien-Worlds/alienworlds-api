@@ -116,7 +116,7 @@ export class Amq {
    * @async
    */
   private async reassignHandlers(): Promise<void> {
-    const promises: Promise<Replies.Consume>[] = [];
+    const promises = [];
     this.handlers.forEach((callback: QueueHandler, queue: string) =>
       promises.push(this.channel.consume(queue, callback, { noAck: false }))
     );
