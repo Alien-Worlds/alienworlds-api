@@ -1,21 +1,17 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const MongoClient = require('mongodb').MongoClient;
+import { Db, MongoClient } from 'mongodb';
+import { MongoConfig } from '../config/config.types';
 
-export async function connectMongo(config) {
-  return new Promise((resolve, reject) => {
-    MongoClient.connect(
-      config.url,
-      { useNewUrlParser: true, useUnifiedTopology: true },
-      (err, client) => {
-        if (err) {
-          console.error('\nFailed to connect\n', err);
-          reject(err);
-        } else if (client) {
-          console.log(`Connected to mongo at ${config.url}`);
-          console.log(`Got DB `);
-          resolve(client.db(config.dbName));
-        }
-      }
-    );
-  });
-}
+/**
+ * Connect to mongo database
+ *
+ * @async
+ * @param {MongoConfig} config
+ * @returns {Db} - database instance
+ */
+export const connectMongo = async (config: MongoConfig): Promise<Db> => {
+  const { url, dbName } = config;
+  const client = new MongoClient(url);
+
+  await client.connect();
+  return client.db(dbName);
+};

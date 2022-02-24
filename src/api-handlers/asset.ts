@@ -44,16 +44,6 @@ export type AssetDataSubDocument = {
 };
 
 /**
- * Represents the MongoDB Long
- * @type
- */
-export type Long = {
-  _bsontype: string;
-  high_: number;
-  low_: number;
-};
-
-/**
  * Represents the data structure of the Asset mongoDB document
  * @type
  */
