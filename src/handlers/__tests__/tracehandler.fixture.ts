@@ -21,7 +21,7 @@ export const actionTraceFixture = {
   ],
 };
 
-export const fakeTransactionTraceId = 'fakeTransactionTraceId';
+export const trxId = 'fakeTransactionTraceId';
 export const blockNumber = 404;
 export const dateTimestamp = new Date(1645815926208);
 
@@ -29,7 +29,7 @@ export const tracesFixture = [
   [
     'transaction_trace_v0',
     {
-      id: fakeTransactionTraceId,
+      id: trxId,
       action_traces: [
         ['action_trace_v0', actionTraceFixture],
         ['action_trace_v1', actionTraceFixture],
@@ -39,7 +39,7 @@ export const tracesFixture = [
   [
     'transaction_trace_v0',
     {
-      id: fakeTransactionTraceId,
+      id: trxId,
       action_traces: [['action_trace_v0', actionTraceFixture]],
     },
   ],

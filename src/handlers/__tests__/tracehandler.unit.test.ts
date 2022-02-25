@@ -5,7 +5,7 @@ import { Amq } from '../../connections/amq';
 import { StatsDisplay } from '../../include/statsdisplay';
 import { TraceHandler } from '../tracehandler';
 import {
-  fakeTransactionTraceId,
+  trxId,
   actionTraceFixture,
   blockNumber,
   dateTimestamp,
@@ -56,16 +56,14 @@ describe('TraceHandler instance Unit tests', () => {
       new StatsDisplay()
     );
     // @ts-ignore
-    expect(
-      tranceHandler
-        .createActionBuffer(
-          fakeTransactionTraceId,
-          actionTraceFixture,
-          blockNumber,
-          dateTimestamp
-        )
-        .toJSON()
-    ).toEqual(actionTraceFixtureBufferJson);
+    const buffer = tranceHandler.createActionBuffer(
+      trxId,
+      // @ts-ignore
+      actionTraceFixture,
+      blockNumber,
+      dateTimestamp
+    );
+    expect(buffer.toJSON()).toEqual(actionTraceFixtureBufferJson);
   });
 
   it('"processTrace" should process trace when trace "version" is equal "transaction_trace_v0"', async () => {

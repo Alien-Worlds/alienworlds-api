@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   WaxService,
   ContractService,
@@ -12,7 +13,7 @@ import fetch from 'node-fetch';
 jest.mock('node-fetch');
 jest.mock('ethers');
 
-const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+const mockFetch = fetch as jest.MockedFunction<any>;
 
 describe('"balanceReducer" unit tests', () => {
   it('Should decrease the initial value by the given numbers', async () => {
