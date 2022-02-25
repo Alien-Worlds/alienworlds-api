@@ -9,7 +9,14 @@ import {
   sampleMineResult,
   sampleMinesResponse,
 } from './fixtures/mines.fixture';
-import { buildQuery, getMinesCollection, getSortingDirectionByString, Mine, MineResult, MinesResponse } from '../mines';
+import {
+  buildQuery,
+  getMinesCollection,
+  getSortingDirectionByString,
+  Mine,
+  MineResult,
+  MinesResponse,
+} from '../mines';
 
 describe('Mine unit tests', () => {
   it('Mine.fromDto should return Mine entity based on data provided in given MineDocument dto', async () => {
@@ -60,13 +67,18 @@ describe('"getSortingDirectionByString" unit tests', () => {
 
 describe('"getMinesCollection" unit tests', () => {
   it('Should return collection of Mine entities', async () => {
-    const collection = await getMinesCollection(getMinesFastifyMock({ findResult: [sampleMineDocument] }), {});
+    const collection = await getMinesCollection(
+      getMinesFastifyMock({ findResult: [sampleMineDocument] }),
+      {}
+    );
 
     expect(collection).toEqual([sampleMine]);
   });
 
   it('It should throw an error when an given limit option is > 5000', async () => {
-    await getMinesCollection(getMinesFastifyMock({ findResult: [] }), { query: { limit: 5001 } }).catch(error => {
+    await getMinesCollection(getMinesFastifyMock({ findResult: [] }), {
+      query: { limit: 5001 },
+    }).catch(error => {
       expect(error).toBeInstanceOf(Error);
     });
   });
@@ -78,10 +90,14 @@ describe('"buildQuery" unit tests', () => {
   });
 
   it('Should build a query containing only the transaction ID "tx_id" when given in options', async () => {
-    expect(buildQuery(onlyTxIdMinesRequestQueryOptions)).toEqual(onlyTxIdMinerSearchQuery);
+    expect(buildQuery(onlyTxIdMinesRequestQueryOptions)).toEqual(
+      onlyTxIdMinerSearchQuery
+    );
   });
 
   it('Should build a query based on a given options without "tx_id"', async () => {
-    expect(buildQuery(noTxIdMinesRequestQueryOptions)).toEqual(noTxIdMinerSearchQuery);
+    expect(buildQuery(noTxIdMinesRequestQueryOptions)).toEqual(
+      noTxIdMinerSearchQuery
+    );
   });
 });

@@ -49,4 +49,7 @@ export const pipelineWithBlockTimestamps = (from: Date, to: Date) => [
   ...pipelineBase,
 ];
 
-export const pipelineWithEndBlockTimestamp = (to: Date) => [{ $match: { block_timestamp: { $lt: to } } }, ...pipelineBase];
+export const pipelineWithEndBlockTimestamp = (to: Date) => [
+  { $match: { block_timestamp: { $lt: to } } },
+  ...pipelineBase,
+];

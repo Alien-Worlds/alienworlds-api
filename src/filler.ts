@@ -128,7 +128,13 @@ class AlienAPIFiller {
       to_buffer.writeBigInt64BE(BigInt(to), 0);
 
       send_promises.push(
-        this.amq.send('aw_block_range', Buffer.concat([from_buffer, to_buffer]))
+        new Promise(resolve => {
+          this.amq.send(
+            'aw_block_range',
+            Buffer.concat([from_buffer, to_buffer]),
+            () => resolve
+          );
+        })
       );
       number_jobs++;
 
@@ -182,7 +188,7 @@ const commanderParseInt = (value: string) => {
 (async () => {
   const stats = new StatsDisplay();
 
-  const amq = new Amq(config.amqConnectionString);
+  const amq = new Amq(config.amqConnectionString, console);
   await amq.init();
 
   const mongo = await connectMongo(config.mongo);
