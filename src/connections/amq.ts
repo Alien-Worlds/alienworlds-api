@@ -1,151 +1,237 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-var-requires */
-const Amqp = require('amqplib');
+import {
+  ConfirmChannel,
+  connect,
+  Connection,
+  ConsumeMessage,
+  Message,
+  Replies,
+} from 'amqplib';
 
+export const wait = async (ms: number) =>
+  new Promise(resolve => setTimeout(resolve, ms));
+
+export enum QueueName {
+  Action = 'action',
+  AlienWorldsBlockRange = 'aw_block_range',
+  RecalcAsset = 'recalc_asset',
+}
+
+export type QueueHandler = (msg: ConsumeMessage | null) => void;
+
+/**
+ * Represents Amq driver.
+ *
+ * @class
+ */
 export class Amq {
-  logger: any;
-  channel: any;
-  initialized: boolean;
-  connection_errors: number;
-  max_connection_errors: number;
-  listeners: any;
-  connection_string: string;
+  private logger: Console;
+  private channel: ConfirmChannel;
+  private connection: Connection;
+  private initialized: boolean;
+  private connectionErrorsCount: number;
+  private maxConnectionErrors: number;
+  private handlers: Map<string, QueueHandler>;
+  private address: string;
 
-  constructor(connection_string) {
-    this.connection_string = connection_string;
+  /**
+   * Creates instances of the Amq class
+   *
+   * @constructor
+   * @param {string} address - connection string
+   * @param {Console} logger - logger instance
+   */
+  constructor(address: string, logger: Console) {
+    this.address = address;
     this.initialized = false;
-    this.listeners = [];
-    this.connection_errors = 0;
-    this.max_connection_errors = 5;
-
-    // this.logger = require('./logger')('eosdac-amq', config.logger);
-    this.logger = console;
+    this.handlers = new Map<string, QueueHandler>();
+    this.connectionErrorsCount = 0;
+    this.maxConnectionErrors = 5;
+    this.logger = logger;
   }
 
-  async reconnect() {
-    if (this.listeners.length && !this.initialized) {
-      this.logger.info(`Reloading connection with listeners`);
-
-      try {
-        await this.init();
-      } catch (e) {
-        this.connection_errors++;
-
-        const retry_ms = Math.pow(this.connection_errors, 2) * 1000;
-        const log_fn =
-          this.connection_errors > this.max_connection_errors
-            ? this.logger.error
-            : this.logger.warn;
-        log_fn(
-          `${this.connection_errors.toString()} failed connection attempts, retrying in ${Math.floor(
-            retry_ms / 1000
-          ).toString()}s`,
-          { connection_errors: this.connection_errors }
-        );
-
-        setTimeout(() => this.reconnect(), retry_ms);
-
-        return;
-      }
-
-      this.logger.info(`Adding listeners`);
-      this.listeners.forEach(({ queue_name, cb }) => {
-        this.listen(queue_name, cb);
-      });
-    }
+  /**
+   * Reconnect to server
+   *
+   * This function is called when the connection is closed.
+   *
+   * @private
+   * @async
+   */
+  private async handleConnectionClose(): Promise<void> {
+    this.logger.warn('Connection closed');
+    await this.reconnect();
   }
 
-  async init() {
-    const conn = await Amqp.connect(this.connection_string);
-
-    const channel = await conn.createConfirmChannel();
-
-    // channel.assertQueue('block_range', {durable: true});
-    // channel.assertQueue('contract_row', {durable: true});
-    // channel.assertQueue('permission_link', {durable: true});
-    // channel.assertQueue('trace', {durable: true});
-    channel.assertQueue('action', { durable: true });
-    channel.assertQueue('aw_block_range', { durable: true });
-    channel.assertQueue('recalc_asset', { durable: true });
-
-    this.channel = channel;
-    this.initialized = true;
-    this.connection_errors = 0;
-
-    this.logger.info(`Connected to AMQ ${this.connection_string}`);
-
-    conn.on('error', err => {
-      if (err.message !== 'Connection closing') {
-        const log_fn =
-          this.connection_errors > this.max_connection_errors
-            ? this.logger.error
-            : this.logger.warn;
-
-        log_fn('Connection Error', { e: err });
-        this.initialized = false;
-        this.reconnect();
-      }
-    });
-    conn.on('close', () => {
-      this.logger.warn('Connection closed');
-      this.initialized = false;
-      this.reconnect();
-    });
-  }
-
-  async send(queue_name, msg) {
-    return new Promise((resolve, reject) => {
-      if (!Buffer.isBuffer(msg)) {
-        msg = Buffer.from(msg);
-      }
-
-      const return_fn = (err, ok) => {
-        if (err !== null) reject(err);
-        else resolve(ok);
-      };
-
-      if (!this.initialized) {
-        this.init().then(() => {
-          this.channel.sendToQueue(queue_name, msg, {}, return_fn);
-        });
+  /**
+   * Logs a connection error and tries to reconnect.
+   * This function is called when there is a connection error.
+   *
+   * @private
+   * @async
+   * @param {Error} error
+   */
+  private async handleConnectionError(error: Error): Promise<void> {
+    if (error.message !== 'Connection closing') {
+      this.connectionErrorsCount++;
+      if (this.connectionErrorsCount > this.maxConnectionErrors) {
+        this.logger.error('Connection Error', { e: error });
       } else {
-        this.channel.sendToQueue(queue_name, msg, {}, return_fn);
+        this.logger.warn('Connection Error', { e: error });
       }
+      await this.reconnect();
+    }
+  }
+
+  /**
+   * Reconnect to server and reassign queue handlers.
+   * This function is called when the connection is lost
+   * due to an error or closure.
+   *
+   * After a failed connection attempt, the function calls
+   * itself after a specified time.
+   *
+   * @private
+   * @async
+   */
+  private async reconnect() {
+    this.initialized = false;
+    this.logger.info(`Reloading connection with handlers`);
+
+    try {
+      await this.init();
+      await this.reassignHandlers();
+    } catch (error) {
+      this.connectionErrorsCount++;
+      const retryMs = Math.pow(this.connectionErrorsCount, 2) * 1000;
+      await wait(retryMs);
+      await this.reconnect();
+    }
+  }
+
+  /**
+   * Reassign queue handlers stored in the 'handlers' map.
+   * This function is called when the connection is restored
+   *
+   * @private
+   * @async
+   */
+  private async reassignHandlers(): Promise<void> {
+    const promises = [];
+    this.handlers.forEach((callback: QueueHandler, queue: string) =>
+      promises.push(this.channel.consume(queue, callback, { noAck: false }))
+    );
+    await Promise.all(promises);
+  }
+
+  /**
+   * Create channel and set up queues.
+   *
+   * @private
+   * @async
+   */
+  private async createChannel(): Promise<void> {
+    this.channel = await this.connection.createConfirmChannel();
+    this.logger.info(`Channel created.`);
+
+    await this.channel.prefetch(1);
+    await this.channel.assertQueue(QueueName.Action, { durable: true });
+    await this.channel.assertQueue(QueueName.AlienWorldsBlockRange, {
+      durable: true,
     });
+    await this.channel.assertQueue(QueueName.RecalcAsset, { durable: true });
+
+    this.logger.info(`Queues set up.`);
   }
 
-  async listen(queue_name, cb) {
-    if (!this.initialized) {
-      await this.init();
-    }
+  /**
+   * Connect to server
+   *
+   * @private
+   * @async
+   */
+  private async connect(): Promise<void> {
+    this.connection = await connect(this.address);
+    this.connection.on('error', error => this.handleConnectionError(error));
+    this.connection.on('close', () => this.handleConnectionClose());
 
-    this.channel.prefetch(1);
-    // await this.channel.assertQueue(queue_name, {durable: true})
-    this.listeners.push({ queue_name, cb });
-
-    this.channel.consume(queue_name, cb, { noAck: false });
+    this.logger.info(`Connected to AMQ ${this.address}`);
   }
 
-  async ack(job) {
-    if (!this.initialized) {
-      await this.init();
-    }
+  /**
+   * Initialize driver
+   *
+   * @async
+   */
+  public async init(): Promise<void> {
+    await this.connect();
+    await this.createChannel();
+
+    this.initialized = true;
+    this.connectionErrorsCount = 0;
+  }
+
+  /**
+   * Send a single message with the content given as a buffer to the specific queue named, bypassing routing.
+   *
+   * @param {string} queue
+   * @param {Buffer} message
+   * @param {Function} callback
+   */
+  public send(
+    queue: string,
+    message: Buffer,
+    callback?: (err: Error, ok: Replies.Empty) => void
+  ): void {
     try {
-      return this.channel.ack(job);
-    } catch (e) {
-      this.logger.error(`Failed to ack job`, e);
-      // failure to ack isnt a problem, all jobs are idempotent
+      this.channel.sendToQueue(queue, message, {}, callback);
+    } catch (error) {
+      this.logger.error(`Failed to send message`, error);
     }
   }
 
-  async reject(job) {
-    if (!this.initialized) {
-      await this.init();
-    }
+  /**
+   * Set up a listener for the queue.
+   *
+   * @param {string} queue - queue name
+   * @param {QueueHandler} handler - queue handler
+   */
+  public addListener(queue: string, handler: QueueHandler): void {
     try {
-      return this.channel.reject(job, true);
-    } catch (e) {
-      this.logger.error(`Failed to reject job`);
+      if (this.handlers.has(queue)) {
+        this.logger.warn(
+          'The listener is already assigned, the current handler will be replaced with the new one'
+        );
+      }
+      this.handlers.set(queue, handler);
+      this.channel.consume(queue, handler, { noAck: false });
+    } catch (error) {
+      this.logger.error(`Failed to add listener`, error);
+    }
+  }
+
+  /**
+   * Acknowledge the given message, or all messages up to and including the given message.
+   *
+   * @param {Message} job
+   */
+  public ack(job: Message): void {
+    try {
+      this.channel.ack(job);
+    } catch (error) {
+      this.logger.error(`Failed to ack job`, error);
+    }
+  }
+
+  /**
+   * Reject a message.
+   *
+   * @param {Message} job
+   */
+  public reject(job: Message): void {
+    try {
+      this.channel.reject(job, true);
+    } catch (error) {
+      this.logger.error(`Failed to reject job`, error);
     }
   }
 }

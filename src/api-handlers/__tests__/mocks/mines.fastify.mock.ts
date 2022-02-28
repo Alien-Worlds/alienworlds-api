@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { MineDocument } from '../../mines';
 
-export const getMinesFastifyMock = (options: { findResult: MineDocument[] }) => {
+export const getMinesFastifyMock = (options: {
+  findResult: MineDocument[];
+}) => {
   const { findResult } = options;
   const mines = [...findResult];
 

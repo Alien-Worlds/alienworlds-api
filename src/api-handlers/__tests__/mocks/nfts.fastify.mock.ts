@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NFTDocument } from '../../nfts';
 
 export const getNFTsFastifyMock = (options: {
