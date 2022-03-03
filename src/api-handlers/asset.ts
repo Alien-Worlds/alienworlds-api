@@ -243,13 +243,6 @@ export class AssetResponse {
 /**
  * Pars the given string into an array of integer values
  *
- * @example <caption>buildLongIntListFromString('1099535583633')</caption>
- * // returns
- * // {
- * //   _bsontype: 'Long',
- * //   high_: 256,
- * //   low_: 23955857
- * // }
  * @param {string} value
  * @returns {Long[]} an array of Long Objects
  * @see {@link https://mongodb.github.io/node-mongodb-native/api-bson-generated/long.html} for further information about Long class.

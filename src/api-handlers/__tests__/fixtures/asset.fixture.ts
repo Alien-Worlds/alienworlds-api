@@ -1,21 +1,9 @@
 import { Long } from 'mongodb';
 import { Asset, AssetDocument, AssetResponse, AssetResult } from '../../asset';
 
-export const long_0 = {
-  high: 0,
-  low: 0,
-  unsigned: false,
-};
-export const long_1099535583633 = {
-  high: 256,
-  low: 23955857,
-  unsigned: false,
-};
-export const long_1099624236152 = {
-  high: 256,
-  low: 112608376,
-  unsigned: false,
-};
+export const long_0 = new Long('0');
+export const long_1099535583633 = new Long('1099535583633');
+export const long_1099624236152 = new Long('1099624236152');
 
 export const sampleAsset: Asset = {
   id: '61f7f245a92817601180e8eb',
