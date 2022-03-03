@@ -1,133 +1,223 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-case-declarations */
-import { Config } from '../config';
-import { StatsDisplay } from '../include/statsdisplay';
-const { Api, JsonRpc, Serialize } = require('eosjs');
-export class TraceHandler {
-  config: Config;
-  eos_rpc: typeof JsonRpc;
-  eos_api: typeof Api;
-  abis: Array<any>;
-  current_abi: string;
-  amq: any;
-  stats: StatsDisplay;
 
-  constructor({ config, amq, stats }) {
+import { Config } from '../config';
+import { Amq } from '../connections/amq';
+import { StatsDisplay } from '../include/statsdisplay';
+import fetch from 'node-fetch';
+
+const { Api, JsonRpc, Serialize } = require('eosjs');
+
+export enum ActionName {
+  LogMine = 'logmine',
+  LogRand = 'logrand',
+  LogTransfer = 'logtransfer',
+  LogBurn = 'logburn',
+  LogMint = 'logmint',
+}
+
+export type ActionReceiptDto = {
+  receiver: string;
+  act_digest: string;
+  global_sequence: number;
+  recv_sequence: number;
+  auth_sequence: [string, number][];
+  code_sequence: number;
+  abi_sequence: number;
+};
+
+export type ProcessedActionDto = {
+  account: string;
+  name?: string;
+  authorization?: AuthorizationDto[];
+  data?: any;
+  hex_data?: string;
+};
+
+export type AuthorizationDto = {
+  actor: string;
+  permission: string;
+};
+
+export type ActionTraceDto = {
+  act: ProcessedActionDto;
+  receiver: string;
+  receipt: ActionReceiptVersionAndValueDto;
+};
+
+export type TransactionTraceDto = {
+  id: string;
+  action_traces: ActionVersionAndValueDto[];
+};
+
+export type ActionReceiptVersionAndValueDto = [string, ActionReceiptDto];
+export type ActionVersionAndValueDto = [string, ActionTraceDto];
+export type TraceVersionAndValueDto = [string, TransactionTraceDto];
+
+/**
+ * Represents TraceHandler.
+ *
+ * @class
+ */
+export class TraceHandler {
+  private config: Config;
+  private amq: Amq;
+  private stats: StatsDisplay;
+  private BUFFER_SIZE = 4;
+  public api: typeof Api;
+  public rpc: typeof JsonRpc;
+
+  /**
+   * Creates instances of the Tracehandler class
+   *
+   * @param {Config} config
+   * @param {Amq} amq
+   * @param {StatsDisplay} stats
+   */
+  constructor(config: Config, amq: Amq, stats: StatsDisplay) {
     this.config = config;
     this.amq = amq;
     this.stats = stats;
 
-    const fetch = require('node-fetch');
-    this.eos_rpc = new JsonRpc(config.endpoints[0], { fetch });
-    this.eos_api = new Api({
-      rpc: this.eos_rpc,
+    this.rpc = new JsonRpc(config.endpoints[0], { fetch });
+    this.api = new Api({
+      rpc: this.rpc,
       signatureProvider: null,
       textDecoder: new TextDecoder(),
       textEncoder: new TextEncoder(),
     });
-
-    // nodeAbieos.load_abi_hex("m.federation", JSON.stringify(mining_abi));
   }
 
-  int32ToBuffer(num) {
-    const arr = Buffer.alloc(4);
-    arr.writeUInt32BE(num, 0);
-    return arr;
+  /**
+   * Write a number to an instance of the Buffer class
+   *
+   * @private
+   * @param {number} value
+   * @param {number} size
+   * @returns {Buffer}
+   */
+  private int32ToBuffer(
+    value: number,
+    size: number = this.BUFFER_SIZE
+  ): Buffer {
+    const buffer = Buffer.alloc(size);
+    buffer.writeUInt32BE(value);
+    return buffer;
   }
 
-  async processTrace(block_num, traces, block_timestamp) {
+  /**
+   * Create action buffer
+   *
+   * @private
+   * @param {string} transactionTraceId
+   * @param {ActionTraceDto} actionTrace
+   * @param {number} blockNumber
+   * @param {Date} blockTimestamp
+   * @returns {Buffer}
+   */
+  private createActionBuffer(
+    transactionTraceId: string,
+    actionTrace: ActionTraceDto,
+    blockNumber: number,
+    blockTimestamp: Date
+  ): Buffer {
+    this.stats.add('actions');
+
+    const {
+      act: { account, name, data },
+      receipt: [, receipt],
+    } = actionTrace;
+
+    // Create action buffer
+    const actionSerialBuffer = new Serialize.SerialBuffer({
+      textEncoder: new TextEncoder(),
+      textDecoder: new TextDecoder(),
+    });
+    actionSerialBuffer.pushName(account);
+    actionSerialBuffer.pushName(name);
+    actionSerialBuffer.pushBytes(data);
+    const actionBuffer = Buffer.from(actionSerialBuffer.array);
+
+    // Create a buffer with block number
+    const blockBuffer = Buffer.allocUnsafe(8);
+    blockBuffer.writeBigInt64BE(BigInt(blockNumber), 0);
+
+    // Create a buffer with block timestamp
+    const timestampBuffer = this.int32ToBuffer(blockTimestamp.getTime() / 1000);
+
+    // Create a buffer with transaction trace id
+    const transactionTraceIdBuffer = Buffer.from(transactionTraceId, 'hex');
+
+    // Create a buffer with receive sequence
+    const recvBuffer = Buffer.allocUnsafe(8);
+    recvBuffer.writeBigInt64BE(BigInt(receipt.recv_sequence), 0);
+
+    // Creat a buffer with global sequence
+    const globalBuffer = Buffer.allocUnsafe(8);
+    globalBuffer.writeBigInt64BE(BigInt(receipt.global_sequence), 0);
+
+    return Buffer.concat([
+      blockBuffer,
+      timestampBuffer,
+      transactionTraceIdBuffer,
+      recvBuffer,
+      globalBuffer,
+      actionBuffer,
+    ]);
+  }
+
+  /**
+   * Convert the given data into a series of buffers which are then sent to the "action" queue
+   *
+   * This method is used, inter alia, in here:
+   * @see {@link https://github.com/eosdac/eosio-statereceiver/blob/master/statereceiver.js#L201}
+   * @param {number} blockNumber
+   * @param {Array<TraceVersionAndValueDto>} traces
+   * @param {Date} blockTimestamp
+   */
+  public processTrace(
+    blockNumber: number,
+    traces: TraceVersionAndValueDto[],
+    blockTimestamp: Date
+  ) {
     this.stats.add('blocks');
 
+    const {
+      miningContract,
+      atomicAssets: { contract },
+    } = this.config;
+
     for (const trace of traces) {
-      switch (trace[0]) {
-        case 'transaction_trace_v0':
-          const trx = trace[1];
-          this.stats.add('txs');
+      const [version, transactionTrace] = trace;
 
-          for (const action of trx.action_traces) {
-            switch (action[0]) {
-              case 'action_trace_v0':
-                if (
-                  action[1].act.account === this.config.miningContract ||
-                  action[1].act.account === this.config.atomicAssets.contract
-                ) {
-                  this.stats.add('actions');
+      if (version == 'transaction_trace_v0') {
+        this.stats.add('txs');
 
-                  switch (action[1].act.name) {
-                    case 'logmine':
-                    case 'logrand':
-                    case 'logtransfer':
-                    case 'logburn':
-                    case 'logmint':
-                      // case 'logsetdata':
-                      // case 'lognewtempl':
-                      //     const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
-                      //     const type = nodeAbieos.get_type_for_action(action[1].act.account, action[1].act.name);
-                      //     const json = nodeAbieos.bin_to_json(action[1].act.account, type, Buffer.from(action[1].act.data));
-                      //     console.log(action[1].act.name, json);
-                      // console.log(action[1].act.authorization)
-                      // if (action[1].receipt[1].global_sequence == '3024635758'){
-                      // const data = await this.eos_api.deserializeActions([action[1].act])
-                      // console.log(data[0], action[1], action[1].receipt[1].global_sequence)
-                      // console.log(action[1])
-                      // process.exit(0)
-                      // }
+        const { action_traces, id } = transactionTrace;
 
-                      if (action[1].receiver !== action[1].act.account) {
-                        continue;
-                      }
-                      // console.log(action[1])
+        for (const action of action_traces) {
+          const [version, actionTrace] = action;
+          const {
+            act: { account, name },
+            receiver,
+          } = actionTrace;
+          if (
+            version == 'action_trace_v0' &&
+            [miningContract, contract].includes(account) &&
+            Object.values<string>(ActionName).includes(name) &&
+            receiver === account
+          ) {
+            const actionBuffer = this.createActionBuffer(
+              id,
+              actionTrace,
+              blockNumber,
+              blockTimestamp
+            );
+            this.amq.send('action', actionBuffer);
 
-                      const sb_action = new Serialize.SerialBuffer({
-                        textEncoder: new TextEncoder(),
-                        textDecoder: new TextDecoder(),
-                      });
-
-                      sb_action.pushName(action[1].act.account);
-                      sb_action.pushName(action[1].act.name);
-                      sb_action.pushBytes(action[1].act.data);
-
-                      const block_buffer = Buffer.allocUnsafe(8);
-                      block_buffer.writeBigInt64BE(BigInt(block_num), 0);
-                      const timestamp_buffer = this.int32ToBuffer(
-                        block_timestamp.getTime() / 1000
-                      );
-                      const trx_id_buffer = Buffer.from(trx.id, 'hex');
-                      const recv_buffer = Buffer.allocUnsafe(8);
-                      recv_buffer.writeBigInt64BE(
-                        BigInt(action[1].receipt[1].recv_sequence),
-                        0
-                      );
-                      const global_buffer = Buffer.allocUnsafe(8);
-                      global_buffer.writeBigInt64BE(
-                        BigInt(action[1].receipt[1].global_sequence),
-                        0
-                      );
-
-                      const action_buffer = Buffer.from(sb_action.array);
-                      // this.logger.info(`Publishing action`)
-                      // console.log(`Sending ${action[1].act.name} to queue`);
-                      this.amq.send(
-                        'action',
-                        Buffer.concat([
-                          block_buffer,
-                          timestamp_buffer,
-                          trx_id_buffer,
-                          recv_buffer,
-                          global_buffer,
-                          action_buffer,
-                        ])
-                      );
-
-                      this.stats.add(action[1].act.name);
-                      break;
-                  }
-                }
-
-                break;
-            }
+            this.stats.add(name);
           }
+        }
       }
     }
   }
