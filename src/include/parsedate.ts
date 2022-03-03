@@ -1,21 +1,28 @@
-export function parseDate(fullStr) {
+/**
+ * Parse string date to the UTC time value in milliseconds.
+ *
+ * @param {string} fullStr
+ * @returns {number} milliseconds
+ */
+export function parseDate(fullStr: string) {
   const [fullDate] = fullStr.split('.');
   const [dateStr, timeStr] = fullDate.split('T');
   const [year, month, day] = dateStr.split('-');
-  let hourStr = 0,
-    minuteStr = 0,
-    secondStr = 0;
+  let hourStr = '0';
+  let minuteStr = '0';
+  let secondStr = '0';
+
   if (timeStr) {
     [hourStr, minuteStr, secondStr] = timeStr.split(':');
   }
 
   const dt = new Date();
-  dt.setUTCFullYear(year);
-  dt.setUTCMonth(month - 1);
-  dt.setUTCDate(day);
-  dt.setUTCHours(hourStr);
-  dt.setUTCMinutes(minuteStr);
-  dt.setUTCSeconds(secondStr);
+  dt.setUTCFullYear(+year);
+  dt.setUTCMonth(+month - 1);
+  dt.setUTCDate(+day);
+  dt.setUTCHours(+hourStr);
+  dt.setUTCMinutes(+minuteStr);
+  dt.setUTCSeconds(+secondStr);
   dt.setUTCMilliseconds(0);
 
   return dt.getTime();

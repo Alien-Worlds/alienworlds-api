@@ -6,6 +6,8 @@
     "preserveConstEnums": true,
     "esModuleInterop": true,
     "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "outDir": "dist/"
   },
   "include": ["src/**/*"],
