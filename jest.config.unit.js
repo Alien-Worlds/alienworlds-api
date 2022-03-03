@@ -14,5 +14,6 @@ module.exports = {
     '!**/__tests__/**',
     '!**/__mocks__/**',
     '!**/schemas/**',
+    '!src/**/index.ts',
   ],
 };

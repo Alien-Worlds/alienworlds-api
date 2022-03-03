@@ -1,3 +1,5 @@
+import { existsSync } from 'fs';
+import { mkdir } from 'fs/promises';
 import { getActionsByAccount } from './get-actions-by-account';
 import { saveAbisToFiles } from './save-abis-to-files';
 
@@ -16,6 +18,9 @@ export const storeAbisByAccount = async (
   if (failure) {
     console.error(failure.error);
   } else {
+    if (!existsSync(directory)) {
+      await mkdir(directory, { recursive: true }).catch(console.error);
+    }
     await saveAbisToFiles(account, content, directory);
   }
 };
