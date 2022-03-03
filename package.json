@@ -58,7 +58,7 @@
     "fastify-oas": "^3.0.8",
     "file-exists": "^5.0.1",
     "http": "^0.0.1-security",
-    "mongodb": "^3.6.3",
+    "mongodb": "^4.4.0",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {

@@ -1,25 +1,20 @@
-import {
-  Asset,
-  AssetDocument,
-  AssetResponse,
-  AssetResult,
-  Long,
-} from '../../asset';
+import { Long } from 'mongodb';
+import { Asset, AssetDocument, AssetResponse, AssetResult } from '../../asset';
 
-export const long_0: Long = {
-  _bsontype: 'Long',
-  high_: 0,
-  low_: 0,
+export const long_0 = {
+  high: 0,
+  low: 0,
+  unsigned: false,
 };
-export const long_1099535583633: Long = {
-  _bsontype: 'Long',
-  high_: 256,
-  low_: 23955857,
+export const long_1099535583633 = {
+  high: 256,
+  low: 23955857,
+  unsigned: false,
 };
-export const long_1099624236152: Long = {
-  _bsontype: 'Long',
-  high_: 256,
-  low_: 112608376,
+export const long_1099624236152 = {
+  high: 256,
+  low: 112608376,
+  unsigned: false,
 };
 
 export const sampleAsset: Asset = {
