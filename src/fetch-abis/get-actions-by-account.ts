@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
-import { RequestError } from '../common/domain/errors/request.error';
-import { Failure } from '../core/failure';
-import { Result } from '../core/result';
+import { RequestError } from '../core/errors/request.error';
+import { Failure } from '../core/domain/failure';
+import { Result } from '../core/domain/result';
 import { ActionDto, GetActionsResponseDto } from './fetch-abis.types';
 
 /**
@@ -25,10 +25,10 @@ export const getActionsByAccount = async (
         ? Result.withContent(actions)
         : Result.withFailure(Failure.withMessage(JSON.stringify(json)));
     }
-    const { statusCode } = json;
-    return statusCode
-      ? Result.withFailure(Failure.fromError(new RequestError(json)))
-      : Result.withFailure(Failure.withMessage(JSON.stringify(json)));
+    const { status, statusText } = response;
+    return Result.withFailure(
+      Failure.fromError(new RequestError(status, statusText, json))
+    );
   } catch (error) {
     return Result.withFailure(Failure.fromError(<Error>error));
   }

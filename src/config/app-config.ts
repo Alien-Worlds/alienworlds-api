@@ -28,6 +28,7 @@ export default class AppConfig implements Config {
     public readonly bscTokenContract: string = process.env.BSC_TOKEN_CONTRACT,
     public readonly ethTokenContract: string = process.env.ETH_TOKEN_CONTRACT,
     public readonly startBlock: number = Number(process.env.START_BLOCK),
+    public readonly endBlock: number = Number(process.env.END_BLOCK),
     public readonly amqConnectionString: string = process.env
       .AMQ_CONNECTION_STRING,
     public readonly atomicAssets: AtomicAssetsConfig = {

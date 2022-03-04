@@ -24,7 +24,7 @@
     "mongo-indexes": "node dist/mongo_setup.js",
     "api": "tsc-watch --onSuccess \"node dist/index.js\"",
     "blockrange": "tsc-watch --onSuccess \"node dist/blockrange.js\"",
-    "filler": "tsc-watch --onSuccess \"node dist/filler.js ${flags}\"",
+    "filler": "tsc-watch --onSuccess \"node dist/filler/index.js ${flags}\"",
     "processor": "tsc-watch --onSuccess \"node dist/processor.js\""
   },
   "husky": {
@@ -77,10 +77,12 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^5.2.0",
     "husky": "^7.0.4",
+    "inversify": "^6.0.1",
     "jest": "^27.4.5",
     "lint-staged": "^12.1.7",
     "prettier": "2.5.1",
     "redoc-cli": "^0.13.6",
+    "reflect-metadata": "^0.1.13",
     "ts-jest": "^27.1.3",
     "tsc-watch": "^4.6.0",
     "typescript": "^4.5.4"

@@ -8,7 +8,14 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "outDir": "dist/"
+    "outDir": "dist/",
+    "baseUrl": "src",
+    "paths": {
+      "@common/*": ["common/*"],
+      "@config": ["config/index"],
+      "@config/types": ["config/config.types"],
+      "@core/*": ["core/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": [

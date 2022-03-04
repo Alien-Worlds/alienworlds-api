@@ -16,6 +16,7 @@ ETH_ENDPOINT=''
 BSC_TOKEN_CONTRACT=''
 ETH_TOKEN_CONTRACT=''
 START_BLOCK=93613945 # m.federation genesis block 93613945, atomicassets genesis = 64105503
+END_BLOCK=0xffffffff
 # AMQ
 AMQ_CONNECTION_STRING='amqp://guest:guest@queue/'
 # ATOMIC ASSETS

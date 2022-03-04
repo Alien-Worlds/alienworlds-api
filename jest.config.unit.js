@@ -15,5 +15,6 @@ module.exports = {
     '!**/__mocks__/**',
     '!**/schemas/**',
     '!src/**/index.ts',
+    '!**/ioc.config.ts',
   ],
 };

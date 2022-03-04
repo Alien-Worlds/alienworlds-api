@@ -29,6 +29,7 @@ export type Config = {
   bscTokenContract: string;
   ethTokenContract: string;
   startBlock: number;
+  endBlock: number;
   amqConnectionString: string;
   atomicAssets: AtomicAssetsConfig;
   mongo: MongoConfig;
