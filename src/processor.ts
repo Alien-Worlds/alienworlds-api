@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-case-declarations */
+const newrelic = require('newrelic');
 import { StatsDisplay } from './include/statsdisplay';
 
 import { Amq } from './connections/amq';
@@ -9,8 +12,8 @@ const { Long } = require('mongodb');
 import { deserialize, ObjectSchema } from 'atomicassets';
 import * as cluster from 'cluster';
 import * as os from 'os';
-const crypto = require('crypto');
-const fetch = require('node-fetch');
+// const crypto = require('crypto');
+// const fetch = require('node-fetch');
 
 class AlienAPIProcessor {
   config: any;
@@ -52,6 +55,7 @@ class AlienAPIProcessor {
 
     // start queue processor
     console.log('Starting queue processor');
+    console.log('New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']');
     setInterval(this.process_insert_queue.bind(this), 50);
   }
 

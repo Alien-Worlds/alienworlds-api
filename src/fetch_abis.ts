@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
-/*
-gets all the abis
- */
-
+// Fetching all ABIs
 const fetch_abis = async directory => {
   const fetch = require('node-fetch');
   const fs = require('fs');

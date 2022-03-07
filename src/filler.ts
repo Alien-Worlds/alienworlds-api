@@ -1,9 +1,12 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-constant-condition */
+const newrelic = require('newrelic');
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
 import { connectMongo } from './connections/mongo';
 import { StatsDisplay } from './include/statsdisplay';
 import { TraceHandler } from './handlers/tracehandler';
-import { DeltaHandler } from './handlers/deltahandler';
+// import { DeltaHandler } from './handlers/deltahandler';
 import { program } from 'commander';
 import fetch from 'node-fetch';
 
@@ -34,6 +37,8 @@ class AlienAPIFiller {
   async start() {
     let startBlock = this.config.start_block;
     let endBlock = 0xffffffff;
+
+    console.log('New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']');
 
     if (this.options.startBlock === -1) {
       console.log(`Finding start block from DB`);

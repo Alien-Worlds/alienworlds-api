@@ -16,12 +16,14 @@ jobs:
     name: "Build and Lint"
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: write
-      packages: read
-      pull-requests: read
+      packages: write
+      pull-requests: write
+      repository-projects: write
     env:
       DOCKER_REGISTRY: ghcr.io/alien-worlds
-      FILLER_FLAGS:
+      FILLER_FLAGS: ''
     steps:
       - uses: actions/checkout@v2
 

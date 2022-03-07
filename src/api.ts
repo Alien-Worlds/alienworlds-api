@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-disable no-unused-vars */
+const newrelic = require('newrelic');
 
 process.title = 'eosdac-api';
 
@@ -6,7 +8,7 @@ process.title = 'eosdac-api';
 // const {loadConfig} = require('./functions');
 // const path = require('path');
 import path from 'path';
-import fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import fastifyOas from 'fastify-oas';
 import fastifyCors from 'fastify-cors';
 import fastifyAutoload from 'fastify-autoload';
@@ -63,6 +65,7 @@ const server_port = config.api.port || '8800';
 
 server.ready().then(
   async () => {
+    console.log('New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']');
     console.log(`Started API server on ${server_address}:${server_port}`);
     await server.oas();
   },

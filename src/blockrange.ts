@@ -1,11 +1,13 @@
+/* eslint-disable no-unused-vars */
+const newrelic = require('newrelic');
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
-import { connectMongo } from './connections/mongo';
+// import { connectMongo } from './connections/mongo';
 import { StatsDisplay } from './include/statsdisplay';
 import { TraceHandler } from './handlers/tracehandler';
 import { DeltaHandler } from './handlers/deltahandler';
-import { program } from 'commander';
-import fetch from 'node-fetch';
+// import { program } from 'commander';
+// import fetch from 'node-fetch';
 import * as cluster from 'cluster';
 import * as os from 'os';
 const { Serialize } = require('eosjs');
@@ -91,6 +93,8 @@ class AlienAPIBlockRange {
   }
 
   async start() {
+    console.log('New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']');
+
     this.amq.listen('aw_block_range', this.process_blockrange_job.bind(this));
   }
 }

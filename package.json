@@ -11,10 +11,10 @@
     "prepare": "husky install",
     "lint": "yarn lint-prettier && yarn lint-es",
     "lint-fix": "yarn lint-prettier-fix && yarn lint-es-fix",
-    "lint-es": "eslint src/**/*",
-    "lint-es-fix": "eslint --fix src/**/*",
-    "lint-prettier": "yarn prettier --check src/",
-    "lint-prettier-fix": "yarn prettier --write src/",
+    "lint-es": "eslint \"src/**/*\"",
+    "lint-es-fix": "eslint --fix \"src/**/*\"",
+    "lint-prettier": "yarn prettier --check \"src/\"",
+    "lint-prettier-fix": "yarn prettier --write \"src/\"",
     "build": "yarn check-config && yarn clean && tsc && yarn copy-files && yarn abis",
     "copy-files": "cp ./config.js ./dist/",
     "clean": "rm -rf ./dist",
@@ -42,6 +42,7 @@
   "dependencies": {
     "@eosdacio/eosio-statereceiver": "^1.1.0",
     "@eosrio/node-abieos": "^2.1.0-beta.0",
+    "@newrelic/native-metrics": "^7.1.0",
     "@types/node": "^14.14.22",
     "amqplib": "^0.6.0",
     "atomicassets": "^1.2.2",
@@ -58,6 +59,7 @@
     "file-exists": "^5.0.1",
     "http": "^0.0.1-security",
     "mongodb": "^3.6.3",
+    "newrelic": "^8.7.1",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
