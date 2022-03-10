@@ -1,33 +1,40 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const StateReceiver = require('@eosdacio/eosio-statereceiver');
-
-import { injectable } from 'inversify';
-import config from '../../../config';
+import { Messages } from '@core/domain/messages';
+import {
+  StateReceiver,
+  StateReceiverFactory,
+} from '@core/domain/state-receiver';
+import { inject, injectable } from 'inversify';
+import { config } from '../../../config';
 import { Result } from '../../../core/domain/result';
 import { UseCase } from '../../../core/domain/use-case';
-import { TraceHandler } from '../../../handlers/tracehandler';
+import { TraceHandler } from '../../../handlers/trace-handler';
 import { StatsDisplay } from '../../../include/statsdisplay';
 import { BlocksRange } from '../entities/blocks-range';
 
 @injectable()
-export class SetupStateReceiverUseCase extends UseCase {
+export class SetupStateReceiverUseCase extends UseCase<StateReceiver> {
   public static Token = 'SETUP_STATE_RECEIVER_USE_CASE';
 
-  public execute(blocksRange: BlocksRange): Result<typeof StateReceiver> {
+  constructor(
+    @inject(Messages.Token) private messages: Messages,
+    @inject(StateReceiverFactory.Token)
+    private stateReceiverFactory: (
+      startBlock: number,
+      endBlock: number,
+      mode: number
+    ) => StateReceiver
+  ) {
+    super();
+  }
+
+  public execute(blocksRange: BlocksRange): Result<StateReceiver> {
     const { start: startBlock, end: endBlock } = blocksRange;
-    const traceHandler = new TraceHandler(config, this.amq, new StatsDisplay());
-    const stateReceiver = new StateReceiver({
-      startBlock,
-      endBlock,
-      mode: 0,
-      config: {
-        eos: {
-          wsEndpoint: config.shipEndpoints[0],
-          chainId: config.chainId,
-          endpoint: config.endpoints[0],
-        },
-      },
-    });
+    const traceHandler = new TraceHandler(
+      config,
+      this.messages,
+      new StatsDisplay()
+    );
+    const stateReceiver = this.stateReceiverFactory(startBlock, endBlock, 0);
     stateReceiver.registerTraceHandler(traceHandler);
 
     return Result.withContent(stateReceiver);

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { MineDocument } from '@common/mines/data/mines.dtos';
+import { Mine } from '@common/mines/domain/entities/mine';
 import {
-  MineDocument,
-  Mine,
   MineResult,
   MinesResponse,
   MinesSearchQuery,
@@ -29,7 +30,7 @@ export const sampleMineDocument: MineDocument = {
   block_timestamp: '2022-02-04T14:34:53Z',
   global_sequence: 37593403954,
   tx_id: '92f0f074f841cafba129c28f65e551f022f7a2b5ba2fdc3463291fc7aee29ce1',
-};
+} as any;
 
 export const sampleMine: Mine = {
   id: '62fd3a3bcc6d81005d135799',

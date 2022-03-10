@@ -13,10 +13,10 @@ import {
   buildQuery,
   getMinesCollection,
   getSortingDirectionByString,
-  Mine,
   MineResult,
   MinesResponse,
 } from '../mines';
+import { Mine } from '@common/mines/domain/entities/mine';
 
 describe('Mine unit tests', () => {
   it('Mine.fromDto should return Mine entity based on data provided in given MineDocument dto', async () => {

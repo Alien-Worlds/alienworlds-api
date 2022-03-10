@@ -16,7 +16,7 @@ const { Long } = require('mongodb');
 import { deserialize, ObjectSchema } from 'atomicassets';
 import * as cluster from 'cluster';
 import * as os from 'os';
-import config, { Config } from './config';
+import { config, Config } from './config';
 
 class AlienAPIProcessor {
   config: Config;

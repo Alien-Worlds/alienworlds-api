@@ -1,4 +1,4 @@
-import { Failure } from '../../../core/domain/failure';
+import { Result } from '@core/domain/result';
 import { CurrencyStats } from './entities/currecy-stats';
 import { EosDacInfo } from './entities/eos-dac-info';
 
@@ -8,7 +8,7 @@ import { EosDacInfo } from './entities/eos-dac-info';
 export abstract class EosDacRepository {
   public static Token = 'EOS_DAC_REPOSITORY';
 
-  public abstract getInfo(): Promise<EosDacInfo | Failure>;
-  public abstract getCurrecyStats(): Promise<CurrencyStats | Failure>;
-  public abstract getCurrencyBalance(account: string): Promise<number>;
+  public abstract getInfo(): Promise<Result<EosDacInfo>>;
+  public abstract getCurrecyStats(): Promise<Result<CurrencyStats>>;
+  public abstract getCurrencyBalance(account: string): Promise<Result<number>>;
 }

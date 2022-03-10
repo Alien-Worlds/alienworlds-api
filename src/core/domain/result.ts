@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Failure } from './failure';
 
 /**
@@ -5,9 +6,9 @@ import { Failure } from './failure';
  * The result may return a Failure object or the typed content.
  * @class
  */
-export class Result<T> {
-  public readonly content: T | undefined;
-  public readonly failure: Failure | undefined;
+export class Result<T, U = Error> {
+  public readonly content: T;
+  public readonly failure: Failure<U> | undefined;
 
   /**
    * Create instances of the class Result
@@ -16,8 +17,8 @@ export class Result<T> {
    * @private
    * @param data
    */
-  private constructor(data: { content?: T; failure?: Failure }) {
-    const { content, failure } = data;
+  private constructor(data: { content?: T; failure?: Failure<U> }) {
+    const { content, failure } = data || {};
     if (content) {
       this.content = content;
     }
@@ -45,13 +46,23 @@ export class Result<T> {
   }
 
   /**
+   * Create instance of the Result class with empty content
+   *
+   * @static
+   * @returns {Result<void>}
+   */
+  public static withoutContent(): Result<void> {
+    return new Result({});
+  }
+
+  /**
    * Create instance of the Result class with the failure
    *
    * @static
    * @param {Failure} failure
    * @returns
    */
-  public static withFailure<T>(failure: Failure): Result<T> {
-    return new Result<T>({ failure });
+  public static withFailure<U = Error>(failure: Failure<U>): Result<any, U> {
+    return new Result<any, U>({ failure });
   }
 }

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { buildCommand } from './data/filler.utils';
 import { FillerOptions } from './domain/entities/filler-options';
-import { FillerCommandHandler } from './filler.command-handler';
+import { FillerCommandHandler } from './domain/filler.command-handler';
 import { setupIOC, ioc } from './ioc.config';
 
 /**

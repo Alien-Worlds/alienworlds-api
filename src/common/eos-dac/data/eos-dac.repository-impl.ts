@@ -1,3 +1,5 @@
+import { config } from '@config';
+import { Result } from '@core/domain/result';
 import { inject, injectable } from 'inversify';
 import { Failure } from '../../../core/domain/failure';
 import { CurrencyStats } from '../domain/entities/currecy-stats';
@@ -11,33 +13,34 @@ export class EosDacRepositoryImpl implements EosDacRepository {
     @inject(EosDacService.Token) private eosDacService: EosDacService
   ) {}
 
-  public async getInfo(): Promise<EosDacInfo | Failure> {
+  public async getInfo(): Promise<Result<EosDacInfo>> {
+    console.log(`Fetching lib from ${config.endpoints[0]}/v1/chain/get_info`);
     try {
       const dto = await this.eosDacService.getInfo();
-      return EosDacInfo.fromDto(dto);
+      return Result.withContent(EosDacInfo.fromDto(dto));
     } catch (error) {
-      return Failure.fromError(error);
+      return Result.withFailure(Failure.fromError(error));
     }
   }
 
-  public async getCurrecyStats(): Promise<CurrencyStats | Failure> {
+  public async getCurrecyStats(): Promise<Result<CurrencyStats>> {
     try {
       const dto = await this.eosDacService.getCurrencyStats();
-      return CurrencyStats.fromDto(dto);
+      return Result.withContent(CurrencyStats.fromDto(dto));
     } catch (error) {
-      return Failure.fromError(error);
+      return Result.withFailure(Failure.fromError(error));
     }
   }
 
-  public async getCurrencyBalance(account: string): Promise<number> {
+  public async getCurrencyBalance(account: string): Promise<Result<number>> {
     try {
       const dto = this.eosDacService.getCurrencyBalance(account);
       // map dto to float number
       const [balance] = dto[0].split(' ');
-      return parseFloat(balance);
+      return Result.withContent(parseFloat(balance));
     } catch (error) {
       // TODO: Should we log errors?
-      return 0;
+      return Result.withContent(0);
     }
   }
 }

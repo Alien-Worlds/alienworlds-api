@@ -6,7 +6,7 @@ const sock = axon.socket('pub-emitter');
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 const { Api, JsonRpc } = require('eosjs');
 const fetch = require('node-fetch');
-import config, { Config } from './config';
+import { config, Config } from './config';
 
 class WSTraceHandler {
   config: Config;

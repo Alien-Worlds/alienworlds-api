@@ -1,16 +1,16 @@
-export class Failure {
+export class Failure<T = Error> {
   private constructor(
-    public readonly error: Error,
+    public readonly error: T,
     public readonly throwable: boolean,
     public readonly reportable: boolean
   ) {}
 
-  public static fromError(
-    error: Error,
+  public static fromError<T = Error>(
+    error: T,
     throwable = false,
     reportable = false
-  ): Failure {
-    return new Failure(error, throwable, reportable);
+  ): Failure<T> {
+    return new Failure<T>(error, throwable, reportable);
   }
 
   public static withMessage(

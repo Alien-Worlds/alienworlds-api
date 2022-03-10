@@ -3,10 +3,10 @@
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
 import { StatsDisplay } from './include/statsdisplay';
-import { TraceHandler } from './handlers/tracehandler';
+import { TraceHandler } from './handlers/trace-handler';
 import * as cluster from 'cluster';
 import * as os from 'os';
-import config, { Config } from './config';
+import { config, Config } from './config';
 
 const { Serialize } = require('eosjs');
 

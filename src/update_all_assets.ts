@@ -3,7 +3,7 @@
 
 import { connectMongo } from './connections/mongo';
 import { AssetAggregator } from './include/assetaggregator';
-import config from './config';
+import { config } from './config';
 
 (async () => {
   const mongo: any = await connectMongo(config.mongo);

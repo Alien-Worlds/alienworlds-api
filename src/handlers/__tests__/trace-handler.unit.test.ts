@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import config from '../../config';
-import { Amq } from '../../connections/amq';
+import { AmqMessages } from '@core/data/messages/amq.messages';
+import { config } from '../../config';
+// import { Amq } from '../../connections/amq';
 import { StatsDisplay } from '../../include/statsdisplay';
-import { TraceHandler } from '../tracehandler';
+import { TraceHandler } from '../trace-handler';
 import {
   trxId,
   actionTraceFixture,
@@ -13,7 +14,8 @@ import {
   tracesFixture,
 } from './tracehandler.fixture';
 
-jest.mock('../../connections/amq');
+// jest.mock('../../connections/amq');
+jest.mock('@core/data/messages/amq.messages');
 jest.mock('../../include/statsdisplay');
 
 describe('TraceHandler instance Unit tests', () => {
@@ -24,7 +26,7 @@ describe('TraceHandler instance Unit tests', () => {
   it('"int32ToBuffer" should return correct buffer when given size and value', async () => {
     const tranceHandler = new TraceHandler(
       config,
-      new Amq('', console),
+      new AmqMessages('', console),
       new StatsDisplay()
     );
     // @ts-ignore
@@ -37,7 +39,7 @@ describe('TraceHandler instance Unit tests', () => {
   it('"int32ToBuffer" should return Buffer with data [0,0,0,0] when given value is NaN/null/undefined', async () => {
     const tranceHandler = new TraceHandler(
       config,
-      new Amq('', console),
+      new AmqMessages('', console),
       new StatsDisplay()
     );
     const buffer = { type: 'Buffer', data: [0, 0, 0, 0] };
@@ -52,7 +54,7 @@ describe('TraceHandler instance Unit tests', () => {
   it('"createActionBuffer" should return correct buffer when', async () => {
     const tranceHandler = new TraceHandler(
       config,
-      new Amq('', console),
+      new AmqMessages('', console),
       new StatsDisplay()
     );
     // @ts-ignore
@@ -78,7 +80,7 @@ describe('TraceHandler instance Unit tests', () => {
     };
     const tranceHandler = new TraceHandler(
       configMock,
-      new Amq('', console),
+      new AmqMessages('', console),
       new StatsDisplay()
     );
     // @ts-ignore

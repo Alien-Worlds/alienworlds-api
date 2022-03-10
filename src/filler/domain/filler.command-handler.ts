@@ -1,9 +1,10 @@
 import { inject, injectable } from 'inversify';
-import { CommandHandler } from '../core/domain/command-handler';
-import { FillerOptions } from './domain/entities/filler-options';
-import { GetBlocksRangeUseCase } from './domain/use-cases/get-blocks-range.use-case';
-import { PopulateBlockRangesUseCase } from './domain/use-cases/populate-block-ranges.use-case';
-import { SetupStateReceiverUseCase } from './domain/use-cases/setup-state-receiver.use-case';
+import { CommandHandler } from '../../core/domain/command-handler';
+import { FillerOptions } from './entities/filler-options';
+import { ShiftBlocksRangeUseCase } from './use-cases/shift-blocks-range.use-case';
+import { GetBlocksRangeUseCase } from './use-cases/get-blocks-range.use-case';
+import { PopulateBlockRangesUseCase } from './use-cases/populate-block-ranges.use-case';
+import { SetupStateReceiverUseCase } from './use-cases/setup-state-receiver.use-case';
 
 @injectable()
 export class FillerCommandHandler extends CommandHandler {
@@ -18,8 +19,12 @@ export class FillerCommandHandler extends CommandHandler {
   @inject(PopulateBlockRangesUseCase.Token)
   private populateBlockRangesUseCase: PopulateBlockRangesUseCase;
 
+  @inject(ShiftBlocksRangeUseCase.Token)
+  private shiftBlocksRangeUseCase: ShiftBlocksRangeUseCase;
+
   /**
    * Run filler command
+   *
    * @async
    * @param {FillerOptions} options
    */
@@ -38,27 +43,33 @@ export class FillerCommandHandler extends CommandHandler {
         `Kicking off parallel replay, make sure you start a filler instance after this replay is complete`
       );
       const populateResult = await this.populateBlockRangesUseCase.execute(
-        blocksRange,
-        options
+        blocksRange
       );
+
+      if (populateResult.isFailure) {
+        // TODO: what if failure?
+      }
 
       if (continueWithFiller) {
         console.log(
           'Prepare the startBlock and endBlock to continue a filler after the replay has been scheduled instead of exiting the process.'
         );
-        blocksRange = populateResult.content;
+        const shiftResult = await this.shiftBlocksRangeUseCase.execute(
+          blocksRange
+        );
+        blocksRange = shiftResult.content;
       } else {
         process.exit(0);
       }
     }
 
-    const sateReceiverResult =
+    const { content: stateReceiver, failure } =
       this.setupStateReceiverUseCase.execute(blocksRange);
 
-    if (sateReceiverResult.isFailure) {
-      throw new Error('Something went wrong');
+    if (failure) {
+      throw failure.error;
     }
-    const { content: sateReceiver } = sateReceiverResult;
-    sateReceiver.content.start();
+
+    stateReceiver.start();
   }
 }

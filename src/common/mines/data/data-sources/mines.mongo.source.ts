@@ -1,11 +1,11 @@
 import { Collection } from 'mongodb';
-import { MongoSource } from '@core/data/mongo.source';
+import { MongoSource } from '@core/data/data-sources/mongo.source';
 import { inject, injectable } from 'inversify';
 import { MineDocument } from '../mines.dtos';
 
 @injectable()
 export class MinesMongoSource {
-  public static Token;
+  public static Token = 'MINES_MONGO_SOURCE';
   private collection: Collection;
 
   constructor(@inject(MongoSource.Token) private mongoSource: MongoSource) {

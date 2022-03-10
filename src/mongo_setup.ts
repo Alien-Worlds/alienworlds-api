@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { connectMongo } from './connections/mongo';
-import config from './config';
+import { config } from './config';
 
 (async () => {
   const mongo: any = await connectMongo(config.mongo);

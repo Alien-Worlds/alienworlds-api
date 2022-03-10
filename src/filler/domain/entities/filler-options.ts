@@ -1,7 +1,9 @@
 import { OptionValues } from 'commander';
-import config from '../../../config';
+import { config } from '@config';
 
-/* eslint-disable @typescript-eslint/no-empty-function */
+/**
+ * @class
+ */
 export class FillerOptions {
   private constructor(
     public readonly startBlock: number,
@@ -11,11 +13,19 @@ export class FillerOptions {
     public readonly continueWithFiller: boolean
   ) {}
 
+  /**
+   * Create instance of the FillerOptions
+   *
+   * @static
+   * @param {OptionValues} options
+   * @returns {FillerOptions}
+   */
   public static fromOptionValues(options: OptionValues): FillerOptions {
+    const { startBlock, endBlock, test } = options;
     return new FillerOptions(
-      options.startBlock || config.startBlock,
-      options.endBlock || config.endBlock,
-      options.test || 0,
+      isNaN(parseInt(startBlock)) ? config.startBlock : startBlock,
+      isNaN(parseInt(endBlock)) ? config.endBlock : endBlock,
+      isNaN(parseInt(test)) ? 0 : test,
       options.replay || false,
       options.continueWithFiller || false
     );

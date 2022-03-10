@@ -1,81 +1,84 @@
+import { Messages } from '@core/domain/messages';
+import { MessageQueue } from '@core/domain/messages.types';
 import { inject, injectable } from 'inversify';
 import { Failure } from '../../../core/domain/failure';
 import { Result } from '../../../core/domain/result';
 import { UseCase } from '../../../core/domain/use-case';
 import { BlocksRange } from '../entities/blocks-range';
-import { FillerOptions } from '../entities/filler-options';
-import { GetLastIrreversableBlockNumUseCase } from './get-last-irreversable-block-number.use-case';
 
 @injectable()
-export class PopulateBlockRangesUseCase extends UseCase<BlocksRange> {
-  public static Token = 'REPLAY_USE_CASE';
+export class PopulateBlockRangesUseCase extends UseCase {
+  public static Token = 'POPULATE_BLOCK_RANGES_USE_CASE';
 
-  @inject(GetLastIrreversableBlockNumUseCase.Token)
-  private getLastIrreversableBlockNumUseCase: GetLastIrreversableBlockNumUseCase;
+  constructor(@inject(Messages.Token) private messages: Messages) {
+    super();
+  }
 
-  public async execute(
-    blocksRange: BlocksRange,
-    options: FillerOptions
-  ): Promise<Result<BlocksRange>> {
-    // const startBlock = blocksRange.start;
-    const endBlock = blocksRange.end;
+  /**
+   * Write block range as a buffer.....
+   *
+   * @private
+   * @param {number} start
+   * @param {number} end
+   * @returns {Buffer}
+   */
+  private writeBlockRangeBuffer(start: number, end: number): Buffer {
+    const startBuffer = Buffer.allocUnsafe(8);
+    startBuffer.writeBigInt64BE(BigInt(start), 0);
 
-    // if (endBlock === 0xffffffff) {
-    //     const getLastBlockNumResult = await this.getLastIrreversableBlockNumUseCase.execute();
+    const endBuffer = Buffer.allocUnsafe(8);
+    endBuffer.writeBigInt64BE(BigInt(end), 0);
 
-    //     if (getLastBlockNumResult.isFailure) {
-    //         return Result.withFailure(getLastBlockNumResult.failure);
-    //     }
-    //     endBlock = getLastBlockNumResult.content;
-    // }
+    return Buffer.concat([startBuffer, endBuffer]);
+  }
 
-    // const chunk_size = 10000;
-    // let from = startBlock;
-    // let to = from + chunk_size; // to is not inclusive
-    // let jobsCount = 0;
+  /**
+   *
+   * @async
+   * @param {BlockRange} blocksRange
+   * @returns
+   */
+  public async execute(blocksRange: BlocksRange) {
+    const { start: startBlock, end: endBlock } = blocksRange;
 
-    // const send_promises = [];
+    const chunkSize = 10000;
+    const chunksCount = Math.ceil((endBlock - startBlock) / chunkSize);
+    const queue = [];
+    let from = startBlock;
+    let to = from + chunkSize;
+    let i = 0;
+    let messagesCount = 0;
 
-    // while (to !== endBlock || from < to) {
-    //     process.stdout.write('.');
+    while (i < chunksCount) {
+      process.stdout.write(
+        `Sending ${messagesCount}/${chunksCount} messages\r`
+      );
 
-    //     const from_buffer = Buffer.allocUnsafe(8);
-    //     from_buffer.writeBigInt64BE(BigInt(from), 0);
+      if (to > endBlock) {
+        to = endBlock;
+        i = chunksCount;
+      }
 
-    //     const to_buffer = Buffer.allocUnsafe(8);
-    //     to_buffer.writeBigInt64BE(BigInt(to), 0);
+      const buffer = this.writeBlockRangeBuffer(from, to);
+      queue.push(
+        this.messages.send(MessageQueue.AlienWorldsBlockRange, buffer)
+      );
 
-    //     send_promises.push(
-    //         new Promise(resolve => {
-    //             this.amq.send(
-    //                 'aw_block_range',
-    //                 Buffer.concat([from_buffer, to_buffer]),
-    //                 () => resolve
-    //             );
-    //         })
-    //     );
-    //     jobsCount++;
+      from += chunkSize;
+      to += chunkSize;
+      i++;
+      messagesCount++;
+    }
 
-    //     from += chunk_size;
-    //     to += chunk_size;
-
-    //     if (to > endBlock) {
-    //         to = endBlock;
-    //     }
-
-    //     if (from > to) {
-    //         break_now = true;
-    //     }
-
-    //     if (break_now) {
-    //         break;
-    //     }
-    // }
-    // console.log(`Added ${jobsCount} jobs`);
-    // await Promise.all(send_promises);
-
-    return options.continueWithFiller
-      ? Result.withContent(BlocksRange.create(endBlock, 0xffffffff))
-      : Result.withFailure(Failure.withMessage('game over'));
+    try {
+      await Promise.all(queue);
+      console.log(`Sent ${messagesCount} messages`);
+      return Result.withContent({
+        sent: messagesCount,
+        total: chunksCount,
+      });
+    } catch (error) {
+      return Result.withFailure(Failure.fromError(error));
+    }
   }
 }

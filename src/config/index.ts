@@ -22,5 +22,5 @@ if (!envStats.isFile()) {
 
 require('dotenv').config({ path: envPath });
 
-export default new AppConfig();
+export const config = new AppConfig();
 export { Config } from './config.types';

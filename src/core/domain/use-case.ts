@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { injectable } from 'inversify';
 import { Failure } from './failure';
 import { Result } from './result';

@@ -1,31 +1,55 @@
-import { MinesRepository } from '@common/mines/domain/mines.repository';
-import { Failure } from '@core/domain/failure';
+import { GetLastBlockUseCase } from '@common/mines/domain/use-cases/get-last-block.use-case';
+import { config } from '@config';
 import { inject, injectable } from 'inversify';
 import { Result } from '../../../core/domain/result';
 import { UseCase } from '../../../core/domain/use-case';
 import { BlocksRange } from '../entities/blocks-range';
 import { FillerOptions } from '../entities/filler-options';
+import { GetLastIrreversableBlockNumUseCase } from './get-last-irreversable-block-number.use-case';
 
 @injectable()
 export class GetBlocksRangeUseCase implements UseCase<BlocksRange> {
   public static Token = 'GET_BLOCKS_RANGE_USE_CASE';
 
   constructor(
-    @inject(MinesRepository.Token) private minesRepository: MinesRepository
+    @inject(GetLastBlockUseCase.Token)
+    private getLastBlockUseCase: GetLastBlockUseCase,
+    @inject(GetLastIrreversableBlockNumUseCase.Token)
+    private getLastIrreversableBlockNumUseCase: GetLastIrreversableBlockNumUseCase
   ) {}
 
   public async execute(options: FillerOptions): Promise<Result<BlocksRange>> {
-    const { startBlock, endBlock } = options;
-    if (startBlock === -1) {
-      try {
-        const lastBlock = await this.minesRepository.getLastBlock();
-        const { blockNum } = lastBlock;
-        return Result.withContent(BlocksRange.create(blockNum, endBlock));
-      } catch (error) {
-        return Result.withFailure(Failure.fromError(error));
-      }
-    } else {
-      return Result.withContent(BlocksRange.create(startBlock, endBlock));
+    const { startBlock, endBlock, replay } = options;
+    let tempStartBlock = config.startBlock;
+    let tempEndBlock = config.endBlock;
+
+    if (endBlock !== config.endBlock) {
+      tempEndBlock = endBlock;
     }
+
+    if (startBlock === -1) {
+      const getLastBlockResult = await this.getLastBlockUseCase.execute();
+
+      if (getLastBlockResult.isFailure) {
+        return Result.withFailure(getLastBlockResult.failure);
+      }
+
+      const { blockNum } = getLastBlockResult.content;
+      tempStartBlock = blockNum;
+    } else {
+      tempStartBlock = startBlock;
+    }
+
+    if (replay && endBlock === 0xffffffff) {
+      const { failure, content } =
+        await this.getLastIrreversableBlockNumUseCase.execute();
+
+      if (failure) {
+        return Result.withFailure(failure);
+      }
+      tempEndBlock = content;
+    }
+
+    return Result.withContent(BlocksRange.create(tempStartBlock, tempEndBlock));
   }
 }

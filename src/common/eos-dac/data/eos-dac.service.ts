@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import config from '../../../config';
+import { config } from '../../../config';
 import { RequestError } from '../../../core/errors/request.error';
 import { EosDacInfoDto, CurrencyStatsDto } from './eos-dac.dtos';
 

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { MineDocument } from '../../mines';
+
+import { MineDocument } from '@common/mines/data/mines.dtos';
 
 export const getMinesFastifyMock = (options: {
   findResult: MineDocument[];

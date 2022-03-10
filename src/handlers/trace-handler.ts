@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 import { Config } from '../config';
-import { Amq } from '../connections/amq';
 import { StatsDisplay } from '../include/statsdisplay';
 import fetch from 'node-fetch';
+import { Messages } from '@core/domain/messages';
+import { MessageQueue } from '@core/domain/messages.types';
 
 const { Api, JsonRpc, Serialize } = require('eosjs');
 
@@ -61,7 +62,7 @@ export type TraceVersionAndValueDto = [string, TransactionTraceDto];
  */
 export class TraceHandler {
   private config: Config;
-  private amq: Amq;
+  private amq: Messages;
   private stats: StatsDisplay;
   private BUFFER_SIZE = 4;
   public api: typeof Api;
@@ -74,7 +75,7 @@ export class TraceHandler {
    * @param {Amq} amq
    * @param {StatsDisplay} stats
    */
-  constructor(config: Config, amq: Amq, stats: StatsDisplay) {
+  constructor(config: Config, amq: Messages, stats: StatsDisplay) {
     this.config = config;
     this.amq = amq;
     this.stats = stats;
@@ -213,7 +214,7 @@ export class TraceHandler {
               blockNumber,
               blockTimestamp
             );
-            this.amq.send('action', actionBuffer);
+            this.amq.send(MessageQueue.Action, actionBuffer);
 
             this.stats.add(name);
           }
