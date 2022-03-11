@@ -1,20 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { injectable } from 'inversify';
-import { CurrencyStatsDto, EosDacInfoDto } from '../eos-dac.dtos';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-@injectable()
-export class EosDacService {
-  public static Token = 'EOS_DAC_SERVICE';
+export const EosDacService = jest.fn(() => ({
+  getInfo: jest.fn(),
+  getCurrencyStats: jest.fn(),
+  getCurrencyBalance: jest.fn(),
+}));
 
-  public async getInfo(): Promise<EosDacInfoDto> {
-    return null;
-  }
-
-  public async getCurrencyStats(): Promise<CurrencyStatsDto> {
-    return null;
-  }
-
-  public async getCurrencyBalance(account: string): Promise<string[]> {
-    return [];
-  }
-}
+(EosDacService as any).Token = 'EOS_DAC_SERVICE';

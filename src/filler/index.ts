@@ -6,6 +6,13 @@ import { setupIOC, ioc } from './ioc.config';
 
 /**
  * IIFE Filler
+ *
+ * Read raw action data from blockchain nodes and distributes
+ * it through the message broker to other services/ processes.
+ *
+ * Command options:
+ * @see {@link ./data/filler.utils.ts}
+ *
  * @async
  */
 (async () => {

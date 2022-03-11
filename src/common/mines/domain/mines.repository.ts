@@ -3,6 +3,7 @@ import { Mine } from './entities/mine';
 
 /**
  * @abstract
+ * @class
  */
 export abstract class MinesRepository {
   public static Token = 'MINES_REPOSITORY';

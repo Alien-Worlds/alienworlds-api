@@ -7,10 +7,6 @@ import { Container } from 'inversify';
 import { Failure } from '@core/domain/failure';
 import { EosDacRepository } from '@common/eos-dac/domain/eos-dac.repository';
 import { EosDacRepositoryImpl } from '@common/eos-dac/data/eos-dac.repository-impl';
-import { EosDacService } from '@common/eos-dac/data/eos-dac.service';
-
-jest.mock('@config');
-// const configMock = config as jest.MockedObject<Config>;
 
 jest.mock('@common/eos-dac/data/eos-dac.service');
 jest.mock('@common/eos-dac/domain/eos-dac.repository');
@@ -21,10 +17,9 @@ let useCase: GetLastIrreversableBlockNumUseCase;
 describe('GetLastIrreversableBlockNumUseCase Unit tests', () => {
   beforeAll(() => {
     container = new Container();
-    container.bind<EosDacService>(EosDacService.Token).to(EosDacService);
     container
       .bind<EosDacRepository>(EosDacRepository.Token)
-      .to(EosDacRepositoryImpl);
+      .toConstantValue(new EosDacRepositoryImpl(null));
     container
       .bind<GetLastIrreversableBlockNumUseCase>(
         GetLastIrreversableBlockNumUseCase.Token

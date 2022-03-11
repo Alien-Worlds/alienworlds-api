@@ -4,19 +4,22 @@ import 'reflect-metadata';
 import { Config, config } from '../../../../config';
 import { BlocksRange } from '../../entities/blocks-range';
 import { FillerOptions } from '../../entities/filler-options';
-import { GetLastBlockUseCase } from '../../../../common/mines/domain/use-cases/get-last-block.use-case';
+import { GetLastBlockUseCase } from '@common/mines/domain/use-cases/get-last-block.use-case';
 import { GetBlocksRangeUseCase } from '../get-blocks-range.use-case';
 import { GetLastIrreversableBlockNumUseCase } from '../get-last-irreversable-block-number.use-case';
-import { Result } from '../../../../core/domain/result';
+import { Result } from '@core/domain/result';
 import { Container } from 'inversify';
 import { Failure } from '@core/domain/failure';
 
 jest.mock('@config');
 const configMock = config as jest.MockedObject<Config>;
 
-jest.mock('../../../../common/mines/domain/use-cases/get-last-block.use-case');
+jest.mock('@common/mines/domain/use-cases/get-last-block.use-case');
 jest.mock('../get-last-irreversable-block-number.use-case');
 
+const getLastBlockUseCaseMock = new GetLastBlockUseCase(null);
+const getLastIrreversableBlockNumUseCaseMock =
+  new GetLastIrreversableBlockNumUseCase(null);
 let container: Container;
 let useCase: GetBlocksRangeUseCase;
 
@@ -25,12 +28,12 @@ describe('GetBlocksRangeUseCase Unit tests', () => {
     container = new Container();
     container
       .bind<GetLastBlockUseCase>(GetLastBlockUseCase.Token)
-      .to(GetLastBlockUseCase);
+      .toConstantValue(getLastBlockUseCaseMock);
     container
       .bind<GetLastIrreversableBlockNumUseCase>(
         GetLastIrreversableBlockNumUseCase.Token
       )
-      .to(GetLastIrreversableBlockNumUseCase);
+      .toConstantValue(getLastIrreversableBlockNumUseCaseMock);
     container
       .bind<GetBlocksRangeUseCase>(GetBlocksRangeUseCase.Token)
       .to(GetBlocksRangeUseCase);
@@ -70,7 +73,7 @@ describe('GetBlocksRangeUseCase Unit tests', () => {
   it('Should execute GetLastBlockUseCase when given startBlock is equal -1', async () => {
     const blockNum = 200;
     const executeMock = jest
-      .spyOn(GetLastBlockUseCase.prototype, 'execute')
+      .spyOn(getLastBlockUseCaseMock, 'execute')
       .mockResolvedValue(Result.withContent<any>({ blockNum }));
     const options = FillerOptions.fromOptionValues({
       startBlock: -1,
@@ -83,7 +86,7 @@ describe('GetBlocksRangeUseCase Unit tests', () => {
 
   it('Should return failure when GetLastBlockUseCase fails', async () => {
     const executeMock = jest
-      .spyOn(GetLastBlockUseCase.prototype, 'execute')
+      .spyOn(getLastBlockUseCaseMock, 'execute')
       .mockResolvedValue(Result.withFailure(Failure.withMessage('fail')));
     const options = FillerOptions.fromOptionValues({
       startBlock: -1,
@@ -98,7 +101,7 @@ describe('GetBlocksRangeUseCase Unit tests', () => {
   it('Should execute GetLastBlockUseCase when given startBlock is equal -1', async () => {
     const lastBlock = 123456;
     const executeMock = jest
-      .spyOn(GetLastIrreversableBlockNumUseCase.prototype, 'execute')
+      .spyOn(getLastIrreversableBlockNumUseCaseMock, 'execute')
       .mockResolvedValue(Result.withContent<number>(lastBlock));
     const options = FillerOptions.fromOptionValues({
       replay: true,
@@ -114,7 +117,7 @@ describe('GetBlocksRangeUseCase Unit tests', () => {
 
   it('Should return failure when GetLastIrreversableBlockNumUseCase fails', async () => {
     const executeMock = jest
-      .spyOn(GetLastIrreversableBlockNumUseCase.prototype, 'execute')
+      .spyOn(getLastIrreversableBlockNumUseCaseMock, 'execute')
       .mockResolvedValue(Result.withFailure(Failure.withMessage('fail')));
     const options = FillerOptions.fromOptionValues({
       replay: true,

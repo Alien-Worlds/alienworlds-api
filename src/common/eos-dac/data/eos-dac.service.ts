@@ -35,7 +35,7 @@ export class EosDacService {
   }
 
   /**
-   * Get chainblock information
+   * Get blockchain information
    *
    * @async
    * @returns {EosDacInfoDto}

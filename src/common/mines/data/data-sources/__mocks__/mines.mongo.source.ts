@@ -1,11 +1,7 @@
-import { injectable } from 'inversify';
-import { MineDocument } from '../../mines.dtos';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-@injectable()
-export class MinesMongoSource {
-  public static Token = 'MINES_MONGO_SOURCE';
+export const MinesMongoSource = jest.fn(() => ({
+  findLastBlock: jest.fn(),
+}));
 
-  public async findLastBlock(): Promise<MineDocument> {
-    return null;
-  }
-}
+(MinesMongoSource as any).Token = 'MINES_MONGO_SOURCE';

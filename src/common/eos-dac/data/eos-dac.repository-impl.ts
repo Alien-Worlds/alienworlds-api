@@ -7,12 +7,26 @@ import { EosDacInfo } from '../domain/entities/eos-dac-info';
 import { EosDacRepository } from '../domain/eos-dac.repository';
 import { EosDacService } from './eos-dac.service';
 
+/**
+ * EosDacRepository implementation
+ * @class
+ */
 @injectable()
 export class EosDacRepositoryImpl implements EosDacRepository {
+  /**
+   * @constructor
+   * @param {EosDacService} eosDacService
+   */
   constructor(
     @inject(EosDacService.Token) private eosDacService: EosDacService
   ) {}
 
+  /**
+   * Gets the blockchain information
+   *
+   * @async
+   * @returns {Promise<Result<EosDacInfo>>}
+   */
   public async getInfo(): Promise<Result<EosDacInfo>> {
     console.log(`Fetching lib from ${config.endpoints[0]}/v1/chain/get_info`);
     try {
@@ -23,6 +37,12 @@ export class EosDacRepositoryImpl implements EosDacRepository {
     }
   }
 
+  /**
+   * Gets the TLM currency statistics
+   *
+   * @async
+   * @returns {Promise<Result<CurrencyStats>>}
+   */
   public async getCurrecyStats(): Promise<Result<CurrencyStats>> {
     try {
       const dto = await this.eosDacService.getCurrencyStats();
@@ -32,6 +52,13 @@ export class EosDacRepositoryImpl implements EosDacRepository {
     }
   }
 
+  /**
+   * Gets the current TLM currency balance
+   *
+   * @async
+   * @param {string} account
+   * @returns {Promise<Result<number>>}
+   */
   public async getCurrencyBalance(account: string): Promise<Result<number>> {
     try {
       const dto = this.eosDacService.getCurrencyBalance(account);

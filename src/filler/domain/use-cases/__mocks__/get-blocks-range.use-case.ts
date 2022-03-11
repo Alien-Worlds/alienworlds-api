@@ -1,15 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { injectable } from 'inversify';
-import { UseCase } from '@core/domain/use-case';
-import { Result } from '@core/domain/result';
-import { BlocksRange } from '../../../domain/entities/blocks-range';
-import { FillerOptions } from '../../../domain/entities/filler-options';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-@injectable()
-export class GetBlocksRangeUseCase implements UseCase {
-  public static Token = 'GET_BLOCKS_RANGE_USE_CASE';
+export const GetBlocksRangeUseCase = jest.fn(() => ({
+  execute: jest.fn(),
+}));
 
-  public async execute(options: FillerOptions): Promise<Result<BlocksRange>> {
-    return null;
-  }
-}
+(GetBlocksRangeUseCase as any).Token = 'GET_BLOCKS_RANGE_USE_CASE';

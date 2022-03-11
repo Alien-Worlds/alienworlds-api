@@ -1,5 +1,9 @@
 import { Message, MessageQueue, QueueHandler } from './messages.types';
 
+/**
+ * @abstract
+ * @class
+ */
 export abstract class Messages {
   public static Token = 'MESSAGES';
 

@@ -1,16 +1,7 @@
-import { Result } from '@core/domain/result';
-import { UseCase } from '@core/domain/use-case';
-import { injectable } from 'inversify';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-@injectable()
-export class SetupStateReceiverUseCase extends UseCase {
-  public static Token = 'SETUP_STATE_RECEIVER_USE_CASE';
+export const SetupStateReceiverUseCase = jest.fn(() => ({
+  execute: jest.fn(),
+}));
 
-  public execute() {
-    return Result.withContent({
-      start: () => {
-        //
-      },
-    });
-  }
-}
+(SetupStateReceiverUseCase as any).Token = 'SETUP_STATE_RECEIVER_USE_CASE';

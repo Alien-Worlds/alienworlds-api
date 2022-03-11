@@ -2,9 +2,18 @@ import { Messages } from '@core/domain/messages';
 import { MessageQueue, QueueHandler } from '../../domain/messages.types';
 import { ConfirmChannel, connect, Connection, Message } from 'amqplib';
 
+/**
+ * Suspends execution of the current process for a given number of milliseconds
+ * @async
+ * @param {number} ms
+ * @returns {Promise}
+ */
 export const wait = async (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms));
 
+/**
+ * @class
+ */
 export class AmqMessages implements Messages {
   private logger: Console;
   private channel: ConfirmChannel;
@@ -16,8 +25,6 @@ export class AmqMessages implements Messages {
   private initialized: boolean;
 
   /**
-   * Creates instances of the Amq class
-   *
    * @constructor
    * @param {string} address - connection string
    * @param {Console} logger - logger instance

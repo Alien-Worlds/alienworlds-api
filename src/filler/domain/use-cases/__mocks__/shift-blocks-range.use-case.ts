@@ -1,11 +1,7 @@
-import { UseCase } from '@core/domain/use-case';
-import { injectable } from 'inversify';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-@injectable()
-export class ShiftBlocksRangeUseCase implements UseCase {
-  public static Token = 'SHIFT_BLOCKS_RANGE_USE_CASE';
+export const ShiftBlocksRangeUseCase = jest.fn(() => ({
+  execute: jest.fn(),
+}));
 
-  public async execute() {
-    return null;
-  }
-}
+(ShiftBlocksRangeUseCase as any).Token = 'SHIFT_BLOCKS_RANGE_USE_CASE';

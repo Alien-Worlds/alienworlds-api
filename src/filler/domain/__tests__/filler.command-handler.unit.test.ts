@@ -17,9 +17,16 @@ jest.mock('../use-cases/populate-block-ranges.use-case');
 jest.mock('../use-cases/setup-state-receiver.use-case');
 jest.mock('../use-cases/shift-blocks-range.use-case');
 
+const getBlocksRangeUseCaseMock = new GetBlocksRangeUseCase(null, null);
+const populateBlockRangesUseCaseMock = new PopulateBlockRangesUseCase(null);
+const shiftBlocksRangeUseCaseCaseMock = new ShiftBlocksRangeUseCase();
+const setupStateReceiverUseCaseCaseMock = new SetupStateReceiverUseCase(
+  null,
+  null
+);
+
 let container: Container;
 let commandHandler: FillerCommandHandler;
-
 let executeGetBlocksRangeUseCaseMock;
 let executePopulateBlockRangesUseCaseMock;
 let executeShiftBlocksRangeUseCaseCaseMock;
@@ -30,16 +37,16 @@ describe('FillerCommandHandler Unit tests', () => {
     container = new Container();
     container
       .bind<PopulateBlockRangesUseCase>(PopulateBlockRangesUseCase.Token)
-      .to(PopulateBlockRangesUseCase);
+      .toConstantValue(populateBlockRangesUseCaseMock);
     container
       .bind<ShiftBlocksRangeUseCase>(ShiftBlocksRangeUseCase.Token)
-      .to(ShiftBlocksRangeUseCase);
+      .toConstantValue(shiftBlocksRangeUseCaseCaseMock);
     container
       .bind<GetBlocksRangeUseCase>(GetBlocksRangeUseCase.Token)
-      .to(GetBlocksRangeUseCase);
+      .toConstantValue(getBlocksRangeUseCaseMock);
     container
       .bind<SetupStateReceiverUseCase>(SetupStateReceiverUseCase.Token)
-      .to(SetupStateReceiverUseCase);
+      .toConstantValue(setupStateReceiverUseCaseCaseMock);
     container
       .bind<FillerCommandHandler>(FillerCommandHandler.Token)
       .to(FillerCommandHandler);
@@ -50,19 +57,19 @@ describe('FillerCommandHandler Unit tests', () => {
       FillerCommandHandler.Token
     );
     executeGetBlocksRangeUseCaseMock = jest.spyOn(
-      GetBlocksRangeUseCase.prototype,
+      getBlocksRangeUseCaseMock,
       'execute'
     );
     executePopulateBlockRangesUseCaseMock = jest.spyOn(
-      PopulateBlockRangesUseCase.prototype,
+      populateBlockRangesUseCaseMock,
       'execute'
     );
     executeShiftBlocksRangeUseCaseCaseMock = jest.spyOn(
-      ShiftBlocksRangeUseCase.prototype,
+      shiftBlocksRangeUseCaseCaseMock,
       'execute'
     );
     executeSetupStateReceiverUseCaseCaseMock = jest
-      .spyOn(SetupStateReceiverUseCase.prototype, 'execute')
+      .spyOn(setupStateReceiverUseCaseCaseMock, 'execute')
       .mockImplementation(() =>
         Result.withContent(<any>{
           start: () => {
@@ -90,15 +97,13 @@ describe('FillerCommandHandler Unit tests', () => {
 
   it('Should throw an error when block range is not set', async () => {
     const options = FillerOptions.fromOptionValues({});
-    const executeMock = jest
-      .spyOn(GetBlocksRangeUseCase.prototype, 'execute')
-      .mockResolvedValue(Result.withFailure(Failure.withMessage('fail')));
+    executeGetBlocksRangeUseCaseMock.mockResolvedValue(
+      Result.withFailure(Failure.withMessage('fail'))
+    );
 
     await commandHandler.run(options).catch(error => {
       expect(error).toBeInstanceOf(Error);
     });
-
-    executeMock.mockReset();
   });
 
   it('Should execute ShiftBlocksRangeUseCase when replay and continueWithFiller options are true', async () => {

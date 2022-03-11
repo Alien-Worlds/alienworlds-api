@@ -6,6 +6,9 @@ import { GetBlocksRangeUseCase } from './use-cases/get-blocks-range.use-case';
 import { PopulateBlockRangesUseCase } from './use-cases/populate-block-ranges.use-case';
 import { SetupStateReceiverUseCase } from './use-cases/setup-state-receiver.use-case';
 
+/**
+ * @class
+ */
 @injectable()
 export class FillerCommandHandler extends CommandHandler {
   public static Token = 'FILLER_COMMAND_HANDLER';
@@ -23,7 +26,8 @@ export class FillerCommandHandler extends CommandHandler {
   private shiftBlocksRangeUseCase: ShiftBlocksRangeUseCase;
 
   /**
-   * Run filler command
+   * Read raw action data from blockchain nodes and distributes
+   * it through the message broker to other services/ processes.
    *
    * @async
    * @param {FillerOptions} options

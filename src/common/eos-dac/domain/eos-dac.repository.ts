@@ -4,6 +4,7 @@ import { EosDacInfo } from './entities/eos-dac-info';
 
 /**
  * @abstract
+ * @class
  */
 export abstract class EosDacRepository {
   public static Token = 'EOS_DAC_REPOSITORY';

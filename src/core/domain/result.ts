@@ -2,7 +2,8 @@
 import { Failure } from './failure';
 
 /**
- * The class represents the result of executing a use case.
+ * The class represents the result of executing a use case
+ * or repository operation.
  * The result may return a Failure object or the typed content.
  * @class
  */

@@ -1,15 +1,7 @@
-import { UseCase } from '@core/domain/use-case';
-import { injectable } from 'inversify';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-@injectable()
-export class PopulateBlockRangesUseCase extends UseCase {
-  public static Token = 'POPULATE_BLOCK_RANGES_USE_CASE';
+export const PopulateBlockRangesUseCase = jest.fn(() => ({
+  execute: jest.fn(),
+}));
 
-  private writeBlockRangeBuffer() {
-    return null;
-  }
-
-  public async execute() {
-    return null;
-  }
-}
+(PopulateBlockRangesUseCase as any).Token = 'POPULATE_BLOCK_RANGES_USE_CASE';

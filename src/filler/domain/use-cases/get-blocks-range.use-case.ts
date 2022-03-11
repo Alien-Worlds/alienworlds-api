@@ -7,6 +7,9 @@ import { BlocksRange } from '../entities/blocks-range';
 import { FillerOptions } from '../entities/filler-options';
 import { GetLastIrreversableBlockNumUseCase } from './get-last-irreversable-block-number.use-case';
 
+/**
+ * @class
+ */
 @injectable()
 export class GetBlocksRangeUseCase implements UseCase<BlocksRange> {
   public static Token = 'GET_BLOCKS_RANGE_USE_CASE';
@@ -18,6 +21,14 @@ export class GetBlocksRangeUseCase implements UseCase<BlocksRange> {
     private getLastIrreversableBlockNumUseCase: GetLastIrreversableBlockNumUseCase
   ) {}
 
+  /**
+   * Creates and returns a BlockRange object based on the given options.
+   * If an error occurs, it returns the Failure object.
+   *
+   * @async
+   * @param {FillerOptions} options
+   * @returns {Promise<Result<BlocksRange>>}
+   */
   public async execute(options: FillerOptions): Promise<Result<BlocksRange>> {
     const { startBlock, endBlock, replay } = options;
     let tempStartBlock = config.startBlock;

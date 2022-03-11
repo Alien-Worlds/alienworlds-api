@@ -1,9 +1,22 @@
 import { TraceHandler } from 'handlers/trace-handler';
 
+/**
+ * StateReceiver factory.
+ * @see {@link ioc.config.ts} for the usage
+ *
+ * @abstract
+ * @class
+ */
 export abstract class StateReceiverFactory {
   public static Token = 'STATE_RECEIVER_FACTORY';
 }
 
+/**
+ * Abstraction of the eosdac.io state receiver.
+ *
+ * @abstract
+ * @class
+ */
 export abstract class StateReceiver {
   parseDate: () => void;
   registerBlockHandler: () => void;

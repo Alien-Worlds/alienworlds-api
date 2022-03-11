@@ -6,16 +6,27 @@ import { Result } from '../../../core/domain/result';
 import { UseCase } from '../../../core/domain/use-case';
 import { BlocksRange } from '../entities/blocks-range';
 
+export type PopulateBlockRangesUseCaseResult = {
+  sent: number;
+  total: number;
+};
+
+/**
+ * @class
+ */
 @injectable()
-export class PopulateBlockRangesUseCase extends UseCase {
+export class PopulateBlockRangesUseCase implements UseCase {
   public static Token = 'POPULATE_BLOCK_RANGES_USE_CASE';
 
-  constructor(@inject(Messages.Token) private messages: Messages) {
-    super();
-  }
+  /**
+   * @constructor
+   * @param {Messages} messages
+   */
+  constructor(@inject(Messages.Token) private messages: Messages) {}
 
   /**
-   * Write block range as a buffer.....
+   * Writes big endian 64-bits Big integer (startBlock and endBlock)
+   * value to an allocated buffer.
    *
    * @private
    * @param {number} start
@@ -33,10 +44,14 @@ export class PopulateBlockRangesUseCase extends UseCase {
   }
 
   /**
+   * Sends (not in order) divided into specific chunks
+   * block range via message broker.
+   * When the operation is completed, it returns the Result,
+   * in case of an error it returns Failure object.
    *
    * @async
    * @param {BlockRange} blocksRange
-   * @returns
+   * @returns {PopulateBlockRangesUseCaseResult}
    */
   public async execute(blocksRange: BlocksRange) {
     const { start: startBlock, end: endBlock } = blocksRange;

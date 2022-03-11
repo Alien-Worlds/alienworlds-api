@@ -1,3 +1,8 @@
+/**
+ * Represents the data structure of the eosDac
+ * chain/get_info response
+ * @type
+ */
 export type EosDacInfoDto = {
   server_version: string;
   chain_id: string;
@@ -17,6 +22,11 @@ export type EosDacInfoDto = {
   server_full_version_string: string;
 };
 
+/**
+ * Represents the data structure of the eosDac
+ * chain/get_currency_stats response
+ * @type
+ */
 export type CurrencyStatsDto = {
   TLM: {
     supply: string;

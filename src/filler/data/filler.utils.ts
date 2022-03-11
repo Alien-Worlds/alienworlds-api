@@ -1,5 +1,11 @@
-import { program } from 'commander';
+import { CommanderErrorConstructor, program } from 'commander';
 
+/**
+ * Parse a string argument and return an decimal number
+ *
+ * @param {string} value
+ * @returns
+ */
 export const commanderParseInt = (value: string) => {
   // parseInt takes a string and a radix
   const parsedValue = parseInt(value, 10);
@@ -9,6 +15,11 @@ export const commanderParseInt = (value: string) => {
   return parsedValue;
 };
 
+/**
+ *
+ * @param {string[]} args
+ * @returns {Command}
+ */
 export const buildCommand = (args: string[]) => {
   program
     .version('0.1', '-v, --version')
