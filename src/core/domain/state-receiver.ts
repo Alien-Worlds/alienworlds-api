@@ -20,7 +20,7 @@ export abstract class StateReceiverFactory {
 export abstract class StateReceiver {
   parseDate: () => void;
   registerBlockHandler: () => void;
-  registerDoneHandler: () => void;
+  registerDoneHandler: (callback: (...args: unknown[]) => void) => void;
   registerTraceHandler: (traceHandler: TraceHandler) => void;
   registerDeltaHandler: () => void;
   registerProgressHandler: () => void;

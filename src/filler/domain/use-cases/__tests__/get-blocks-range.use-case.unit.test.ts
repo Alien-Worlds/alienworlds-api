@@ -2,7 +2,6 @@
 import 'reflect-metadata';
 
 import { Config, config } from '../../../../config';
-import { BlocksRange } from '../../entities/blocks-range';
 import { FillerOptions } from '../../entities/filler-options';
 import { GetLastBlockUseCase } from '@common/mines/domain/use-cases/get-last-block.use-case';
 import { GetBlocksRangeUseCase } from '../get-blocks-range.use-case';
@@ -10,6 +9,7 @@ import { GetLastIrreversableBlockNumUseCase } from '../get-last-irreversable-blo
 import { Result } from '@core/domain/result';
 import { Container } from 'inversify';
 import { Failure } from '@core/domain/failure';
+import { BlocksRange } from '@common/block/domain/entities/blocks-range';
 
 jest.mock('@config');
 const configMock = config as jest.MockedObject<Config>;

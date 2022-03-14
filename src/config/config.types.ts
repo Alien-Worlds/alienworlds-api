@@ -19,7 +19,9 @@ export type Config = {
   port: number;
   schemes: string[];
   processorThreads: number;
+  processorInviolableThreads: number;
   blockrangeThreads: number;
+  blockrangeInviolableThreads: number;
   shipEndpoints: string[];
   chainId: string;
   endpoints: string[];

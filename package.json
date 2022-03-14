@@ -23,7 +23,7 @@
     "abis": "node dist/fetch-abis/index.js ./dist/abis",
     "mongo-indexes": "node dist/mongo_setup.js",
     "api": "tsc-watch --onSuccess \"node dist/index.js\"",
-    "blockrange": "tsc-watch --onSuccess \"node dist/blockrange.js\"",
+    "blockrange": "tsc-watch --onSuccess \"node dist/index.js\"",
     "filler": "tsc-watch --onSuccess \"node dist/filler/index.js ${flags}\"",
     "processor": "tsc-watch --onSuccess \"node dist/processor.js\""
   },

@@ -14,8 +14,14 @@ export default class AppConfig implements Config {
     public readonly processorThreads: number = Number(
       process.env.PROCESSOR_THREADS
     ),
+    public readonly processorInviolableThreads: number = Number(
+      process.env.PROCESSOR_INVIOLABLE_THREADS
+    ),
     public readonly blockrangeThreads: number = Number(
       process.env.BLOCKRANGE_THREADS
+    ),
+    public readonly blockrangeInviolableThreads: number = Number(
+      process.env.BLOCKRANGE_INVIOLABLE_THREADS
     ),
     public readonly shipEndpoints: string[] = process.env.SHIP_ENDPOINTS.split(
       ' '

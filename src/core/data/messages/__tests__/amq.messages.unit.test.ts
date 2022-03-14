@@ -3,8 +3,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import 'reflect-metadata';
 import { AmqMessages } from '../amq.messages';
-import { MessageQueue } from '../../../domain/messages.types';
 import amqp from 'amqplib';
+import { MessageQueue } from '@core/domain/messages';
 
 let channelMock;
 let connectionMock;

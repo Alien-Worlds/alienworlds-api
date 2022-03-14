@@ -1,4 +1,4 @@
-import { CommanderErrorConstructor, program } from 'commander';
+import { program } from 'commander';
 
 /**
  * Parse a string argument and return an decimal number

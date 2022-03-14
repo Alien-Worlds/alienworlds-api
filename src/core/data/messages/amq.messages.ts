@@ -1,5 +1,4 @@
-import { Messages } from '@core/domain/messages';
-import { MessageQueue, QueueHandler } from '../../domain/messages.types';
+import { MessageHandler, MessageQueue, Messages } from '@core/domain/messages';
 import { ConfirmChannel, connect, Connection, Message } from 'amqplib';
 
 /**
@@ -20,7 +19,7 @@ export class AmqMessages implements Messages {
   private connection: Connection;
   private connectionErrorsCount: number;
   private maxConnectionErrors: number;
-  private handlers: Map<string, QueueHandler>;
+  private handlers: Map<string, MessageHandler>;
   private address: string;
   private initialized: boolean;
 
@@ -32,7 +31,7 @@ export class AmqMessages implements Messages {
   constructor(address: string, logger: Console) {
     this.address = address;
     this.initialized = false;
-    this.handlers = new Map<string, QueueHandler>();
+    this.handlers = new Map<string, MessageHandler>();
     this.connectionErrorsCount = 0;
     this.maxConnectionErrors = 5;
     this.logger = logger;
@@ -106,7 +105,7 @@ export class AmqMessages implements Messages {
    */
   private async reassignHandlers(): Promise<void> {
     const promises = [];
-    this.handlers.forEach((callback: QueueHandler, queue: string) =>
+    this.handlers.forEach((callback: MessageHandler, queue: string) =>
       promises.push(this.channel.consume(queue, callback, { noAck: false }))
     );
     await Promise.all(promises);
@@ -176,9 +175,9 @@ export class AmqMessages implements Messages {
    * Set up a listener for the queue.
    *
    * @param {string} queue - queue name
-   * @param {QueueHandler} handler - queue handler
+   * @param {MessageHandler} handler - queue handler
    */
-  public consume(queue: MessageQueue, handler: QueueHandler): void {
+  public consume(queue: MessageQueue, handler: MessageHandler): void {
     try {
       if (this.handlers.has(queue)) {
         this.logger.warn(
@@ -195,13 +194,13 @@ export class AmqMessages implements Messages {
   /**
    * Positive acknowledgements - record a message as delivered and can be discarded.
    *
-   * @param {Message} job
+   * @param {Message} message
    */
-  public ack(job: Message): void {
+  public ack(message: Message): void {
     try {
-      this.channel.ack(job);
+      this.channel.ack(message);
     } catch (error) {
-      this.logger.error(`Failed to ack job`, error);
+      this.logger.error(`Failed to ack message`, error);
     }
   }
 
@@ -209,13 +208,13 @@ export class AmqMessages implements Messages {
    * Reject a message.
    * Negative acknowledgements - record a message as not delivered and should be discarded.
    *
-   * @param {Message} job
+   * @param {Message} message
    */
-  public reject(job: Message): void {
+  public reject(message: Message): void {
     try {
-      this.channel.reject(job, true);
+      this.channel.reject(message, true);
     } catch (error) {
-      this.logger.error(`Failed to reject job`, error);
+      this.logger.error(`Failed to reject message`, error);
     }
   }
 }

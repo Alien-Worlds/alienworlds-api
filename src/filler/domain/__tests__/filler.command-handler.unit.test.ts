@@ -10,7 +10,7 @@ import { GetBlocksRangeUseCase } from '../use-cases/get-blocks-range.use-case';
 import { PopulateBlockRangesUseCase } from '../use-cases/populate-block-ranges.use-case';
 import { SetupStateReceiverUseCase } from '../use-cases/setup-state-receiver.use-case';
 import { ShiftBlocksRangeUseCase } from '../use-cases/shift-blocks-range.use-case';
-import { BlocksRange } from '../entities/blocks-range';
+import { BlocksRange } from '@common/block/domain/entities/blocks-range';
 
 jest.mock('../use-cases/get-blocks-range.use-case');
 jest.mock('../use-cases/populate-block-ranges.use-case');

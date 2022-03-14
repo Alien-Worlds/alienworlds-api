@@ -1,4 +1,14 @@
-import { Message, MessageQueue, QueueHandler } from './messages.types';
+import * as Amq from 'amqplib';
+
+export type Message = Amq.Message;
+
+export enum MessageQueue {
+  Action = 'action',
+  AlienWorldsBlockRange = 'aw_block_range',
+  RecalcAsset = 'recalc_asset',
+}
+
+export type MessageHandler = (message: Message) => void;
 
 /**
  * @abstract
@@ -11,5 +21,5 @@ export abstract class Messages {
   public abstract send(queue: MessageQueue, message: Buffer): Promise<void>;
   public abstract ack(message: Message): void;
   public abstract reject(message: Message): void;
-  public abstract consume(queue: MessageQueue, handler: QueueHandler): void;
+  public abstract consume(queue: MessageQueue, handler: MessageHandler): void;
 }

@@ -1,10 +1,9 @@
-import { Messages } from '@core/domain/messages';
-import { MessageQueue } from '@core/domain/messages.types';
+import { BlocksRange } from '@common/block/domain/entities/blocks-range';
+import { MessageQueue, Messages } from '@core/domain/messages';
 import { inject, injectable } from 'inversify';
 import { Failure } from '../../../core/domain/failure';
 import { Result } from '../../../core/domain/result';
 import { UseCase } from '../../../core/domain/use-case';
-import { BlocksRange } from '../entities/blocks-range';
 
 export type PopulateBlockRangesUseCaseResult = {
   sent: number;
@@ -53,7 +52,7 @@ export class PopulateBlockRangesUseCase implements UseCase {
    * @param {BlockRange} blocksRange
    * @returns {PopulateBlockRangesUseCaseResult}
    */
-  public async execute(blocksRange: BlocksRange) {
+  public async execute(blocksRange: BlocksRange<number>) {
     const { start: startBlock, end: endBlock } = blocksRange;
 
     const chunkSize = 10000;

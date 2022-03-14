@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import { BlocksRange } from '../../entities/blocks-range';
 import { ShiftBlocksRangeUseCase } from '../shift-blocks-range.use-case';
+import { BlocksRange } from '@common/block/domain/entities/blocks-range';
 
 let container: Container;
 let useCase: ShiftBlocksRangeUseCase;

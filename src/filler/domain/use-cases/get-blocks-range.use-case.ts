@@ -1,9 +1,9 @@
+import { BlocksRange } from '@common/block/domain/entities/blocks-range';
 import { GetLastBlockUseCase } from '@common/mines/domain/use-cases/get-last-block.use-case';
 import { config } from '@config';
 import { inject, injectable } from 'inversify';
 import { Result } from '../../../core/domain/result';
 import { UseCase } from '../../../core/domain/use-case';
-import { BlocksRange } from '../entities/blocks-range';
 import { FillerOptions } from '../entities/filler-options';
 import { GetLastIrreversableBlockNumUseCase } from './get-last-irreversable-block-number.use-case';
 
@@ -29,7 +29,9 @@ export class GetBlocksRangeUseCase implements UseCase<BlocksRange> {
    * @param {FillerOptions} options
    * @returns {Promise<Result<BlocksRange>>}
    */
-  public async execute(options: FillerOptions): Promise<Result<BlocksRange>> {
+  public async execute(
+    options: FillerOptions
+  ): Promise<Result<BlocksRange<number>>> {
     const { startBlock, endBlock, replay } = options;
     let tempStartBlock = config.startBlock;
     let tempEndBlock = config.endBlock;

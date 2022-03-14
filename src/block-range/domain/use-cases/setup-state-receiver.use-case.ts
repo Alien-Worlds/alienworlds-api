@@ -1,5 +1,5 @@
 import { BlocksRange } from '@common/block/domain/entities/blocks-range';
-import { Messages } from '@core/domain/messages';
+import { Message, Messages } from '@core/domain/messages';
 import {
   StateReceiver,
   StateReceiverFactory,
@@ -27,8 +27,8 @@ export class SetupStateReceiverUseCase implements UseCase<StateReceiver> {
     @inject(Messages.Token) private messages: Messages,
     @inject(StateReceiverFactory.Token)
     private stateReceiverFactory: (
-      startBlock: number,
-      endBlock: number,
+      startBlock: bigint,
+      endBlock: bigint,
       mode: number
     ) => StateReceiver
   ) {}
@@ -36,19 +36,23 @@ export class SetupStateReceiverUseCase implements UseCase<StateReceiver> {
   /**
    * Initializes and returns a StateReceiver object.
    *
-   * @param {BlocksRange} blocksRange
+   * @param {Message} message
    * @returns {Result<StateReceiver>}
    */
-  public execute(blocksRange: BlocksRange<number>): Result<StateReceiver> {
-    const { start: startBlock, end: endBlock } = blocksRange;
-    const traceHandler = new TraceHandler(
-      config,
-      this.messages,
-      new StatsDisplay()
-    );
+  public execute(message: Message): Result<StateReceiver> {
+    const { start: startBlock, end: endBlock } =
+      BlocksRange.fromMessage(message);
+    const stats = new StatsDisplay();
+    const traceHandler = new TraceHandler(config, this.messages, stats);
     const stateReceiver = this.stateReceiverFactory(startBlock, endBlock, 0);
     stateReceiver.registerTraceHandler(traceHandler);
-
+    stateReceiver.registerDoneHandler(() => {
+      this.messages.ack(message);
+      stats.add(`Processed range`);
+      console.log(
+        `Completed range ${startBlock.toString()}-${endBlock.toString()}`
+      );
+    });
     return Result.withContent(stateReceiver);
   }
 }

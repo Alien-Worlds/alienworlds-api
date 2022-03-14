@@ -1,7 +1,7 @@
+import { BlocksRange } from '@common/block/domain/entities/blocks-range';
 import { injectable } from 'inversify';
 import { Result } from '../../../core/domain/result';
 import { UseCase } from '../../../core/domain/use-case';
-import { BlocksRange } from '../entities/blocks-range';
 
 /**
  * Prepare the BlockRange to continue a filler after the replay
@@ -10,7 +10,7 @@ import { BlocksRange } from '../entities/blocks-range';
  * @class
  */
 @injectable()
-export class ShiftBlocksRangeUseCase implements UseCase<BlocksRange> {
+export class ShiftBlocksRangeUseCase implements UseCase<BlocksRange<number>> {
   public static Token = 'SHIFT_BLOCKS_RANGE_USE_CASE';
 
   /**
@@ -20,7 +20,7 @@ export class ShiftBlocksRangeUseCase implements UseCase<BlocksRange> {
    * @param {BlocksRange} blockRange
    * @returns {Promise<Result<BlocksRange>>}
    */
-  public execute(blockRange: BlocksRange): Result<BlocksRange> {
+  public execute(blockRange: BlocksRange<number>): Result<BlocksRange<number>> {
     const { end } = blockRange;
 
     return Result.withContent(BlocksRange.create(end, 0xffffffff));

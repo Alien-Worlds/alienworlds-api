@@ -7,7 +7,7 @@ import { Failure } from '@core/domain/failure';
 import { Messages } from '@core/domain/messages';
 import { AmqMessages } from '@core/data/messages/amq.messages';
 import { PopulateBlockRangesUseCase } from '../populate-block-ranges.use-case';
-import { BlocksRange } from '../../../domain/entities/blocks-range';
+import { BlocksRange } from '@common/block/domain/entities/blocks-range';
 
 jest.mock('@config');
 const configMock = config as jest.MockedObject<Config>;

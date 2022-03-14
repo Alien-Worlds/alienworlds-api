@@ -4,8 +4,7 @@
 import { Config } from '../config';
 import { StatsDisplay } from '../include/statsdisplay';
 import fetch from 'node-fetch';
-import { Messages } from '@core/domain/messages';
-import { MessageQueue } from '@core/domain/messages.types';
+import { MessageQueue, Messages } from '@core/domain/messages';
 
 const { Api, JsonRpc, Serialize } = require('eosjs');
 
