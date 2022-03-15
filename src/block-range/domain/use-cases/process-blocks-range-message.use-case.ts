@@ -22,7 +22,7 @@ export class ProcessBlocksRangeMessageUseCase implements UseCase {
   ) {}
 
   /**
-   * Initializes and runs a StateReceiver.
+   * Initializes and runs a eosDAC StateReceiver.
    *
    * @param {Message} message
    */

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-var-requires */
+
+import StateReceiverImpl from '@eosdacio/eosio-statereceiver';
 import { config } from '@config';
 import { AmqMessages } from '@core/data/messages/amq.messages';
 import { AsyncContainerModule, Container, interfaces } from 'inversify';
@@ -10,8 +11,6 @@ import {
   StateReceiverFactory,
 } from '@core/domain/state-receiver';
 import { ProcessBlocksRangeMessageUseCase } from './domain/use-cases/process-blocks-range-message.use-case';
-
-const StateReceiverImpl = require('@eosdacio/eosio-statereceiver');
 
 const bindings = new AsyncContainerModule(async bind => {
   // Create and initialize messages service

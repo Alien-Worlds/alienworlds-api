@@ -16,6 +16,12 @@ export class BlockRangeCommandHandler extends CommandHandler {
   @inject(Messages.Token)
   private messages: Messages;
 
+  /**
+   * Set up a consumer for the "aw_block_range" messages
+   * with a callback to be invoked with each message
+   * and proccess block range.
+   *
+   */
   public run() {
     this.messages.consume(
       MessageQueue.AlienWorldsBlockRange,

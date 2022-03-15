@@ -34,7 +34,7 @@ export class SetupStateReceiverUseCase implements UseCase<StateReceiver> {
   ) {}
 
   /**
-   * Initializes and returns a StateReceiver object.
+   * Initializes and returns a eosDAC StateReceiver object.
    *
    * @param {Message} message
    * @returns {Result<StateReceiver>}
