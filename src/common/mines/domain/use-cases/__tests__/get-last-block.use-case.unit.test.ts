@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { MinesRepositoryImpl } from '@common/mines/data/mines.repository-impl';
-import { Failure } from '@core/domain/failure';
-import { Result } from '@core/domain/result';
+import { MineRepositoryImpl } from '@common/mines/data/mine.repository-impl';
+import { Failure } from '@core/architecture/domain/failure';
+import { Result } from '@core/architecture/domain/result';
 import { Container } from 'inversify';
 import { Mine } from '../../entities/mine';
-import { MinesRepository } from '../../mines.repository';
+import { MineRepository } from '../../mine.repository';
 import { GetLastBlockUseCase } from '../get-last-block.use-case';
 
-jest.mock('@common/mines/data/mines.repository-impl');
+jest.mock('@common/mines/data/mine.repository-impl');
 
-const minesRepositoryImplMock = new MinesRepositoryImpl(null);
+const minesRepositoryImplMock = new MineRepositoryImpl(null);
 let container: Container;
 let useCase: GetLastBlockUseCase;
 let getLastBlockMock;
@@ -20,7 +20,7 @@ describe('GetLastBlockUseCase Unit tests', () => {
   beforeAll(() => {
     container = new Container();
     container
-      .bind<MinesRepository>(MinesRepository.Token)
+      .bind<MineRepository>(MineRepository.Token)
       .toConstantValue(minesRepositoryImplMock);
     container
       .bind<GetLastBlockUseCase>(GetLastBlockUseCase.Token)
@@ -47,7 +47,13 @@ describe('GetLastBlockUseCase Unit tests', () => {
 
   it('Should return Mine object', async () => {
     getLastBlockMock.mockResolvedValue(
-      Result.withContent(Mine.fromDto({ _id: 'fakeMiner' } as any))
+      Result.withContent(
+        Mine.fromDto({
+          _id: 'fakeMiner',
+          block_num: 0,
+          global_sequence: 0,
+        } as any)
+      )
     );
 
     const { content, failure } = await useCase.execute();

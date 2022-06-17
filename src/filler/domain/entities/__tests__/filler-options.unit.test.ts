@@ -15,15 +15,14 @@ describe('FillerOptions Unit tests', () => {
     expect(range.endBlock).toEqual(configMock.endBlock);
     expect(range.test).toEqual(0);
     expect(range.replay).toEqual(false);
-    expect(range.continueWithFiller).toEqual(false);
   });
 
   it('Should create instance of FillerOptions with given values', () => {
     configMock.startBlock = NaN;
-    configMock.startBlock = NaN;
+    configMock.endBlock = NaN;
     const options = {
-      startBlock: 0,
-      endBlock: 0,
+      startBlock: 0n,
+      endBlock: 0n,
       test: 10,
       replay: true,
       continueWithFiller: true,
@@ -34,6 +33,5 @@ describe('FillerOptions Unit tests', () => {
     expect(range.endBlock).toEqual(options.endBlock);
     expect(range.test).toEqual(options.test);
     expect(range.replay).toEqual(options.replay);
-    expect(range.continueWithFiller).toEqual(options.continueWithFiller);
   });
 });

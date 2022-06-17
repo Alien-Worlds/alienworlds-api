@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { NFTDocument } from '../../nfts';
+import { NftDocument } from '../../nfts';
 
 export const getNFTsFastifyMock = (options: {
-  findResult?: NFTDocument[];
+  findResult?: NftDocument[];
   countResult?: number;
 }) => {
   const { findResult, countResult } = options;

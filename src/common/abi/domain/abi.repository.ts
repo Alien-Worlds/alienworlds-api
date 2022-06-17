@@ -1,17 +1,17 @@
-import { Result } from '@core/domain/result';
-import { MostRecentAbi } from './entities/most-recent-abi';
+import { Result } from '@core/architecture/domain/result';
+import { injectable } from 'inversify';
+import { AbiDto } from '../data/dtos/abi.dto';
+import { Abi } from './entities/abi';
 
 /**
  * @abstract
  * @class
  */
+@injectable()
 export abstract class AbiRepository {
   public static Token = 'ABI_REPOSITORY';
 
-  public abstract load(): Promise<Result<unknown>>;
-  public abstract getMostRecentAbi(
-    account: string,
-    blockNum: bigint,
-    fromCurrentBlock?: boolean
-  ): Result<MostRecentAbi>;
+  public abstract createAbi(dto: AbiDto): Result<Abi>;
+  public abstract getCurrentAbi(): Result<Abi>;
+  public abstract clearCurrentAbi(): Result<void>;
 }

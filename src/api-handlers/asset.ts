@@ -1,6 +1,6 @@
 import { assetSchema } from '../schemas';
-import { NotFoundError } from '../errors';
 import { Long } from 'mongodb';
+import NotFoundError from '@core/architecture/data/errors/not-found.error';
 
 /**
  * Represents the available /asset request query options

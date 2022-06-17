@@ -14,7 +14,16 @@ export type DocsConfig = {
   exposeRoute: boolean;
 };
 
+export type BlockRangeScanConfig = {
+  fillerClusterSize: number;
+  blockRangeClusterSize: number;
+  numberOfChildren: number;
+  minChunkSize: number;
+  scanKey: string;
+};
+
 export type Config = {
+  blockRangeScan: BlockRangeScanConfig;
   host: string;
   port: number;
   schemes: string[];
@@ -30,10 +39,13 @@ export type Config = {
   ethEndpoint: string;
   bscTokenContract: string;
   ethTokenContract: string;
-  startBlock: number;
-  endBlock: number;
+  startBlock: bigint | number;
+  endBlock: bigint | number;
   amqConnectionString: string;
   atomicAssets: AtomicAssetsConfig;
   mongo: MongoConfig;
   docs: DocsConfig;
+  abisPath: string;
+  processorMessageHandlerCount: number;
+  mineRepositoryCacheMaxSize: number;
 };

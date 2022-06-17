@@ -1,7 +1,8 @@
+import { Failure } from '@core/architecture/domain/failure';
+import { Result } from '@core/architecture/domain/result';
 import fetch from 'node-fetch';
-import { RequestError } from '../core/errors/request.error';
-import { Failure } from '../core/domain/failure';
-import { Result } from '../core/domain/result';
+import { RequestError } from '../core/architecture/data/errors/request.error';
+
 import { ActionDto, GetActionsResponseDto } from './fetch-abis.types';
 
 /**

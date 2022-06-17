@@ -3,8 +3,8 @@ import fsPromises from 'fs/promises';
 import { getActionsByAccount } from '../get-actions-by-account';
 import { storeAbisByAccount } from '../store-abis-by-account';
 import { saveAbisToFiles } from '../save-abis-to-files';
-import { Result } from '@core/domain/result';
-import { Failure } from '@core/domain/failure';
+import { Result } from '@core/architecture/domain/result';
+import { Failure } from '@core/architecture/domain/failure';
 
 jest.mock('fs');
 jest.mock('fs/promises');

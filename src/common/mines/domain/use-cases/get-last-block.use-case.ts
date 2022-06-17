@@ -1,8 +1,8 @@
-import { Result } from '@core/domain/result';
-import { UseCase } from '@core/domain/use-case';
+import { Result } from '@core/architecture/domain/result';
+import { UseCase } from '@core/architecture/domain/use-case';
 import { inject, injectable } from 'inversify';
 import { Mine } from '../entities/mine';
-import { MinesRepository } from '../mines.repository';
+import { MineRepository } from '../mine.repository';
 
 /**
  * @class
@@ -13,10 +13,10 @@ export class GetLastBlockUseCase implements UseCase<Mine> {
 
   /**
    * @constructor
-   * @param {MinesRepository} minesRepository
+   * @param {MineRepository} minesRepository
    */
   constructor(
-    @inject(MinesRepository.Token) private minesRepository: MinesRepository
+    @inject(MineRepository.Token) private minesRepository: MineRepository
   ) {}
 
   /**

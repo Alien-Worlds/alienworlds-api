@@ -1,23 +1,31 @@
-import * as cluster from 'cluster';
-import { config } from '@config';
-import { ioc, setupIOC } from './ioc.config';
+import 'reflect-metadata';
 
-import { ProcessorCommandHandler } from './domain/processor.command-handler';
+import * as cluster from 'cluster';
+import { orchestratorIoc, setupOrchestratorIoc } from './ioc/master.ioc.config';
+import { ProcessorOrchestrator } from './domain/processor.orchestrator';
+import { processIoc, setupProcessIoc } from './ioc/process.ioc.config';
+import { ProcessorProcess } from './domain/processor.process';
+import { AbiHexFile } from 'processor/data/abi-hex.dto';
 
 /**
  * IIFE Processor
  *
  * @async
  */
-(async () => {
-  if (cluster.isMaster) {
-    //
-  } else {
-    await setupIOC();
-    const handler = ioc.get<ProcessorCommandHandler>(
-      ProcessorCommandHandler.Token
-    );
+// (async () => {
+//   if (cluster.isMaster) {
+//     console.log(`Starting Processor orchestrator`);
+//     await setupOrchestratorIoc();
+//     orchestratorIoc
+//       .get<ProcessorOrchestrator>(ProcessorOrchestrator.Token)
+//       .init();
+//   } else {
+//     console.log(`Starting Processor process`);
 
-    handler.run();
-  }
-})();
+//     process.once('message', async (data: AbiHexFile[]) => {
+//       console.log(`Received ABI hex files.`);
+//       await setupProcessIoc(data);
+//       processIoc.get<ProcessorProcess>(ProcessorProcess.Token).start();
+//     });
+//   }
+// })();

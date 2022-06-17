@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export const MinesMongoSource = jest.fn(() => ({
+export const MineMongoSource = jest.fn(() => ({
   findLastBlock: jest.fn(),
 }));
 
-(MinesMongoSource as any).Token = 'MINES_MONGO_SOURCE';
+(MineMongoSource as any).Token = 'MINES_MONGO_SOURCE';

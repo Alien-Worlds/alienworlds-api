@@ -14,6 +14,7 @@ module.exports = {
   }),
   collectCoverageFrom: [
     'src/**/*.ts',
+    '!**/use-case.ts',
     '!**/*.fixture.ts',
     '!**/*.mock.ts',
     '!**/*.error.ts',
@@ -21,6 +22,10 @@ module.exports = {
     '!**/__mocks__/**',
     '!**/schemas/**',
     '!src/**/index.ts',
-    '!**/ioc.config.ts',
+    '!src/**/*.repository.ts',
+    '!src/**/*.enums.ts',
+    '!src/**/worker.ts',
+    '!src/**/ioc.config.ts',
+    '!src/**/eos-rpc.source.ts',
   ],
 };

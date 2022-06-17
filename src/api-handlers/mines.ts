@@ -1,6 +1,6 @@
 import { minesSchema } from '../schemas';
-import { parseDate } from '../include/parsedate';
 import { Mine } from '@common/mines/domain/entities/mine';
+import { parseDate } from '@common/utils/date.utils';
 
 /**
  * Represents the possible search query options
@@ -63,11 +63,11 @@ export class MineResult {
     public readonly land_id: string,
     public readonly planet_name: string,
     public readonly landowner: string,
-    public readonly bag_items: number[],
+    public readonly bag_items: bigint[],
     public readonly offset: number,
-    public readonly block_num: number,
-    public readonly block_timestamp: string,
-    public readonly global_sequence: number,
+    public readonly block_num: bigint,
+    public readonly block_timestamp: Date,
+    public readonly global_sequence: bigint,
     public readonly tx_id: string
   ) {}
 
@@ -83,23 +83,17 @@ export class MineResult {
     const {
       id,
       miner,
-      invalid,
-      error,
-      delay,
-      difficulty,
-      ease,
-      luck,
-      commission,
+      params: { invalid, error, delay, difficulty, ease, luck, commission },
       bounty,
       landId,
       planetName,
-      landowner,
+      landOwner,
       bagItems,
       offset,
-      blockNum,
+      blockNumber,
       blockTimestamp,
       globalSequence,
-      txId,
+      transactionId,
     } = entity;
 
     return new MineResult(
@@ -117,13 +111,13 @@ export class MineResult {
       bounty,
       landId,
       planetName,
-      landowner,
+      landOwner,
       bagItems,
       offset,
-      blockNum,
+      blockNumber,
       blockTimestamp,
       globalSequence,
-      txId
+      transactionId
     );
   }
 }

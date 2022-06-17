@@ -11,8 +11,8 @@ import { injectable } from 'inversify';
  * @class
  */
 @injectable()
-export class AbieosService {
-  public static Token = 'ABIEOS_SERVICE';
+export class AbiEosService {
+  public static Token = 'ABI_EOS_SERVICE';
   /**
    * Set abi hex format.
    *

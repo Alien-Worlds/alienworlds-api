@@ -1,13 +1,13 @@
 import {
   NFT,
-  NFTDocument,
+  NftDocument,
   NFTResult,
   NFTSearchQuery,
   NFTsRequestQueryOptions,
   NFTsResponse,
 } from '../../nfts';
 
-export const sampleNFTDocument: NFTDocument = {
+export const sampleNFTDocument: NftDocument = {
   _id: '61eee6039181c700422ef773',
   miner: 'fakeminer1.wam',
   land_id: '1099512961112',

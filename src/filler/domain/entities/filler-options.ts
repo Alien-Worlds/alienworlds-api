@@ -1,16 +1,16 @@
 import { OptionValues } from 'commander';
 import { config } from '@config';
+import { parseToBigInt } from '@common/utils/dto.utils';
 
 /**
  * @class
  */
 export class FillerOptions {
   private constructor(
-    public readonly startBlock: number,
-    public readonly endBlock: number,
+    public readonly startBlock: bigint,
+    public readonly endBlock: bigint,
     public readonly test: number,
-    public readonly replay: boolean,
-    public readonly continueWithFiller: boolean
+    public readonly replay: boolean
   ) {}
 
   /**
@@ -21,13 +21,24 @@ export class FillerOptions {
    * @returns {FillerOptions}
    */
   public static fromOptionValues(options: OptionValues): FillerOptions {
-    const { startBlock, endBlock, test } = options;
+    // if the given value is not a number use the default from config
+    const startBlock = isNaN(parseInt(options.startBlock))
+      ? config.startBlock
+      : parseToBigInt(options.startBlock);
+
+    // if the given value is not a number use the default from config
+    const endBlock = isNaN(parseInt(options.endBlock))
+      ? config.endBlock
+      : parseToBigInt(options.endBlock);
+
+    // if the given value is not a number use 0
+    const test = isNaN(parseInt(options.test)) ? 0 : parseInt(options.test);
+
     return new FillerOptions(
-      isNaN(parseInt(startBlock)) ? config.startBlock : startBlock,
-      isNaN(parseInt(endBlock)) ? config.endBlock : endBlock,
-      isNaN(parseInt(test)) ? 0 : test,
-      options.replay || false,
-      options.continueWithFiller || false
+      startBlock,
+      endBlock,
+      test,
+      options.replay || false
     );
   }
 }

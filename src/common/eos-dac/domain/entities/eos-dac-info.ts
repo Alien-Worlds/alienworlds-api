@@ -1,3 +1,4 @@
+import { parseToBigInt } from '@common/utils/dto.utils';
 import { EosDacInfoDto } from '../../data/eos-dac.dtos';
 
 /**
@@ -12,8 +13,8 @@ export class EosDacInfo {
   private constructor(
     public readonly serverVversion: string,
     public readonly chainId: string,
-    public readonly headBlockNum: number,
-    public readonly lastIrreversibleBlockNum: number,
+    public readonly headBlockNum: bigint,
+    public readonly lastIrreversibleBlockNum: bigint,
     public readonly lastIrreversibleBlockId: string,
     public readonly headBlockId: string,
     public readonly headBlockTime: string,
@@ -23,7 +24,7 @@ export class EosDacInfo {
     public readonly blockCpuLimit: number,
     public readonly blockNetLimit: number,
     public readonly serverVersionString: string,
-    public readonly forkDbHeadBlockNum: number,
+    public readonly forkDbHeadBlockNum: bigint,
     public readonly forkDbHeadBlockId: string,
     public readonly serverFullVersionString: string
   ) {}
@@ -39,8 +40,8 @@ export class EosDacInfo {
     return new EosDacInfo(
       dto.server_version,
       dto.chain_id,
-      dto.head_block_num,
-      dto.last_irreversible_block_num,
+      parseToBigInt(dto.head_block_num),
+      parseToBigInt(dto.last_irreversible_block_num),
       dto.last_irreversible_block_id,
       dto.head_block_id,
       dto.head_block_time,
@@ -50,7 +51,7 @@ export class EosDacInfo {
       dto.block_cpu_limit,
       dto.block_net_limit,
       dto.server_version_string,
-      dto.fork_db_head_block_num,
+      parseToBigInt(dto.fork_db_head_block_num),
       dto.fork_db_head_block_id,
       dto.server_full_version_string
     );

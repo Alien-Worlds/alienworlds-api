@@ -1,5 +1,5 @@
+import { parseDate } from '@common/utils/date.utils';
 import { mineLuckSchema } from '../schemas';
-import { parseDate } from '../include/parsedate';
 
 /**
  * Represents the data structure of the MineLuck mongoDB document

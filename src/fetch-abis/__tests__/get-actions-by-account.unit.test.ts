@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RequestError } from '@core/errors/request.error';
+import { RequestError } from '@core/architecture/data/errors/request.error';
 import fetch from 'node-fetch';
 import { getActionsByAccount } from '../get-actions-by-account';
 
