@@ -32,7 +32,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - '27017'
+      - '27017:27017'
     volumes:
       - database:/data/db
 
@@ -40,7 +40,7 @@ services:
     image: rabbitmq:management
     restart: always
     ports:
-      - '5672'
+      - '5672:5672'
       - '15672:15672'
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:15672']

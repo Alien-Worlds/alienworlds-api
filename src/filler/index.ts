@@ -73,4 +73,4 @@ commander
   )
   .parse(process.argv);
 
-// start(commander.opts());
+start(commander.opts());

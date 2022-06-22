@@ -44,20 +44,37 @@ export class NFT {
    * @returns {NftDocument}
    */
   public toDto(): NftDocument {
+    const {
+      id,
+      miner,
+      params,
+      landId,
+      rand1,
+      rand2,
+      rand3,
+      templateId,
+      blockNumber,
+      blockTimestamp,
+      globalSequence,
+      templateData,
+    } = this;
     const dto: NftDocument = {
-      _id: this.id,
-      miner: this.miner,
-      params: this.params.toDto(),
-      land_id: this.landId,
-      rand1: this.rand1,
-      rand2: this.rand2,
-      rand3: this.rand3,
-      template_id: this.templateId,
-      block_num: Long.fromBigInt(this.blockNumber),
-      block_timestamp: this.blockTimestamp,
-      global_sequence: Long.fromBigInt(this.globalSequence),
-      template_data: this.templateData.toDto(),
+      miner,
+      params: params.toDto(),
+      land_id: landId,
+      rand1,
+      rand2,
+      rand3,
+      template_id: templateId,
+      block_num: Long.fromBigInt(blockNumber),
+      block_timestamp: blockTimestamp,
+      global_sequence: Long.fromBigInt(globalSequence),
+      template_data: templateData.toDto(),
     };
+
+    if (id) {
+      dto._id = id;
+    }
 
     // Remove undefined properties so as not to send them to the data source.
     // This should not happen - the only exception is the "_id" property

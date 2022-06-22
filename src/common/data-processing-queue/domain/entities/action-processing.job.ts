@@ -55,6 +55,7 @@ export class ActionProcessingJob extends Job {
     const transactionId = parseUint8ArrayToBigInt(
       sb.getUint8Array(32)
     ).toString(16);
+    const recvSequence = parseUint8ArrayToBigInt(sb.getUint8Array(8));
     const globalSequence = parseUint8ArrayToBigInt(sb.getUint8Array(8));
     const account = sb.getName();
     const name = sb.getName();

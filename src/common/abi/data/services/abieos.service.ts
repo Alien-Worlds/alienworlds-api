@@ -1,4 +1,4 @@
-import abieos from '@eosrio/node-abieos';
+import * as abieos from '@eosrio/node-abieos';
 import { injectable } from 'inversify';
 
 /**
@@ -55,6 +55,6 @@ export class AbiEosService {
     type: string,
     buffer: Buffer
   ): string {
-    return abieos.bin_to_json(account, type, buffer);
+    return JSON.stringify(abieos.bin_to_json(account, type, buffer));
   }
 }

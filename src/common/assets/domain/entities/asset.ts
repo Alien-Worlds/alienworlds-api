@@ -123,12 +123,16 @@ export class Asset {
    * @returns {AssetDocument}
    */
   public toDto(): AssetDocument {
+    const { id, assetId, owner, data } = this;
     const dto: AssetDocument = {
-      _id: this.id,
-      asset_id: Long.fromBigInt(this.assetId),
-      owner: this.owner,
-      data: this.data.toDto(),
+      asset_id: Long.fromBigInt(assetId),
+      owner: owner,
+      data: data.toDto(),
     };
+
+    if (id) {
+      dto._id = id;
+    }
 
     // Remove undefined properties so as not to send them to the data source.
     // This should not happen - the only exception is the "_id" property

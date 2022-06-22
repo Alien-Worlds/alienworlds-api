@@ -43,7 +43,6 @@ import { DeserializeActionJobUseCase } from '../domain/use-cases/deserialize-act
 import { ProcessActionUseCase } from '../domain/use-cases/process-action.use-case';
 import { ProcessAssetUseCase } from '../domain/use-cases/process-asset.use-case';
 import { CreateEntityFromActionUseCase } from '../domain/use-cases/create-entity-from-action.use-case';
-import { InsertCachedMinesUseCase } from '../domain/use-cases/insert-cached-mines.use-case';
 import { AbiHexRepository } from '../domain/abi-hex.repository';
 import { AssetProcessingQueueService } from '@common/data-processing-queue/domain/services/asset-processing-queue.service';
 import { AssetProcessingQueueServiceImpl } from '@common/data-processing-queue/data/asset-processing-queue.service-impl';
@@ -191,9 +190,6 @@ const bindings = new AsyncContainerModule(async bind => {
   bind<ProcessAssetUseCase>(ProcessAssetUseCase.Token).to(ProcessAssetUseCase);
   bind<CreateEntityFromActionUseCase>(CreateEntityFromActionUseCase.Token).to(
     CreateEntityFromActionUseCase
-  );
-  bind<InsertCachedMinesUseCase>(InsertCachedMinesUseCase.Token).to(
-    InsertCachedMinesUseCase
   );
 });
 

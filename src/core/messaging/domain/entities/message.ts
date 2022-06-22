@@ -1,5 +1,4 @@
 import { MessageDto } from '../../data/messaging.dtos';
-import { MissingMessageIdError } from '../errors/missing-message-id.error';
 import { MessageFields, MessageProperties } from 'amqplib';
 
 export class Message {
@@ -37,11 +36,6 @@ export class Message {
    */
   public static fromDto(dto: MessageDto): Message {
     const { content, fields, properties } = dto;
-
-    if (!properties || !properties.messageId) {
-      throw new MissingMessageIdError();
-    }
-
     return new Message(properties.messageId, content, fields, properties);
   }
 }

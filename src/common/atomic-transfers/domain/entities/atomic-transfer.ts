@@ -43,16 +43,29 @@ export class AtomicTransfer {
    * @returns {AtomicTransferDocument}
    */
   public toDto(): AtomicTransferDocument {
+    const {
+      id,
+      blockNumber,
+      type,
+      from,
+      to,
+      assetIds,
+      blockTimestamp,
+      globalSequence,
+    } = this;
     const dto: AtomicTransferDocument = {
-      _id: this.id,
-      type: this.type,
-      from: this.from,
-      to: this.to,
-      asset_ids: this.assetIds.map(id => Long.fromBigInt(id)),
-      block_num: Long.fromBigInt(this.blockNumber),
-      block_timestamp: this.blockTimestamp,
-      global_sequence: Long.fromBigInt(this.globalSequence),
+      type,
+      from,
+      to,
+      asset_ids: assetIds.map(id => Long.fromBigInt(id)),
+      block_num: Long.fromBigInt(blockNumber),
+      block_timestamp: blockTimestamp,
+      global_sequence: Long.fromBigInt(globalSequence),
     };
+
+    if (id) {
+      dto._id = id;
+    }
 
     // Remove undefined properties so as not to send them to the data source.
     // This should not happen - the only exception is the "_id" property

@@ -1,6 +1,7 @@
+import { log } from '@common/state-history/domain/state-history.utils';
 import { Message } from '@core/messaging/domain/entities/message';
 import { ConnectionState } from '@core/messaging/domain/messaging.enums';
-import { ConfirmChannel, connect, Connection } from 'amqplib';
+import { Channel, connect, Connection } from 'amqplib';
 import { wait } from '../messaging.utils';
 
 import {
@@ -24,7 +25,7 @@ export type ChannelOptions = {
  */
 export class MessagingAmqSource implements MessagingSource {
   private logger: Console;
-  private channel: ConfirmChannel;
+  private channel: Channel;
   private connection: Connection;
   private connectionErrorsCount: number;
   private maxConnectionErrors: number;
@@ -133,7 +134,7 @@ export class MessagingAmqSource implements MessagingSource {
   private async reconnect() {
     if (this.connectionState === ConnectionState.Offline) {
       this.initialized = false;
-      this.logger.info(`Reloading connection with handlers`);
+      log(`Reloading connection with handlers`);
 
       try {
         await this.init();
@@ -187,18 +188,18 @@ export class MessagingAmqSource implements MessagingSource {
    */
   private async createChannel(): Promise<void> {
     const { prefetch, queues } = this.channelOptions;
-    this.channel = await this.connection.createConfirmChannel();
+    this.channel = await this.connection.createChannel();
     this.channel.on('cancel', data => this.handleChannelCancel(data));
     this.channel.on('close', () => this.handleChannelClose());
     this.channel.on('error', error => this.handleChannelError(error));
-    this.logger.info(`Channel created.`);
+    log(`Channel created.`);
 
     await this.channel.prefetch(prefetch);
     for (const queue of queues) {
       await this.channel.assertQueue(queue.name, queue.options);
     }
 
-    this.logger.info(`Queues set up.`);
+    log(`Queues set up.`);
   }
 
   /**
@@ -208,7 +209,6 @@ export class MessagingAmqSource implements MessagingSource {
    * @async
    */
   private async connect(): Promise<void> {
-    console.log(this.connectionState);
     if (this.connectionState !== ConnectionState.Offline) {
       return;
     }
@@ -218,7 +218,7 @@ export class MessagingAmqSource implements MessagingSource {
     this.connection.on('close', () => this.handleConnectionClose());
     this.connectionState = ConnectionState.Online;
 
-    this.logger.info(`Connected to AMQ ${this.address}`);
+    log(`Connected to AMQ ${this.address}`);
   }
 
   /**
@@ -234,7 +234,7 @@ export class MessagingAmqSource implements MessagingSource {
       }
       await this.connection.close();
 
-      this.logger.info(`Disconnected from AMQ ${this.address}`);
+      log(`Disconnected from AMQ ${this.address}`);
     }
   }
 
@@ -284,9 +284,10 @@ export class MessagingAmqSource implements MessagingSource {
    */
   public async send(queue: string, message: Buffer): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.channel.sendToQueue(queue, message, {}, error =>
-        error ? reject(error) : resolve()
-      );
+      const success = this.channel.sendToQueue(queue, message, {
+        deliveryMode: true,
+      });
+      return success ? resolve() : reject();
     });
   }
   /**

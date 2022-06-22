@@ -8,22 +8,24 @@ import { AtomicTransferRepository } from '@common/atomic-transfers/domain/reposi
 import { MineRepository } from '@common/mines/domain/mine.repository';
 import { AtomicTransfer } from '@common/atomic-transfers/domain/entities/atomic-transfer';
 import { Mine } from '@common/mines/domain/entities/mine';
-import { DataSourceOperationError } from '@core/architecture/data/errors/data-source-operation.error';
+import {
+  DataSourceOperationError,
+  OperationErrorType,
+} from '@core/architecture/data/errors/data-source-operation.error';
 import { CreateEntityFromActionUseCase } from './create-entity-from-action.use-case';
 import { Failure } from '@core/architecture/domain/failure';
 import { UnhandledEntityError } from '../errors/unhandled-entity.error';
-import { config } from '@config';
-import { InsertCachedMinesUseCase } from './insert-cached-mines.use-case';
 import { ActionProcessingJob } from '@common/data-processing-queue/domain/entities/action-processing.job';
 import { ActionProcessingQueueService } from '@common/data-processing-queue/domain/services/action-processing-queue.service';
 import { QueueAssetProcessingUseCase } from '@common/data-processing-queue/domain/use-cases/queue-asset-processing.use-case';
+import { log } from '@common/state-history/domain/state-history.utils';
+import { UnknownActionTypeError } from '../errors/unknown-action-type.error';
 
 /**
  * Proccess received action job.
  *
  * Depending on the type of action, the use case is to send
- * the created entity (NFT or AtomicTransfer) to the data source or
- * store it for a later bulk-upload (Mine).
+ * the created entity (Mine, NFT or AtomicTransfer) to the data source
  *
  * @class
  */
@@ -45,32 +47,35 @@ export class ProcessActionUseCase implements UseCase {
     @inject(ActionProcessingQueueService.Token)
     private actionProcessingQueueService: ActionProcessingQueueService,
     @inject(QueueAssetProcessingUseCase.Token)
-    private queueAssetProcessingUseCase: QueueAssetProcessingUseCase,
-    @inject(InsertCachedMinesUseCase.Token)
-    private insertCachedMinesUseCase: InsertCachedMinesUseCase
+    private queueAssetProcessingUseCase: QueueAssetProcessingUseCase
   ) {}
 
   /**
-   * Store Mine entity and message for later bulk-upload.
+   * Upload Mine entity.
    *
    * @async
    * @param {Mine} entity
    * @param {Message} job
    * @returns {Result}
    */
-  private async cacheMine(
+  private async uploadMine(
     entity: Mine,
     job: ActionProcessingJob
   ): Promise<Result<void>> {
-    this.actionProcessingQueueService.cacheJob(entity.transactionId, job);
-    this.minesRepository.cache(entity);
+    const { failure } = await this.minesRepository.insertOne(entity);
 
-    if (
-      this.minesRepository.getCacheSize() >= config.mineRepositoryCacheMaxSize
-    ) {
-      return this.insertCachedMinesUseCase.execute();
+    if (failure) {
+      const { error } = failure;
+
+      if (error.type === OperationErrorType.Duplicate) {
+        this.actionProcessingQueueService.ackJob(job);
+      } else {
+        this.actionProcessingQueueService.rejectJob(job);
+      }
+      return Result.withFailure(failure);
     }
 
+    this.actionProcessingQueueService.ackJob(job);
     return Result.withoutContent();
   }
 
@@ -126,7 +131,7 @@ export class ProcessActionUseCase implements UseCase {
         (error.isDuplicateError || error.isInvalidDataError)
       ) {
         // In case of a duplicate or invalid data, ack message
-        await this.actionProcessingQueueService.ackJob(job);
+        this.actionProcessingQueueService.ackJob(job);
       } else {
         // Otherwise reject message
         this.actionProcessingQueueService.rejectJob(job);
@@ -159,15 +164,20 @@ export class ProcessActionUseCase implements UseCase {
     // Ack message and return Failure if the operation failed
     // because of mismatched collection names.
     if (entityCreationFailure) {
-      if (entityCreationFailure.error instanceof CollectionMismatchError) {
+      if (
+        entityCreationFailure.error instanceof CollectionMismatchError ||
+        entityCreationFailure.error instanceof UnknownActionTypeError
+      ) {
         this.actionProcessingQueueService.ackJob(job);
+      } else {
+        this.actionProcessingQueueService.rejectJob(job);
       }
       return Result.withFailure(entityCreationFailure);
     }
 
-    // store Mine entity for later bulk-upload to the data source
+    // handle sending Mine entity
     if (entity instanceof Mine) {
-      return this.cacheMine(entity, job);
+      return this.uploadMine(entity, job);
     }
     // handle sending NFT entity
     if (entity instanceof NFT) {
@@ -177,6 +187,8 @@ export class ProcessActionUseCase implements UseCase {
     if (entity instanceof AtomicTransfer) {
       return this.uploadAtomicTransfer(entity, job);
     }
+
+    this.actionProcessingQueueService.ackJob(job);
 
     return Result.withFailure(
       Failure.fromError(new UnhandledEntityError(entity))

@@ -1,4 +1,3 @@
-import { AbiHexRepository } from 'processor/domain/abi-hex.repository';
 import { ActionProcessingJob } from '@common/data-processing-queue/domain/entities/action-processing.job';
 import { AssetProcessingJob } from '@common/data-processing-queue/domain/entities/asset-processing.job';
 import { ActionProcessingQueueService } from '@common/data-processing-queue/domain/services/action-processing-queue.service';
@@ -27,9 +26,6 @@ export class ProcessorProcess extends Process {
 
   @inject(ProcessAssetUseCase.Token)
   private processAssetUseCase: ProcessAssetUseCase;
-
-  @inject(AbiHexRepository.Token)
-  private abiHexRepository: AbiHexRepository;
 
   /**
    *

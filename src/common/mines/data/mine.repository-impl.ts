@@ -5,6 +5,8 @@ import { Mine } from '../domain/entities/mine';
 import { InsertManyError } from '../domain/errors/insert-many.error';
 import { MineRepository } from '../domain/mine.repository';
 import { MineMongoSource } from './data-sources/mine.mongo.source';
+import { DataSourceOperationError } from '@core/architecture/data/errors/data-source-operation.error';
+import { InsertError } from '../domain/errors/insert.error';
 
 /**
  * @class
@@ -64,6 +66,25 @@ export class MineRepositoryImpl implements MineRepository {
    */
   public clearCache(): void {
     this.storage = [];
+  }
+
+  /**
+   * @async
+   * @param {Mine} mine
+   * @returns {Promise<Result<Mine>}
+   */
+  public async insertOne(mine: Mine): Promise<Result<Mine, InsertError<Mine>>> {
+    try {
+      await this.minesMongoSource.insert(mine.toDto());
+    } catch (dataSourceError) {
+      const { type, error } = dataSourceError as DataSourceOperationError;
+
+      return Result.withFailure(
+        Failure.fromError(InsertError.create<Mine>(mine, type, error))
+      );
+    }
+
+    return Result.withContent(mine);
   }
 
   /**

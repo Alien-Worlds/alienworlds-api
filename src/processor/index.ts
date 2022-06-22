@@ -12,20 +12,20 @@ import { AbiHexFile } from 'processor/data/abi-hex.dto';
  *
  * @async
  */
-// (async () => {
-//   if (cluster.isMaster) {
-//     console.log(`Starting Processor orchestrator`);
-//     await setupOrchestratorIoc();
-//     orchestratorIoc
-//       .get<ProcessorOrchestrator>(ProcessorOrchestrator.Token)
-//       .init();
-//   } else {
-//     console.log(`Starting Processor process`);
+(async () => {
+  if (cluster.isMaster) {
+    console.log(`Starting Processor orchestrator`);
+    await setupOrchestratorIoc();
+    orchestratorIoc
+      .get<ProcessorOrchestrator>(ProcessorOrchestrator.Token)
+      .init();
+  } else {
+    console.log(`Starting Processor process`);
 
-//     process.once('message', async (data: AbiHexFile[]) => {
-//       console.log(`Received ABI hex files.`);
-//       await setupProcessIoc(data);
-//       processIoc.get<ProcessorProcess>(ProcessorProcess.Token).start();
-//     });
-//   }
-// })();
+    process.once('message', async (data: AbiHexFile[]) => {
+      console.log(`Received ABI hex files data.`);
+      await setupProcessIoc(data);
+      processIoc.get<ProcessorProcess>(ProcessorProcess.Token).start();
+    });
+  }
+})();

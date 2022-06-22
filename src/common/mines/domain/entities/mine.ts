@@ -99,21 +99,39 @@ export class Mine {
    * @returns {MineDocument}
    */
   public toDto(): MineDocument {
+    const {
+      id,
+      miner,
+      params,
+      bounty,
+      landId,
+      planetName,
+      landOwner,
+      bagItems,
+      offset,
+      blockNumber,
+      blockTimestamp,
+      globalSequence,
+      transactionId,
+    } = this;
     const dto: MineDocument = {
-      _id: this.id,
-      miner: this.miner,
-      params: this.params.toDto(),
-      bounty: this.bounty,
-      land_id: this.landId,
-      planet_name: this.planetName,
-      landowner: this.landOwner,
-      bag_items: this.bagItems.map(item => Long.fromBigInt(item)),
-      offset: this.offset,
-      block_num: Long.fromBigInt(this.blockNumber),
-      block_timestamp: this.blockTimestamp,
-      global_sequence: Long.fromBigInt(this.globalSequence),
-      tx_id: this.transactionId,
+      miner,
+      params: params.toDto(),
+      bounty,
+      land_id: landId,
+      planet_name: planetName,
+      landowner: landOwner,
+      bag_items: bagItems.map(item => Long.fromBigInt(item)),
+      offset,
+      block_num: Long.fromBigInt(blockNumber),
+      block_timestamp: blockTimestamp,
+      global_sequence: Long.fromBigInt(globalSequence),
+      tx_id: transactionId,
     };
+
+    if (id) {
+      dto._id = id;
+    }
 
     // Remove undefined properties so as not to send them to the data source.
     // This should not happen - the only exception is the "_id" property
@@ -198,11 +216,11 @@ export class Mine {
       land_id,
       planet_name,
       landowner,
-      bag_items.map(item => BigInt(item)),
+      bag_items.map(item => parseToBigInt(item)),
       offset,
-      BigInt(blockNumber),
+      blockNumber,
       blockTimestamp,
-      BigInt(globalSequence),
+      globalSequence,
       transactionId
     );
   }
