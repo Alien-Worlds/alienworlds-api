@@ -43,6 +43,8 @@ export class ProcessReceivedBlockUseCase implements UseCase<void> {
       );
     }
 
+    // When processing the received block, we want to find and queue actions data
+    // (for later work in the processor).
     if (traces.length > 0) {
       for (const trace of traces) {
         const { type, id, actionTraces } = trace;
@@ -59,6 +61,8 @@ export class ProcessReceivedBlockUseCase implements UseCase<void> {
       }
     }
 
+    // Set the number of the currently processed block in the curently scanned
+    // block range node
     const updateResult =
       await this.blockRangeScanRepository.updateScannedBlockNumber(
         scanKey,

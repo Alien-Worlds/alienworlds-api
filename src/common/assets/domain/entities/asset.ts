@@ -122,7 +122,11 @@ export class Asset {
    *
    * @returns {AssetDocument}
    */
-  public toDto(): AssetDocument {
+  public toDto(modifiedData?: {
+    asset_id?: Long;
+    owner?: string;
+    data?: AssetDataSubDocument;
+  }): AssetDocument {
     const { id, assetId, owner, data } = this;
     const dto: AssetDocument = {
       asset_id: Long.fromBigInt(assetId),
@@ -132,6 +136,12 @@ export class Asset {
 
     if (id) {
       dto._id = id;
+    }
+
+    if (modifiedData) {
+      for (const prop in modifiedData) {
+        dto[prop] = modifiedData[prop];
+      }
     }
 
     // Remove undefined properties so as not to send them to the data source.

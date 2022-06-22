@@ -129,26 +129,27 @@ export class ProcessAssetUseCase implements UseCase {
       }
     } else {
       // If asset is found, update "owner" and send it back to data source.
-      const assetDto = getAssetResult.content.toDto();
-      assetDto.owner = transfer.to;
+      const assetDto = getAssetResult.content.toDto({ owner: transfer.to });
       const updateResult = await this.assetRepository.update(
         Asset.fromDto(assetDto)
       );
       // If the update was unsuccessful, set the failure for later handling
       failure = updateResult.failure;
     }
-    // Handle any failure
+
+    // Handle the failure
     if (failure) {
       // when createAssetFromSmartContractsData fails due to not found data
       if (failure.error instanceof SmartContractDataNotFoundError) {
-        await this.assetProcessingQueueService.ackJob(job);
+        this.assetProcessingQueueService.ackJob(job);
       } else {
-        await this.assetProcessingQueueService.rejectJob(job);
+        this.assetProcessingQueueService.rejectJob(job);
       }
       return Result.withFailure(failure);
-    } else {
-      await this.assetProcessingQueueService.ackJob(job);
-      return Result.withoutContent();
     }
+
+    // Ack job when processing is successful
+    this.assetProcessingQueueService.ackJob(job);
+    return Result.withoutContent();
   }
 }
