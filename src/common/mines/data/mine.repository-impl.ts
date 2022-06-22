@@ -12,7 +12,6 @@ import { InsertError } from '../domain/errors/insert.error';
  * @class
  */
 export class MineRepositoryImpl implements MineRepository {
-  private storage: Mine[] = [];
   /**
    * @constructor
    * @param {MineMongoSource} minesMongoSource
@@ -32,40 +31,6 @@ export class MineRepositoryImpl implements MineRepository {
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
-  }
-
-  /**
-   * Store mine for later bulk upload to data source.
-   *
-   * @param {Mine} mine
-   */
-  public cache(mine: Mine): void {
-    this.storage.push(mine);
-  }
-
-  /**
-   * Get cached mine entities.
-   *
-   * @returns {Mine[]}
-   */
-  public getCachedMines(): Mine[] {
-    return this.storage;
-  }
-
-  /**
-   * Get number of cached entities
-   *
-   * @returns {number}
-   */
-  public getCacheSize(): number {
-    return this.storage.length;
-  }
-
-  /**
-   * Clear storage.
-   */
-  public clearCache(): void {
-    this.storage = [];
   }
 
   /**
@@ -118,26 +83,5 @@ export class MineRepositoryImpl implements MineRepository {
     }
 
     return Result.withContent(mines);
-  }
-
-  /**
-   * Send cached entities collectively. In case of failure of sending any
-   * of the documents, the operation is not interrupted. The method returns
-   * an array of the inserted mines entities.
-   *
-   * @async
-   * @param {boolean} shouldClearCache
-   * @returns {Promise<Result<Mine[]>}
-   */
-  public async insertCached(
-    shouldClearCache?: boolean
-  ): Promise<Result<Mine[], InsertManyError<Mine>>> {
-    const insertResult = await this.insertMany(this.storage);
-
-    if (shouldClearCache) {
-      this.clearCache();
-    }
-
-    return insertResult;
   }
 }

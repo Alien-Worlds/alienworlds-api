@@ -1,7 +1,7 @@
 import { DataSourceOperationError } from '@core/architecture/data/errors/data-source-operation.error';
 
 /**
- * Represents an error thrown by the insertMany or insertCached operations
+ * Represents an error thrown by the insertMany operation
  *
  * @class
  */
