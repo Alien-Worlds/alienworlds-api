@@ -5,7 +5,7 @@ import 'reflect-metadata';
 import { MongoSource } from '@core/storage/data-sources/mongo.source';
 import { MineMongoSource } from '../mine.mongo.source';
 
-jest.mock('@core/data/data-sources/mongo.source');
+jest.mock('@core/storage/data-sources/mongo.source');
 
 const mongoSourceMock = new MongoSource(null);
 let minesSource: MineMongoSource;

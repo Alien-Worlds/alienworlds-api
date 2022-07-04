@@ -1,5 +1,12 @@
-import { BlockRangeScanDocument } from '@common/block-range-scan/data/block-range-scan.dtos';
-import { parseToBigInt } from '@common/utils/dto.utils';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  BlockRangeScanDocument,
+  BlockRangeScanIdDocument,
+} from '@common/block-range-scan/data/block-range-scan.dtos';
+import {
+  parseToBigInt,
+  removeUndefinedProperties,
+} from '@common/utils/dto.utils';
 import { Long } from 'mongodb';
 
 export class BlockRangeScanParent {
@@ -20,10 +27,14 @@ export class BlockRangeScanParent {
     return new BlockRangeScanParent(start, end, scanKey);
   }
 
-  public static fromDocument(document) {
+  public static fromDocument(document: BlockRangeScanIdDocument) {
     const { start, end, scan_key } = document;
 
-    return new BlockRangeScanParent(start, end, scan_key);
+    return new BlockRangeScanParent(
+      parseToBigInt(start),
+      parseToBigInt(end),
+      scan_key
+    );
   }
 
   public toDocument() {
@@ -34,6 +45,12 @@ export class BlockRangeScanParent {
     };
 
     return doc;
+  }
+
+  public toJson() {
+    const { start, end, scanKey } = this;
+
+    return { start, end, scanKey };
   }
 }
 
@@ -56,8 +73,14 @@ export class BlockRangeScan {
    * Create instance of the BlockRangeScanNode
    *
    * @static
-   * @param {bigint} startBlock
-   * @param {bigint} endBlock
+   * @param {bigint | number | string} startBlock
+   * @param {bigint | number | string} endBlock
+   * @param {string} scanKey
+   * @param {number} treeDepth
+   * @param {BlockRangeScanParent=} parent
+   * @param {boolean} isLeafNode
+   * @param {bigint | number | string} currentBlockProgress
+   * @param {Date} timestamp
    * @returns {BlockRangeScan}
    */
   public static create(
@@ -72,9 +95,14 @@ export class BlockRangeScan {
   ): BlockRangeScan {
     let currentRangeAsBigInt: bigint;
 
-    if (currentBlockProgress) {
+    if (
+      typeof currentBlockProgress === 'bigint' ||
+      typeof currentBlockProgress === 'number' ||
+      typeof currentBlockProgress === 'string'
+    ) {
       currentRangeAsBigInt = parseToBigInt(currentBlockProgress);
     }
+
     return new BlockRangeScan(
       parseToBigInt(startBlock),
       parseToBigInt(endBlock),
@@ -123,7 +151,7 @@ export class BlockRangeScan {
     blockRange: BlockRangeScan,
     numberOfChildren: number,
     maxChunkSize: number
-  ) {
+  ): BlockRangeScan[] {
     const {
       start: parentStart,
       end: parentEnd,
@@ -131,7 +159,7 @@ export class BlockRangeScan {
       treeDepth,
     } = blockRange;
     const chunkSize = (parentEnd - parentStart) / BigInt(numberOfChildren);
-    const rangesToPersist = [];
+    const rangesToPersist: BlockRangeScan[] = [];
     let start = parentStart;
 
     while (start < parentEnd) {
@@ -177,7 +205,7 @@ export class BlockRangeScan {
       tree_depth: this.treeDepth,
     };
 
-    if (this.currentBlockProgress) {
+    if (typeof this.currentBlockProgress == 'bigint') {
       doc.current_block_progress = Long.fromString(
         this.currentBlockProgress.toString()
       );
@@ -196,5 +224,33 @@ export class BlockRangeScan {
     }
 
     return doc;
+  }
+
+  public toJson() {
+    const {
+      start,
+      end,
+      scanKey,
+      isLeafNode,
+      treeDepth,
+      timestamp,
+      currentBlockProgress,
+    } = this;
+
+    const json = {
+      start,
+      end,
+      scanKey,
+      isLeafNode,
+      treeDepth,
+      timestamp,
+      currentBlockProgress,
+    } as any;
+
+    if (this.parent) {
+      json.parent = this.parent.toJson();
+    }
+
+    return removeUndefinedProperties(json);
   }
 }

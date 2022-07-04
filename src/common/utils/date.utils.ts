@@ -1,4 +1,4 @@
-export const parseDate = (fullStr: string) => {
+export const parseDateToMs = (fullStr: string) => {
   const [fullDate] = fullStr.split('.');
   const [dateStr, timeStr] = fullDate.split('T');
   const [year, month, day] = dateStr.split('-');

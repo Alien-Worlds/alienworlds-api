@@ -40,13 +40,23 @@ export class WorkerMessage {
 
   public toJson(): object {
     const { pid, type, name, content, error } = this;
+    let errorJson;
 
+    if (error) {
+      const { message, stack, name: errorName, ...rest } = error;
+      errorJson = {
+        message,
+        stack,
+        name: errorName,
+        ...rest,
+      };
+    }
     return {
       pid,
       type,
       name,
       content,
-      error,
+      error: errorJson,
     };
   }
 }

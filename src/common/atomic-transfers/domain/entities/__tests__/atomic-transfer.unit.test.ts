@@ -23,7 +23,6 @@ const messageData = {
 } as any;
 
 const dto = {
-  _id: '',
   type: 'foo.type',
   asset_ids: [Long.fromBigInt(0n)],
   from: 'foo.from',
@@ -37,7 +36,6 @@ describe('AtomicTransfer Unit tests', () => {
   it('Should create entity based on DTO', () => {
     const entity = AtomicTransfer.fromDto(dto);
     expect(entity).toEqual({
-      id: '',
       type: 'foo.type',
       assetIds: [0n],
       from: 'foo.from',

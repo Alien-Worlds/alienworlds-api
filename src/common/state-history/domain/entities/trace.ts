@@ -47,7 +47,7 @@ export class Partial {
 }
 
 export class Trace {
-  public static create(type: string, dto: TraceDto): Trace {
+  public static create(type: string, traceDto: TraceDto): Trace {
     const {
       id,
       status,
@@ -61,15 +61,15 @@ export class Trace {
       except,
       error_code,
       failed_dtrx_trace,
-    } = dto;
+    } = traceDto;
 
     const actionTraces = action_traces.map(item => {
       const [type, dto] = item;
       return ActionTrace.create(type, dto);
     });
     let partial: Partial;
-    if (dto.partial) {
-      const [partialType, partialContent] = dto.partial;
+    if (traceDto.partial) {
+      const [partialType, partialContent] = traceDto.partial;
       partial = Partial.create(partialType, partialContent);
     }
 

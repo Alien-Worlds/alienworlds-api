@@ -22,6 +22,6 @@ export class StartNextScanUseCase implements UseCase<BlockRangeScan> {
    * @returns {Promise<Result<BlockRangeScan>>}
    */
   public async execute(scanKey: string): Promise<Result<BlockRangeScan>> {
-    return await this.blockRangeScanRepository.startNextScan(scanKey);
+    return this.blockRangeScanRepository.startNextScan(scanKey);
   }
 }

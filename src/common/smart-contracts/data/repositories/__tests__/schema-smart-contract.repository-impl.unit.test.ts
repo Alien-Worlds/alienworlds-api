@@ -5,7 +5,7 @@ import { EosRpcSource } from '@core/rpc/data/data-sources/eos-rpc.source';
 import { SchemaSmartContractTableRow } from '../../smart-contract.dtos';
 import { SchemaSmartContractRepositoryImpl } from '../schema-smart-contract.repository-impl';
 
-jest.mock('@core/data/data-sources/eos-rpc.source');
+jest.mock('@core/rpc/data/data-sources/eos-rpc.source');
 
 let repository: SchemaSmartContractRepositoryImpl;
 const source: EosRpcSource = {

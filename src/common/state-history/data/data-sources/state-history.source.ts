@@ -1,19 +1,5 @@
-export enum WaxConnectionState {
-  Connecting = 'connecting',
-  Connected = 'connected',
-  Idle = 'idle',
-  Disconnecting = 'disconnecting',
-}
-
-export type ConnectionChangeHandlerOptions = {
-  previousState: WaxConnectionState;
-  state: WaxConnectionState;
-  data: unknown;
-};
-
-export type ConnectionChangeHandler = (
-  options: ConnectionChangeHandlerOptions
-) => void | Promise<void>;
+import { WaxConnectionState } from '@common/state-history/domain/state-history.enums';
+import { ConnectionChangeHandler } from './state-history.dtos';
 
 export abstract class StateHistorySource {
   public abstract get isConnected();

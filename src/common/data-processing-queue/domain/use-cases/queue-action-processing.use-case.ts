@@ -33,6 +33,7 @@ export class QueueActionProcessingUseCase implements UseCase<void> {
     timestamp: Date
   ): Promise<Result<void>> {
     const { type, receiver, act } = action;
+
     if (
       type === 'action_trace_v0' &&
       (act.account === config.atomicAssets.contract ||

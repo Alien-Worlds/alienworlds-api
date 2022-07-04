@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
 import { BlockDto } from '@common/state-history/data/state-history.dtos';
-import { parseDate } from '@common/utils/date.utils';
+import { parseDateToMs } from '@common/utils/date.utils';
 import { Transaction } from './transaction';
 
 export class Block {
@@ -20,7 +20,7 @@ export class Block {
     } = dto;
 
     const timestamp = dto.timestamp
-      ? new Date(parseDate(dto.timestamp))
+      ? new Date(parseDateToMs(dto.timestamp))
       : new Date();
 
     return new Block(

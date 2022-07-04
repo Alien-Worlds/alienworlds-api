@@ -4,23 +4,25 @@
 import 'reflect-metadata';
 
 import { connect } from 'amqplib';
-import { MessagingAmqSource } from '../data-sources/messaging.amq.source';
-import { wait } from '../messaging.utils';
+import { MessagingAmqSource } from '../messaging.amq.source';
+import { wait } from '../../messaging.utils';
+import { ConnectionState } from '@core/messaging/domain/messaging.enums';
 
-jest.mock('../../messages.utils', () => ({
+jest.mock('../../messaging.utils', () => ({
   wait: jest.fn(),
 }));
 
 jest.mock('amqplib', () => ({
   connect: jest.fn(() => ({
     on: jest.fn(() => {}),
-    createConfirmChannel: jest.fn(() => ({
+    createChannel: jest.fn(() => ({
       prefetch: jest.fn(),
       assertQueue: jest.fn(),
       sendToQueue: jest.fn(),
       consume: jest.fn(),
       ack: jest.fn(),
       reject: jest.fn(),
+      on: jest.fn(),
     })),
   })),
 }));
@@ -51,22 +53,58 @@ describe('Amq instance Unit tests', () => {
     expect(connectMock).toBeCalledWith(connectionString);
   });
 
-  it('"createChannel" should create channel correctly and assert queues "action", "aw_block_range", "recalc_asset"', async () => {
+  it('"connect" should not open new connection when status is other than "Offline"', async () => {
     const connectionString = 'some_connection_string';
     const amq = new MessagingAmqSource(
       connectionString,
       { queues: [], prefetch: 1 },
       console
     );
+    // @ts-ignore
+    amq.connectionState = ConnectionState.Online;
+    // @ts-ignore
+    amq.connect();
+    expect(connectMock).not.toBeCalledWith(connectionString);
+  });
+
+  it('"createChannel" should create channel correctly and assert queues "action", "aw_block_range", "recalc_asset"', async () => {
+    const connectionString = 'some_connection_string';
+    const amq = new MessagingAmqSource(
+      connectionString,
+      {
+        queues: [
+          {
+            name: 'MessageQueue.Action',
+            options: {
+              durable: true,
+            },
+          },
+          {
+            name: 'MessageQueue.AlienWorldsBlockRange',
+            options: {
+              durable: true,
+            },
+          },
+          {
+            name: 'MessageQueue.RecalcAsset',
+            options: {
+              durable: true,
+            },
+          },
+        ],
+        prefetch: 1,
+      },
+      console
+    );
     await amq.init();
-    const createConfirmChannelMock = jest.spyOn(
+    const createChannelMock = jest.spyOn(
       (amq as any).connection,
-      'createConfirmChannel'
+      'createChannel'
     );
     const prefetchMock = jest.spyOn((amq as any).channel, 'prefetch');
     const assertQueueMock = jest.spyOn((amq as any).channel, 'assertQueue');
 
-    expect(createConfirmChannelMock).toBeCalledTimes(1);
+    expect(createChannelMock).toBeCalledTimes(1);
     expect(prefetchMock).toBeCalledTimes(1);
     expect(assertQueueMock).toBeCalledWith('MessageQueue.Action', {
       durable: true,
@@ -81,54 +119,50 @@ describe('Amq instance Unit tests', () => {
       durable: true,
     });
 
-    createConfirmChannelMock.mockClear();
+    createChannelMock.mockClear();
     prefetchMock.mockClear();
     assertQueueMock.mockClear();
   });
 
-  it('"handleConnectionError" should call Amqp.connect', async () => {
+  it('"handleConnectionClose" should call Amqp.connect when connectionState is "closing"', async () => {
     const amq = new MessagingAmqSource(
       '',
       { queues: [], prefetch: 1 },
       console
     );
+    const reconnectMock = jest.spyOn(amq as any, 'reconnect');
     // @ts-ignore
-    await amq.handleConnectionError(new Error('connection error'));
-    expect(connectMock).toHaveBeenCalled();
-  });
-
-  it('"handleConnectionClose" should call Amqp.connect', async () => {
-    const amq = new MessagingAmqSource(
-      '',
-      { queues: [], prefetch: 1 },
-      console
-    );
+    amq.connectionState = ConnectionState.Closing;
     // @ts-ignore
     await amq.handleConnectionClose();
     expect(connectMock).toHaveBeenCalled();
+    expect(reconnectMock).toBeCalledTimes(1);
+
+    reconnectMock.mockClear();
   });
 
-  it('"handleConnectionError" should log error and trigger reconnect', async () => {
+  it('"handleConnectionClose" should....', async () => {
     const amq = new MessagingAmqSource(
       '',
       { queues: [], prefetch: 1 },
       console
     );
-    await amq.init();
+    const reconnectMock = jest
+      .spyOn(amq as any, 'reconnect')
+      .mockImplementation();
+    const handler = jest.fn();
     // @ts-ignore
-    amq.maxConnectionErrors = 0;
-    const reconnectMock = jest.spyOn(amq as any, 'reconnect');
-    const errorMock = jest.spyOn(console, 'error');
+    amq.connectionState = ConnectionState.Closing;
     // @ts-ignore
-    await amq.handleConnectionError(new Error('connection error'));
-    expect(reconnectMock).toBeCalledTimes(1);
-    expect(errorMock).toBeCalledTimes(1);
+    amq.connectionStateHandlers.set(ConnectionState.Offline, handler);
+    // @ts-ignore
+    await amq.handleConnectionClose();
+    expect(handler).toHaveBeenCalled();
 
     reconnectMock.mockClear();
-    errorMock.mockClear();
   });
 
-  it('"handleConnectionError" should log warning and trigger reconnect', async () => {
+  it('"handleConnectionError" should log warning', async () => {
     const amq = new MessagingAmqSource(
       '',
       { queues: [], prefetch: 1 },
@@ -137,30 +171,76 @@ describe('Amq instance Unit tests', () => {
     await amq.init();
     // @ts-ignore
     amq.maxConnectionErrors = 10;
-    const reconnectMock = jest.spyOn(amq as any, 'reconnect');
     const warnMock = jest.spyOn(console, 'warn');
     // @ts-ignore
     await amq.handleConnectionError(new Error('connection error'));
-    expect(reconnectMock).toBeCalledTimes(1);
     expect(warnMock).toBeCalledTimes(1);
 
-    reconnectMock.mockClear();
     warnMock.mockClear();
   });
 
-  it('"handleConnectionClose" should trigger reconnect', async () => {
+  it('"handleConnectionError" should log error', async () => {
     const amq = new MessagingAmqSource(
       '',
       { queues: [], prefetch: 1 },
       console
     );
     await amq.init();
-    const reconnectMock = jest.spyOn(amq as any, 'reconnect');
     // @ts-ignore
-    await amq.handleConnectionClose();
-    expect(reconnectMock).toBeCalledTimes(1);
+    amq.maxConnectionErrors = 0;
+    const errorMock = jest.spyOn(console, 'error');
+    // @ts-ignore
+    await amq.handleConnectionError(new Error('connection error'));
+    expect(errorMock).toBeCalledTimes(1);
 
-    reconnectMock.mockClear();
+    errorMock.mockClear();
+  });
+
+  it('Should close the connection when its status is "online"', async () => {
+    const amq = new MessagingAmqSource(
+      '',
+      { queues: [], prefetch: 1 },
+      console
+    );
+    const connection = { close: jest.fn() };
+    // @ts-ignore
+    amq.connectionState = ConnectionState.Online;
+    // @ts-ignore
+    amq.connection = connection;
+
+    const closeMock = jest.spyOn(connection, 'close');
+
+    // @ts-ignore
+    amq.close(new Error('Some error'));
+
+    expect(closeMock).toBeCalledTimes(1);
+    expect((amq as any).connectionState).toEqual(ConnectionState.Closing);
+    expect((amq as any).connectionError.message).toEqual('Some error');
+
+    closeMock.mockClear();
+  });
+
+  it('Should call connection.close on error, cancellation, or closing the channel', async () => {
+    const amq = new MessagingAmqSource(
+      '',
+      { queues: [], prefetch: 1 },
+      console
+    );
+    // @ts-ignore
+    amq.connectionState = ConnectionState.Online;
+    // @ts-ignore
+    amq.maxConnectionErrors = 0;
+    const closeMock = jest.spyOn(amq, 'close').mockImplementation();
+    // @ts-ignore
+    amq.handleChannelCancel();
+    // @ts-ignore
+    amq.handleChannelClose();
+    // @ts-ignore
+    amq.handleChannelError(new Error('Some error'));
+
+    expect(closeMock).toBeCalledTimes(3);
+
+    closeMock.mockClear();
   });
 
   it('"init" should connect and create a channel', async () => {
@@ -199,6 +279,67 @@ describe('Amq instance Unit tests', () => {
 
     waitAndReconnectMock.mockClear();
     initMock.mockClear();
+  });
+
+  it('"getQueueStats" should return queue stats if queue was found', async () => {
+    const amq = new MessagingAmqSource(
+      '',
+      {
+        queues: [
+          {
+            name: 'foo',
+            options: {},
+          },
+        ],
+        prefetch: 1,
+      },
+      console
+    );
+    const channel = { assertQueue: jest.fn() };
+
+    const assertQueueMock = jest
+      .spyOn(channel, 'assertQueue')
+      .mockImplementation(() => {});
+
+    //@ts-ignore
+    amq.channel = channel;
+
+    await amq.getQueueStats('foo');
+
+    expect(assertQueueMock).toBeCalledTimes(1);
+
+    assertQueueMock.mockClear();
+  });
+
+  it('"getQueueStats" should throw an error when queue was not found', async () => {
+    const amq = new MessagingAmqSource(
+      '',
+      {
+        queues: [
+          {
+            name: 'foo',
+            options: {},
+          },
+        ],
+        prefetch: 1,
+      },
+      console
+    );
+    const channel = { assertQueue: jest.fn() };
+    const assertQueueMock = jest
+      .spyOn(channel, 'assertQueue')
+      .mockImplementation(() => {});
+
+    //@ts-ignore
+    amq.channel = channel;
+
+    let getQueueStatsError;
+
+    await amq.getQueueStats('bar').catch(error => (getQueueStatsError = error));
+
+    expect(getQueueStatsError).toBeInstanceOf(Error);
+
+    assertQueueMock.mockClear();
   });
 
   it('"waitAndReconnect" should connect and create a channel', async () => {
@@ -253,7 +394,9 @@ describe('Amq instance Unit tests', () => {
     );
     await amq.init();
     const sendToQueueMock = jest.spyOn((amq as any).channel, 'sendToQueue');
-    amq.send('MessageQueue.Action', Buffer.from(''));
+    await amq
+      .send('MessageQueue.Action', Buffer.from(''))
+      .catch(e => console.log(e));
     expect(sendToQueueMock).toHaveBeenCalled();
     sendToQueueMock.mockClear();
   });
@@ -358,5 +501,59 @@ describe('Amq instance Unit tests', () => {
 
     consumeMock.mockClear();
     errorMock.mockClear();
+  });
+
+  it('"addConnectionStateHandler" should log warning when handler is already assigned to the connection state', async () => {
+    const warnMock = jest.spyOn(console, 'warn');
+    const amq = new MessagingAmqSource(
+      '',
+      { queues: [], prefetch: 1 },
+      console
+    );
+
+    amq.addConnectionStateHandler(ConnectionState.Online, async () => {});
+    amq.addConnectionStateHandler(ConnectionState.Online, async () => {});
+
+    expect(warnMock).toBeCalled();
+    warnMock.mockClear();
+  });
+
+  it('"addConnectionStateHandler" should assign handler to the connection state', async () => {
+    const amq = new MessagingAmqSource(
+      '',
+      { queues: [], prefetch: 1 },
+      console
+    );
+
+    amq.addConnectionStateHandler(ConnectionState.Online, async () => {});
+    expect(
+      (amq as any).connectionStateHandlers.has(ConnectionState.Online)
+    ).toBeTruthy();
+  });
+
+  it('"removeConnectionStateHandlers" should remove handler assigned to the state', async () => {
+    const amq = new MessagingAmqSource(
+      '',
+      { queues: [], prefetch: 1 },
+      console
+    );
+
+    amq.addConnectionStateHandler(ConnectionState.Online, async () => {});
+    amq.removeConnectionStateHandlers(ConnectionState.Online);
+
+    expect(
+      (amq as any).connectionStateHandlers.has(ConnectionState.Online)
+    ).toBeFalsy();
+  });
+
+  it('"removeConnectionStateHandlers" should remove all handlers', async () => {
+    const amq = new MessagingAmqSource(
+      '',
+      { queues: [], prefetch: 1 },
+      console
+    );
+
+    amq.removeConnectionStateHandlers();
+    expect((amq as any).connectionStateHandlers.size).toEqual(0);
   });
 });

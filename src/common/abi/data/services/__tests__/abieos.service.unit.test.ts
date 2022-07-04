@@ -3,7 +3,15 @@ import 'reflect-metadata';
 import abieos from '@eosrio/node-abieos';
 import { AbiEosService } from '../abieos.service';
 
-jest.mock('@eosrio/node-abieos');
+jest.mock(
+  '@eosrio/node-abieos',
+  jest.fn(() => ({
+    bin_to_json: jest.fn(),
+    get_type_for_table: jest.fn(),
+    load_abi_hex: jest.fn(),
+    get_type_for_action: jest.fn(),
+  }))
+);
 const abieosMock = abieos as jest.MockedObject<typeof abieos>;
 
 describe('AbieosService Unit tests', () => {

@@ -6,6 +6,8 @@ import { InsertManyError } from '@common/mines/domain/errors/insert-many.error';
 import { Failure } from '@core/architecture/domain/failure';
 import { DataSourceBulkWriteError } from '@core/architecture/data/errors/data-source-bulk-write.error';
 import { MineRepositoryImpl } from '../mine.repository-impl';
+import { InsertError } from '@common/mines/domain/errors/insert.error';
+import { DataSourceOperationError } from '@core/architecture/data/errors/data-source-operation.error';
 
 const paramsDto = {
   invalid: 0,
@@ -35,6 +37,7 @@ const dto = {
 const minesMongoSourceMock = {
   findLastBlock: () => ({}),
   insertMany: () => [],
+  insert: () => ({}),
 };
 
 describe('MineRepositoryImpl Unit tests', () => {
@@ -53,30 +56,6 @@ describe('MineRepositoryImpl Unit tests', () => {
     const result = await repository.getLastBlock();
     expect(result.content).toBeUndefined();
     expect(result.failure).toBeInstanceOf(Failure);
-  });
-
-  it('"cache" should store entity', async () => {
-    const repository = new MineRepositoryImpl(minesMongoSourceMock as any);
-    const entity = Mine.fromDto(dto);
-    repository.cache(entity);
-    expect(repository.getCachedMines()).toEqual([entity]);
-  });
-
-  it('"getCacheSize" should return size of the cache', async () => {
-    const repository = new MineRepositoryImpl(minesMongoSourceMock as any);
-    const entity = Mine.fromDto(dto);
-    repository.cache(entity);
-    repository.cache(entity);
-    expect(repository.getCacheSize()).toEqual(2);
-  });
-
-  it('"clearCache" should clear the cache', async () => {
-    const repository = new MineRepositoryImpl(minesMongoSourceMock as any);
-    const entity = Mine.fromDto(dto);
-    repository.cache(entity);
-    repository.cache(entity);
-    repository.clearCache();
-    expect(repository.getCachedMines()).toEqual([]);
   });
 
   it('"insertMany" should insert to the data source multiple documents, created from the entities', async () => {
@@ -105,17 +84,28 @@ describe('MineRepositoryImpl Unit tests', () => {
     expect(result.failure.error.skippedEntities).toEqual(list);
   });
 
-  it('"insertCached" should add cached entities and clear cache when shouldClearCache is true', async () => {
-    minesMongoSourceMock.insertMany = () => [];
+  it('"insertOne" should store Mine entity', async () => {
+    minesMongoSourceMock.insert = () => [];
 
     const repository = new MineRepositoryImpl(minesMongoSourceMock as any);
     const entity = Mine.fromDto(dto);
-    repository.cache(entity);
-    repository.cache(entity);
-    const list = [entity, entity];
-    const result = await repository.insertCached(true);
-    expect(result.content).toEqual(list);
+    const result = await repository.insertOne(entity);
+    expect(result.content).toEqual(entity);
     expect(result.failure).toBeUndefined();
-    expect(repository.getCacheSize()).toEqual(0);
+  });
+
+  it('"insertOne" should return a failure when isertion has failed', async () => {
+    minesMongoSourceMock.insert = () => {
+      throw DataSourceOperationError.fromError(
+        new Error('something went wrong')
+      );
+    };
+
+    const repository = new MineRepositoryImpl(minesMongoSourceMock as any);
+    const entity = Mine.fromDto(dto);
+    const result = await repository.insertOne(entity);
+    expect(result.content).toBeUndefined();
+    expect(result.failure).toBeInstanceOf(Failure);
+    expect(result.failure.error).toBeInstanceOf(InsertError);
   });
 });

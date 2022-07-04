@@ -29,31 +29,10 @@ export const deserializeMessage = <T = any>(
     buffer,
     new Serialize.SerializerState({ bytesAsUint8Array: true })
   );
+
   if (buffer.readPos != array.length) throw new Error('oops: ' + type); // todo: remove check
   return result;
 };
-
-// export const parseDate = (fullStr: string) => {
-//   const [fullDate] = fullStr.split('.');
-//   const [dateStr, timeStr] = fullDate.split('T');
-//   const [year, month, day] = dateStr.split('-');
-//   const [hourStr, minuteStr, secondStr] = timeStr.split(':');
-
-//   const dt = new Date();
-//   dt.setUTCFullYear(Number(year));
-//   dt.setUTCMonth(Number(month) - 1);
-//   dt.setUTCDate(Number(day));
-//   dt.setUTCHours(Number(hourStr));
-//   dt.setUTCMinutes(Number(minuteStr));
-//   dt.setUTCSeconds(Number(secondStr));
-
-//   return dt.getTime();
-// };
-
-// export const getBlockTimestamp = (block?: { timestamp: string }) =>
-//   block
-//     ? new Date(parseDate(block.timestamp.replace(/\.000|\.500/, 'Z')))
-//     : new Date();
 
 export const log = (...args) =>
   console.log(`process:${process.pid} | `, ...args);

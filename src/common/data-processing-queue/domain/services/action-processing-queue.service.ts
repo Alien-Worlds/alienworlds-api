@@ -16,11 +16,4 @@ export abstract class ActionProcessingQueueService {
   public abstract addJobHandler(
     handler: (job: ActionProcessingJob) => Promise<void>
   ): Result<void>;
-  public abstract cacheJob(
-    key: string,
-    message: ActionProcessingJob
-  ): Result<void>;
-  public abstract getCachedJob(key: string): Result<ActionProcessingJob>;
-  public abstract getAllCachedJobs(): Result<ActionProcessingJob[]>;
-  public abstract clearCache(): Result<void>;
 }

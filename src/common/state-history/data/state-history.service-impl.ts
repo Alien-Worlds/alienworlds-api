@@ -16,11 +16,10 @@ import { UnhandledBlockRequestError } from '../domain/errors/unhandled-block-req
 import { UnhandledMessageTypeError } from '../domain/errors/unhandled-message-type.error';
 import { UnhandledMessageError } from '../domain/errors/unhandled-message.error';
 import { StateHistoryService } from '../domain/state-history.service';
-import {
-  ConnectionChangeHandlerOptions,
-  StateHistorySource,
-  WaxConnectionState,
-} from './data-sources/state-history.source';
+import { StateHistorySource } from './data-sources/state-history.source';
+import { WaxConnectionState } from '../domain/state-history.enums';
+import { ConnectionChangeHandlerOptions } from './data-sources/state-history.dtos';
+import { ServiceAlreadyConnectedError } from '../domain/errors/service-already-connected.error';
 
 export class StateHistoryServiceImpl implements StateHistoryService {
   private errorHandler: (error: Error) => Promise<void> | void;
@@ -77,14 +76,13 @@ export class StateHistoryServiceImpl implements StateHistoryService {
 
       const message = StateHistoryMessage.create(dto, abi.getTypesMap());
       if (message.isGetStatusResult) {
-        //   log(response);
+        // TODO: ?
       } else if (message.isGetBlocksResult) {
         await this.handleBlocksResultContent(message.content);
       } else {
         throw new UnhandledMessageTypeError(message.type);
       }
     } catch (error) {
-      console.log(error);
       await this.handleError(error);
     }
   }
@@ -104,7 +102,6 @@ export class StateHistoryServiceImpl implements StateHistoryService {
 
       if (thisBlock) {
         const isLast = thisBlock.blockNumber === blockRange.end - 1n;
-
         await this.receivedBlockHandler(result, blockRange);
 
         // If received block is the last one call onComplete handler
@@ -155,7 +152,7 @@ export class StateHistoryServiceImpl implements StateHistoryService {
     }
 
     return Result.withFailure(
-      Failure.fromError(new ServiceNotConnectedError())
+      Failure.fromError(new ServiceAlreadyConnectedError())
     );
   }
 

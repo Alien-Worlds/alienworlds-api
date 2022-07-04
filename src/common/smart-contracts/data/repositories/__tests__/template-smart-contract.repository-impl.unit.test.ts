@@ -5,7 +5,7 @@ import { EosRpcSource } from '@core/rpc/data/data-sources/eos-rpc.source';
 import { TemplateSmartContractTableRow } from '../../smart-contract.dtos';
 import { TemplateSmartContractRepositoryImpl } from '../template-smart-contract.repository-impl';
 
-jest.mock('@core/data/data-sources/eos-rpc.source');
+jest.mock('@core/rpc/data/data-sources/eos-rpc.source');
 
 let repository: TemplateSmartContractRepositoryImpl;
 const source: EosRpcSource = {

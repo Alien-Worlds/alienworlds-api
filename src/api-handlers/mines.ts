@@ -1,6 +1,6 @@
 import { minesSchema } from '../schemas';
 import { Mine } from '@common/mines/domain/entities/mine';
-import { parseDate } from '@common/utils/date.utils';
+import { parseDateToMs } from '@common/utils/date.utils';
 
 /**
  * Represents the possible search query options
@@ -192,13 +192,13 @@ export const buildQuery = (
     query.planet_name = planet_name;
   }
   if (from) {
-    query.block_timestamp = { $gte: new Date(parseDate(from)) };
+    query.block_timestamp = { $gte: new Date(parseDateToMs(from)) };
   }
   if (to && query.block_timestamp) {
-    query.block_timestamp.$lt = new Date(parseDate(to));
+    query.block_timestamp.$lt = new Date(parseDateToMs(to));
   } else if (to && !query.block_timestamp) {
     query.block_timestamp = {
-      $lt: new Date(parseDate(to)),
+      $lt: new Date(parseDateToMs(to)),
     };
   }
 

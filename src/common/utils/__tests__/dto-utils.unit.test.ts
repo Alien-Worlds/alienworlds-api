@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { removeUndefinedProperties } from '../dto.utils';
+import { parseToBigInt, removeUndefinedProperties } from '../dto.utils';
 
 describe('"DTO Utils" unit tests', () => {
   it('Should remove all undefined and empty -objects- properties', () => {
@@ -25,5 +25,11 @@ describe('"DTO Utils" unit tests', () => {
         cd: false,
       },
     });
+  });
+
+  it('Should convert value to the bigint', () => {
+    const result = parseToBigInt('1');
+
+    expect(result).toEqual(1n);
   });
 });

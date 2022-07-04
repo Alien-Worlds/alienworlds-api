@@ -75,7 +75,7 @@ export class ActionTrace {
     } = dto;
 
     let receipt: Receipt;
-    if (dto.receipt) {
+    if (dto.receipt && dto.receipt.length) {
       const [receiptType, receiptContent] = dto.receipt;
       receipt = Receipt.create(receiptType, receiptContent);
     }

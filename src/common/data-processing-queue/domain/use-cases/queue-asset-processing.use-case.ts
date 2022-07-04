@@ -27,11 +27,11 @@ export class QueueAssetProcessingUseCase implements UseCase<void> {
       const queueResult = await this.assetProcessingQueueService.queueJob(
         AssetProcessingJob.createBuffer(id)
       );
-
       if (queueResult.isFailure) {
         failures.push(id);
       }
     }
+
     return failures;
   }
 
@@ -39,7 +39,7 @@ export class QueueAssetProcessingUseCase implements UseCase<void> {
    * @returns {Result<void>}
    */
   public async execute(assetIds: bigint[]): Promise<Result<void>> {
-    let tries = 3;
+    let tries = 3; //TODO Magic number
     let unqueuedIds = [...assetIds];
 
     while (tries > 0) {

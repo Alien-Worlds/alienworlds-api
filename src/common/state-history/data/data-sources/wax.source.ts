@@ -1,10 +1,8 @@
-import { Config } from '@config';
 import WebSocket from 'ws';
-import {
-  ConnectionChangeHandler,
-  StateHistorySource,
-  WaxConnectionState,
-} from './state-history.source';
+import { WaxConnectionState } from '@common/state-history/domain/state-history.enums';
+import { Config } from '@config';
+import { ConnectionChangeHandler } from './state-history.dtos';
+import { StateHistorySource } from './state-history.source';
 
 export class WaxSource implements StateHistorySource {
   private messageHandler;
@@ -44,6 +42,18 @@ export class WaxSource implements StateHistorySource {
     return this.config.shipEndpoints[this.socketIndex];
   }
 
+  private waitUntilConnectionIsOpen() {
+    return new Promise(resolve => this.client.once('open', resolve));
+  }
+
+  private waitUntilConnectionIsClosed() {
+    return new Promise(resolve => this.client.once('close', resolve));
+  }
+
+  private receiveAbi() {
+    return new Promise(resolve => this.client.once('message', resolve));
+  }
+
   public onError(handler: (error: Error) => void) {
     this.errorHandler = handler;
   }
@@ -57,7 +67,7 @@ export class WaxSource implements StateHistorySource {
     handler: ConnectionChangeHandler
   ) {
     if (this.connectionChangeHandlers.has(state)) {
-      // log warning
+      console.warn(`Overriding the handler assigned to the "${state}" state`);
     } else {
       this.connectionChangeHandlers.set(state, handler);
     }
@@ -75,11 +85,9 @@ export class WaxSource implements StateHistorySource {
           perMessageDeflate: false,
         });
         this.client.on('error', error => this.errorHandler(error));
-        await new Promise(resolve => this.client.once('open', resolve));
+        await this.waitUntilConnectionIsOpen();
         // receive ABI - first message from WS is always ABI
-        const abi = await new Promise(resolve =>
-          this.client.once('message', resolve)
-        );
+        const abi = await this.receiveAbi();
         // set message handler
         this.client.on('message', message => this.messageHandler(message));
 
@@ -96,9 +104,7 @@ export class WaxSource implements StateHistorySource {
         await this.updateConnectionState(WaxConnectionState.Disconnecting);
         this.client.removeAllListeners();
         this.client.close();
-        await new Promise(resolve =>
-          this.client.once('close', () => resolve(true))
-        );
+        await this.waitUntilConnectionIsClosed();
         this.client = null;
         await this.updateConnectionState(WaxConnectionState.Idle);
       } catch (error) {

@@ -26,6 +26,7 @@ export class BlockRangeScanMongoSource extends CollectionMongoSource<BlockRangeS
   ) {
     const { _id, is_leaf_node } = document;
     const { start, end } = _id;
+
     if (!is_leaf_node) {
       throw new Error(
         `(${start}-${end}) range has already completed scanning the blockchain.`

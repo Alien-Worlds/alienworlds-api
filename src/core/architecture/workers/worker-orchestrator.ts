@@ -1,3 +1,4 @@
+import { Serializable } from 'child_process';
 import cluster from 'cluster';
 import { injectable, unmanaged } from 'inversify';
 import { WorkerMessage, WorkerMessageHandler } from './worker-message';
@@ -8,6 +9,7 @@ export class WorkerOrchestrator {
     try {
       process.send(message.toJson());
     } catch (error) {
+      console.log(error);
       //
     }
   }
@@ -15,7 +17,6 @@ export class WorkerOrchestrator {
   private workerMaxCount;
   private workersByPid = new Map<number, cluster.Worker>();
   private handlersByMessageType = new Map<string, WorkerMessageHandler>();
-  private workerReadyHandler;
 
   constructor(@unmanaged() workerMaxCount: number) {
     this.workerMaxCount = workerMaxCount;
@@ -31,11 +32,11 @@ export class WorkerOrchestrator {
     }
   }
 
-  public addMessageHandler(type, handler) {
+  public addMessageHandler(type: string, handler: WorkerMessageHandler) {
     this.handlersByMessageType.set(type, handler);
   }
 
-  public sendToWorker(pid, message): void {
+  public sendToWorker(pid: number, message: Serializable): void {
     const worker = this.workersByPid.get(pid);
 
     if (worker) {
@@ -51,7 +52,7 @@ export class WorkerOrchestrator {
     }
   }
 
-  public removeWorker(pid): void {
+  public removeWorker(pid: number): void {
     const worker = this.workersByPid.get(pid);
 
     if (worker) {
@@ -60,11 +61,7 @@ export class WorkerOrchestrator {
     }
   }
 
-  public onWorkerReady(handler): void {
-    this.workerReadyHandler = handler;
-  }
-
-  private async onWorkerMessage(message): Promise<void> {
+  private async onWorkerMessage(message: WorkerMessage): Promise<void> {
     const worker = this.workersByPid.get(message.pid);
     const handler = this.handlersByMessageType.get(message.type);
 

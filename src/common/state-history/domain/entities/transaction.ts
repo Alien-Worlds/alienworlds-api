@@ -55,7 +55,7 @@ export class Transaction {
         break;
       }
       default: {
-        // LOG unknown trx type
+        console.warn(`Unknown trx type "${type}"`);
       }
     }
     return new Transaction(status, cpu_usage_us, net_usage_words, trx);
