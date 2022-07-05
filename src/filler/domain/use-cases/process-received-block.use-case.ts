@@ -57,7 +57,7 @@ export class ProcessReceivedBlockUseCase implements UseCase<void> {
             );
             // How should we react if one of the actions is not queued?
             if (queueResult.isFailure) {
-              console.log(queueResult.failure.error.name);
+              log(queueResult.failure.error.name);
             }
           }
         }

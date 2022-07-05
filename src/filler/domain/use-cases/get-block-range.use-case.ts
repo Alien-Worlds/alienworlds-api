@@ -39,6 +39,7 @@ export class GetBlockRangeUseCase implements UseCase<BlockRange> {
     if (endBlock && endBlock !== config.endBlock) {
       tempEndBlock = endBlock;
     }
+
     if (startBlock === -1n) {
       const getLastBlockResult = await this.getLastBlockUseCase.execute();
 
@@ -46,11 +47,11 @@ export class GetBlockRangeUseCase implements UseCase<BlockRange> {
         return Result.withFailure(getLastBlockResult.failure);
       }
 
-      const { blockNumber: blockNum } = getLastBlockResult.content;
-      tempStartBlock = blockNum;
+      tempStartBlock = getLastBlockResult.content.blockNumber;
     } else if (startBlock) {
       tempStartBlock = startBlock;
     }
+
     if (replay && endBlock === BigInt(0xffffffff)) {
       const { failure, content } =
         await this.getLastIrreversableBlockNumUseCase.execute();

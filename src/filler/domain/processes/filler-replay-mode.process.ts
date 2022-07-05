@@ -53,18 +53,11 @@ export class FillerReplayModeProcess extends Process {
     );
 
     if (createScanResult.isFailure) {
-      const {
-        failure: {
-          error: { message, name },
-        },
-      } = createScanResult;
-      if (name === DuplicateBlockRangeScanError.Token) {
-        this.stop(scanKey, startBlock, endBlock, message);
-      }
+      const { failure } = createScanResult;
       throw new BlockRangeScanCreationError(
         startBlock,
         endBlock,
-        createScanResult.failure.error
+        failure.error
       );
     }
 
