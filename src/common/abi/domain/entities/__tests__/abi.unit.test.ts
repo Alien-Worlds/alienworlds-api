@@ -29,7 +29,7 @@ const customTypeDto = {
 };
 
 const structDto = {
-  name: 'FOO_NAME',
+  name: 'foo.name',
   base: 'FOO',
   fields: [{ name: 'FIELD_NAME', type: 'FIELD_TYPE' }],
 };

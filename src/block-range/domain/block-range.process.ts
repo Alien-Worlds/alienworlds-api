@@ -7,7 +7,7 @@ import {
   WorkerMessageType,
 } from '@core/architecture/workers/worker-message';
 import { inject, injectable } from 'inversify';
-import { BlockRangeScanReadTimeoutError } from './use-cases/errors/block-range-scan-read-timeout.error';
+import { BlockRangeScanReadTimeoutError } from './errors/block-range-scan-read-timeout.error';
 
 @injectable()
 export class BlockRangeProcess extends Process {
@@ -48,31 +48,39 @@ export class BlockRangeProcess extends Process {
    *
    */
   public async start(scanKey: string) {
-    try {
-      await this.waitUntilBlockRangesAreSet(scanKey);
-      const { content, failure } = await this.startNextScanUseCase.execute(
-        scanKey
-      );
+    await this.waitUntilBlockRangesAreSet(scanKey);
 
-      if (failure) {
-        throw failure.error;
-      }
-      const { start, end } = content;
-      const { failure: processFailure } =
-        await this.requestBlocksUseCase.execute(start, end);
+    const { content, failure: startNextScanFailure } =
+      await this.startNextScanUseCase.execute(scanKey);
 
-      if (processFailure) {
-        throw processFailure.error;
-      }
-    } catch (error) {
+    if (startNextScanFailure) {
       this.sendToMainThread(
         WorkerMessage.create({
           pid: this.id,
           type: WorkerMessageType.Error,
-          name: error.name,
-          error,
+          name: startNextScanFailure.error.name,
+          error: startNextScanFailure.error,
         })
       );
+      return;
+    }
+
+    const { start, end } = content;
+    const { failure: processFailure } = await this.requestBlocksUseCase.execute(
+      start,
+      end
+    );
+
+    if (processFailure) {
+      this.sendToMainThread(
+        WorkerMessage.create({
+          pid: this.id,
+          type: WorkerMessageType.Error,
+          name: processFailure.error.name,
+          error: processFailure.error,
+        })
+      );
+      return;
     }
   }
 }

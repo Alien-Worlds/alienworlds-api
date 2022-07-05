@@ -4,7 +4,7 @@ import { NoBlockRangeFoundError } from '@common/block-range-scan/domain/errors/n
 import { WorkerMessageType } from '@core/architecture/workers/worker-message';
 import 'reflect-metadata';
 import { BlockRangeOrchestrator } from '../block-range.orchestrator';
-import { BlockRangeScanReadTimeoutError } from '../use-cases/errors/block-range-scan-read-timeout.error';
+import { BlockRangeScanReadTimeoutError } from '../errors/block-range-scan-read-timeout.error';
 
 jest.mock('@config', () => ({
   config: { blockrangeThreads: 8, blockrangeInviolableThreads: 2 },

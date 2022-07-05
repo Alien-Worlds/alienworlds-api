@@ -6,7 +6,7 @@ import {
 } from '@core/architecture/workers/worker-message';
 import { WorkerOrchestrator } from '@core/architecture/workers/worker-orchestrator';
 import { injectable } from 'inversify';
-import { BlockRangeScanReadTimeoutError } from './use-cases/errors/block-range-scan-read-timeout.error';
+import { BlockRangeScanReadTimeoutError } from './errors/block-range-scan-read-timeout.error';
 import { getWorkersCount } from '@common/utils/worker.utils';
 
 @injectable()

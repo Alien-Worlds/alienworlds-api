@@ -13,9 +13,9 @@ export class ActionProcessingJobMessage {
       textDecoder: new TextDecoder(),
     });
 
-    sb_action.pushName(action[1].act.account);
-    sb_action.pushName(action[1].act.name);
-    sb_action.pushBytes(action[1].act.data);
+    sb_action.pushName(action.act.account);
+    sb_action.pushName(action.act.name);
+    sb_action.pushBytes(action.act.data);
 
     const blockBuffer = Buffer.allocUnsafe(8);
     blockBuffer.writeBigInt64BE(BigInt(blockNumber), 0);
@@ -23,12 +23,9 @@ export class ActionProcessingJobMessage {
     timestampBuffer.writeUInt32BE(timestamp.getTime() / 1000, 0);
     const trxIdBuffer = Buffer.from(traceId, 'hex');
     const recvBuffer = Buffer.allocUnsafe(8);
-    recvBuffer.writeBigInt64BE(BigInt(action[1].receipt[1].recv_sequence), 0);
+    recvBuffer.writeBigInt64BE(BigInt(action.receipt.recvSequence), 0);
     const globalBuffer = Buffer.allocUnsafe(8);
-    globalBuffer.writeBigInt64BE(
-      BigInt(action[1].receipt[1].global_sequence),
-      0
-    );
+    globalBuffer.writeBigInt64BE(BigInt(action.receipt.globalSequence), 0);
 
     const actionBuffer = Buffer.from(sb_action.array);
 

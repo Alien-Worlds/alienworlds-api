@@ -1,5 +1,4 @@
 import { BlockRangeScanRepository } from '@common/block-range-scan/domain/repositories/block-range-scan.repository';
-import { BlockRangeScan } from '@common/block-range-scan/domain/entities/block-range-scan';
 import { StateHistoryService } from '@common/state-history/domain/state-history.service';
 import { log } from '@common/state-history/domain/state-history.utils';
 import { RequestBlocksUseCase } from '@common/state-history/domain/use-cases/request-blocks.use-case';
@@ -36,39 +35,52 @@ export class CompleteBlockRangeScanUseCase implements UseCase<void> {
     blockRange: BlockRange,
     scanKey: string
   ): Promise<Result<void>> {
-    try {
-      log('Completed blocks range', blockRange);
-      const disconnectResult = await this.stateHistoryService.disconnect();
+    log('Completed blocks range', blockRange);
+    const { failure: disconnectFailure } =
+      await this.stateHistoryService.disconnect();
 
-      if (disconnectResult.isFailure) {
-        throw disconnectResult.failure.error;
-      }
-
-      const startNextScanResult =
-        await this.blockRangeScanRepository.startNextScan(scanKey);
-
-      if (startNextScanResult.isFailure) {
-        throw startNextScanResult.failure.error;
-      }
-      const {
-        content: { start, end },
-      } = startNextScanResult;
-      const { failure } = await this.requestBlocksUseCase.execute(start, end);
-
-      if (failure) {
-        throw failure.error;
-      }
-
-      return Result.withoutContent();
-    } catch (error) {
+    if (disconnectFailure) {
       WorkerOrchestrator.sendToOrchestrator(
         WorkerMessage.create({
           pid: process.pid,
           type: WorkerMessageType.Error,
-          name: error.name,
-          error,
+          name: disconnectFailure.error.name,
+          error: disconnectFailure.error,
+        })
+      );
+      return Result.withoutContent();
+    }
+
+    const { content, failure: startNextScanFailure } =
+      await this.blockRangeScanRepository.startNextScan(scanKey);
+
+    if (startNextScanFailure) {
+      WorkerOrchestrator.sendToOrchestrator(
+        WorkerMessage.create({
+          pid: process.pid,
+          type: WorkerMessageType.Error,
+          name: startNextScanFailure.error.name,
+          error: startNextScanFailure.error,
+        })
+      );
+      return Result.withoutContent();
+    }
+
+    const { start, end } = content;
+    const { failure: requestBlocksFailure } =
+      await this.requestBlocksUseCase.execute(start, end);
+
+    if (requestBlocksFailure) {
+      WorkerOrchestrator.sendToOrchestrator(
+        WorkerMessage.create({
+          pid: process.pid,
+          type: WorkerMessageType.Error,
+          name: requestBlocksFailure.error.name,
+          error: requestBlocksFailure.error,
         })
       );
     }
+
+    return Result.withoutContent();
   }
 }

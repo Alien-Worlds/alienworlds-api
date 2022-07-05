@@ -4,7 +4,7 @@ import { Action } from '../action';
 
 const actionDto: ActionDto = {
   type: 'FOO_TYPE',
-  name: 'FOO_NAME',
+  name: 'foo.name',
   ricardian_contract: 'contract',
 };
 

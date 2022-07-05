@@ -3,11 +3,11 @@ import { ActDto, ActionTraceDto } from '@common/actions/data/actions.dtos';
 import { Act, ActionTrace, Receipt } from '../action-trace';
 
 const actDto: ActDto = {
-  account: 'FOO_ACCOUNT',
-  name: 'FOO_NAME',
+  account: 'foo.account',
+  name: 'foo.name',
   authorization: {
-    actor: 'FOO_ACTOR',
-    permission: 'FOO_PERMISSION',
+    actor: 'foo.actor',
+    permission: 'foo.permission',
   },
   data: [] as any,
 };

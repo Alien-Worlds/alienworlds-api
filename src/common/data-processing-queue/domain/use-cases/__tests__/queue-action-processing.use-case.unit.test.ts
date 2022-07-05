@@ -20,7 +20,7 @@ const actionTrace = ActionTrace.create('action_trace_v0', {
   receipt: [
     'foo',
     {
-      receiver: 'FOO_ACCOUNT',
+      receiver: 'foo.account',
       act_digest: 'act',
       global_sequence: '100',
       recv_sequence: '100',
@@ -29,13 +29,13 @@ const actionTrace = ActionTrace.create('action_trace_v0', {
       abi_sequence: 100,
     },
   ],
-  receiver: 'FOO_ACCOUNT',
+  receiver: 'foo.account',
   act: {
-    account: 'FOO_ACCOUNT',
+    account: 'foo.account',
     name: 'logmine',
     authorization: {
-      actor: 'FOO_ACTOR',
-      permission: 'FOO_PERMISSION',
+      actor: 'foo.actor',
+      permission: 'foo.permission',
     },
     data: [] as any,
   },
@@ -84,7 +84,7 @@ describe('QueueActionProcessingUseCase Unit tests', () => {
   });
 
   it('Should call service queueJob', async () => {
-    (config.miningContract as any) = 'FOO_ACCOUNT';
+    (config.miningContract as any) = 'foo.account';
     const createBufferMock = jest.fn();
     ActionProcessingJob.createBuffer = createBufferMock;
 
@@ -129,7 +129,7 @@ describe('QueueActionProcessingUseCase Unit tests', () => {
   });
 
   it('Should return a result with no content when one of the conditions is not met', async () => {
-    (config.miningContract as any) = 'FOO_ACCOUNT';
+    (config.miningContract as any) = 'foo.account';
 
     const createBufferMock = jest.fn();
     ActionProcessingJob.createBuffer = createBufferMock;
@@ -150,7 +150,7 @@ describe('QueueActionProcessingUseCase Unit tests', () => {
   });
 
   it('Should result with failure when job queuing fails', async () => {
-    (config.miningContract as any) = 'FOO_ACCOUNT';
+    (config.miningContract as any) = 'foo.account';
 
     const createBufferMock = jest.fn();
     ActionProcessingJob.createBuffer = createBufferMock;
