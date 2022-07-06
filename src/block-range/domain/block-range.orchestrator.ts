@@ -7,7 +7,7 @@ import {
 import { WorkerOrchestrator } from '@core/architecture/workers/worker-orchestrator';
 import { injectable } from 'inversify';
 import { BlockRangeScanReadTimeoutError } from './errors/block-range-scan-read-timeout.error';
-import { getWorkersCount } from '@common/utils/worker.utils';
+import { getWorkersCount } from '@core/architecture/workers/worker.utils';
 
 @injectable()
 export class BlockRangeOrchestrator extends WorkerOrchestrator {

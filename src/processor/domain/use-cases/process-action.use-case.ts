@@ -18,7 +18,6 @@ import { UnhandledEntityError } from '../errors/unhandled-entity.error';
 import { ActionProcessingJob } from '@common/data-processing-queue/domain/entities/action-processing.job';
 import { ActionProcessingQueueService } from '@common/data-processing-queue/domain/services/action-processing-queue.service';
 import { QueueAssetProcessingUseCase } from '@common/data-processing-queue/domain/use-cases/queue-asset-processing.use-case';
-import { log } from '@common/state-history/domain/state-history.utils';
 import { UnknownActionTypeError } from '../errors/unknown-action-type.error';
 
 /**

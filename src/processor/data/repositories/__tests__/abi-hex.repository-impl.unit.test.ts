@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import 'reflect-metadata';
+
 import { Failure } from '@core/architecture/domain/failure';
 import { AbiHexFile } from '../../../data/abi-hex.dto';
-import 'reflect-metadata';
 import { AbiHexRepositoryImpl } from '../abi-hex.repository-impl';
 import { AbiHex } from '../../../domain/entities/abi-hex';
 import { MostRecentAbiHex } from '../../../domain/entities/most-recent-abi-hex';
 
-jest.mock('../data-sources/abi.local.source');
+jest.mock('../../data-sources/abi-hex.local.source');
 
 let repository: AbiHexRepositoryImpl;
 
@@ -85,14 +86,14 @@ describe('AbiRepositoryImpl Unit tests', () => {
       filename: 'fake-12345.hex',
     };
     //@ts-ignore
-    repository.mostRecentAbi = MostRecentAbiHex.create(dto, false);
-
-    localSourceMock.getMostRecentAbi.mockReturnValue(dto);
+    repository.mostRecentAbiHex = MostRecentAbiHex.create(dto, false);
+    //@ts-ignore
+    repository.abisByContracts = new Map([['fake', [AbiHex.fromDto(dto)]]]);
 
     localSourceMock.load.mockResolvedValue([dto]);
     const { content, failure } = await repository.getMostRecentAbiHex(
-      'foo',
-      0n
+      'fake',
+      2n
     );
 
     expect(content).toEqual(MostRecentAbiHex.create(dto, false));
@@ -113,18 +114,38 @@ describe('AbiRepositoryImpl Unit tests', () => {
       filename: 'fake-12345.hex',
     };
     //@ts-ignore
-    repository.mostRecentAbi = MostRecentAbiHex.create(currentDto, false);
+    repository.mostRecentAbiHex = MostRecentAbiHex.create(currentDto, false);
+    //@ts-ignore
+    repository.abisByContracts = new Map([['fake', [AbiHex.fromDto(dto)]]]);
 
-    localSourceMock.getMostRecentAbi.mockReturnValue(dto);
-
-    localSourceMock.load.mockResolvedValue([dto]);
     const { content, failure } = await repository.getMostRecentAbiHex(
-      'foo',
-      0n
+      'fake',
+      2n
     );
 
     expect(content).toEqual(MostRecentAbiHex.create(dto, true));
     expect(failure).toBeUndefined();
+  });
+
+  it('"getMostRecentAbi" should return a failure on any error', async () => {
+    const dto: AbiHexFile = {
+      contract: 'fake',
+      block_num: '0',
+      hex: 'fake-abi-hex-2',
+      filename: 'fake-12345.hex',
+    };
+    //@ts-ignore
+    repository.mostRecentAbiHex = MostRecentAbiHex.create(dto, false);
+    //@ts-ignore
+    repository.abisByContracts = new Map([['fake', [AbiHex.fromDto(dto)]]]);
+
+    MostRecentAbiHex.create = jest.fn().mockImplementation(() => {
+      throw new Error();
+    });
+
+    const { failure } = await repository.getMostRecentAbiHex('fake', 2n);
+
+    expect(failure).toBeInstanceOf(Failure);
   });
 
   it('"updateAbi" should update ABI for the given account', () => {
@@ -144,4 +165,41 @@ describe('AbiRepositoryImpl Unit tests', () => {
     expect(content).toBeUndefined();
     expect(failure).toBeInstanceOf(Failure);
   });
+
+  // it('"getMostRecentAbi" should throw an error when Abi was not found for given account', async () => {
+  //   try {
+  //     const source = new AbiHexLocalSource();
+  //     await source.getMostRecentAbiHex('foo', 0n);
+  //   } catch (error) {
+  //     expect(error).toBeInstanceOf(AbiHexNotFoundError);
+  //   }
+  // });
+
+  // it('"getMostRecentAbi" should return most recent abi when fromCurrentBlock is true', async () => {
+  //   const source = new AbiHexLocalSource();
+  //   //@ts-ignore
+  //   source.abisByContracts.set('foo', [
+  //     { block_num: 0 } as any,
+  //     { block_num: 1 } as any,
+  //     { block_num: 2 } as any,
+  //     { block_num: 3 } as any,
+  //   ]);
+
+  //   const abi = source.getMostRecentAbiHex('foo', 2n, true);
+  //   expect(abi.block_num).toEqual(2);
+  // });
+
+  // it('"getMostRecentAbi" should return most recent abi when fromCurrentBlock is false', async () => {
+  //   const source = new AbiHexLocalSource();
+  //   //@ts-ignore
+  //   source.abisByContracts.set('foo', [
+  //     { block_num: 0 } as any,
+  //     { block_num: 1 } as any,
+  //     { block_num: 2 } as any,
+  //     { block_num: 3 } as any,
+  //   ]);
+
+  //   const abi = source.getMostRecentAbiHex('foo', 2n, false);
+  //   expect(abi.block_num).toEqual(1);
+  // });
 });

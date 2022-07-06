@@ -1,28 +1,9 @@
-import * as os from 'os';
-import { injectable } from 'inversify';
+import { injectable, unmanaged } from 'inversify';
 import { WorkerMessageType } from '@core/architecture/workers/worker-message';
 import { WorkerOrchestrator } from '@core/architecture/workers/worker-orchestrator';
-import { Config, config } from '@config';
+import { config } from '@config';
 import { AbiHexFile } from 'processor/data/abi-hex.dto';
-
-/**
- * Get the number of workers from configuration
- * or based on the number of available CPU cores.
- * The number of CPU cores is reduced by
- * a constant specified in the configuration.
- *
- * @param {Config} config
- * @returns {number}
- */
-export const getProcessorWorkersCount = (config: Config) => {
-  let count = config.processorThreads;
-  if (count === 0 || isNaN(count)) {
-    const cpus = os.cpus().length;
-    count = cpus - config.processorInviolableThreads;
-  }
-
-  return count;
-};
+import { getWorkersCount } from '@core/architecture/workers/worker.utils';
 
 @injectable()
 export class ProcessorOrchestrator extends WorkerOrchestrator {
@@ -33,8 +14,9 @@ export class ProcessorOrchestrator extends WorkerOrchestrator {
    * @constructor
    * @param {AbiHexFile[]} abiHex
    */
-  constructor(abiHex: AbiHexFile[]) {
-    super(getProcessorWorkersCount(config));
+  constructor(@unmanaged() abiHex: AbiHexFile[]) {
+    const { processorThreads, processorInviolableThreads } = config;
+    super(getWorkersCount(processorThreads, processorInviolableThreads));
     this.abiHexFiles = abiHex;
   }
 

@@ -2,7 +2,7 @@ import { AbiHexFile } from '../../data/abi-hex.dto';
 import { AbiHex } from './abi-hex';
 
 /**
- * MostRecentAbi entity
+ * MostRecentAbiHex entity
  * @class
  */
 export class MostRecentAbiHex {
@@ -18,7 +18,18 @@ export class MostRecentAbiHex {
   ) {}
 
   /**
-   * Create MostRecentAbi entity based on provided DTO
+   * Parse MostRecentAbiHex entity to Json object
+   * @returns {AbiHexFile}
+   */
+  public toJson(): object {
+    return {
+      data: this.data.toJson(),
+      hasChanged: this.hasChanged,
+    };
+  }
+
+  /**
+   * Create MostRecentAbiHex entity based on provided DTO
    *
    * @static
    * @param {AbiHexFile | AbiHex} data

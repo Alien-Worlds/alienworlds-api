@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import fs from 'fs';
 import { AbiHexLocalSource } from '../abi-hex.local.source';
-import { AbiHexNotFoundError } from '../../../domain/errors/abi-hex-not-found.error';
 import { InvalidAbiHexFileNameError } from '../../../domain/errors/invalid-abi-hex-file-name.error';
 
 jest.mock('fs');
@@ -54,23 +53,23 @@ describe('AbiLocalSource Unit tests', () => {
     const result = await source.load('');
 
     expect(result.length).toEqual(3);
-    expect(result[0]).toEqual({
-      contract: 'bar',
-      block_num: '11111',
-      abi_hex: 'bar-abi-hex-3',
-      filename: 'bar-11111.hex',
-    });
     expect(result[1]).toEqual({
       contract: 'foo',
+      block_num: '67890',
+      hex: 'foo-abi-hex-2',
+      filename: 'foo-67890.hex',
+    });
+    expect(result[0]).toEqual({
+      contract: 'foo',
       block_num: '12345',
-      abi_hex: 'foo-abi-hex',
+      hex: 'foo-abi-hex',
       filename: 'foo-12345.hex',
     });
     expect(result[2]).toEqual({
-      contract: 'foo',
-      block_num: '67890',
-      abi_hex: 'foo-abi-hex-2',
-      filename: 'foo-67890.hex',
+      contract: 'bar',
+      block_num: '11111',
+      hex: 'bar-abi-hex-3',
+      filename: 'bar-11111.hex',
     });
   });
 
@@ -81,7 +80,14 @@ describe('AbiLocalSource Unit tests', () => {
     const warnMock = jest.spyOn(console, 'warn');
     const source = new AbiHexLocalSource();
     //@ts-ignore
-    source.abisByContracts.set('foo', [{}]);
+    source.abisByContracts.set('foo', [
+      {
+        contract: 'foo',
+        block_num: '67890',
+        hex: 'foo-abi-hex-2',
+        filename: 'foo-67890.hex',
+      },
+    ]);
     await source.load('');
 
     expect(warnMock).toBeCalled();
@@ -100,42 +106,5 @@ describe('AbiLocalSource Unit tests', () => {
 
     expect(errorMock).toBeCalled();
     errorMock.mockReset();
-  });
-
-  it('"getMostRecentAbi" should throw an error when Abi was not found for given account', async () => {
-    try {
-      const source = new AbiHexLocalSource();
-      await source.getMostRecentAbiHex('foo', 0n);
-    } catch (error) {
-      expect(error).toBeInstanceOf(AbiHexNotFoundError);
-    }
-  });
-
-  it('"getMostRecentAbi" should return most recent abi when fromCurrentBlock is true', async () => {
-    const source = new AbiHexLocalSource();
-    //@ts-ignore
-    source.abisByContracts.set('foo', [
-      { block_num: 0 } as any,
-      { block_num: 1 } as any,
-      { block_num: 2 } as any,
-      { block_num: 3 } as any,
-    ]);
-
-    const abi = source.getMostRecentAbiHex('foo', 2n, true);
-    expect(abi.block_num).toEqual(2);
-  });
-
-  it('"getMostRecentAbi" should return most recent abi when fromCurrentBlock is false', async () => {
-    const source = new AbiHexLocalSource();
-    //@ts-ignore
-    source.abisByContracts.set('foo', [
-      { block_num: 0 } as any,
-      { block_num: 1 } as any,
-      { block_num: 2 } as any,
-      { block_num: 3 } as any,
-    ]);
-
-    const abi = source.getMostRecentAbiHex('foo', 2n, false);
-    expect(abi.block_num).toEqual(1);
   });
 });

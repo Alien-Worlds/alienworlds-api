@@ -9,13 +9,13 @@ import { UploadAbiHexUseCase } from '../upload-abi-hex.use-case';
 import { AbiHexRepository } from '../../abi-hex.repository';
 
 const abiRepository = {
-  updateAbi: jest.fn(),
+  uploadAbiHex: jest.fn(),
 } as any;
 
 let container: Container;
 let useCase: UploadAbiHexUseCase;
 
-describe('GetLastBlockUseCase Unit tests', () => {
+describe('UploadAbiHexUseCase Unit tests', () => {
   beforeAll(() => {
     container = new Container();
     container
@@ -39,15 +39,15 @@ describe('GetLastBlockUseCase Unit tests', () => {
     expect(UploadAbiHexUseCase.Token).not.toBeNull();
   });
 
-  it('Should call repository.updateAbi', async () => {
-    abiRepository.updateAbi = () => Result.withoutContent();
+  it('Should call repository.uploadAbiHex', async () => {
+    abiRepository.uploadAbiHex = () => Result.withoutContent();
     const { content, failure } = useCase.execute('foo', 'foo.abi');
     expect(content).toBeUndefined();
     expect(failure).toBeUndefined();
   });
 
   it('Should return a Failure object when mines repository returns a failure', async () => {
-    abiRepository.updateAbi = () =>
+    abiRepository.uploadAbiHex = () =>
       Result.withFailure(Failure.withMessage('fail'));
 
     const { content, failure } = await useCase.execute('foo', 'foo.abi');

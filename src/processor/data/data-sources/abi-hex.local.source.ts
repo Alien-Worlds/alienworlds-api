@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { AbiHexNotFoundError } from '../../domain/errors/abi-hex-not-found.error';
 import { InvalidAbiHexFileNameError } from '../../domain/errors/invalid-abi-hex-file-name.error';
 import { AbiHexFile } from '../abi-hex.dto';
 
@@ -33,6 +32,7 @@ export class AbiHexLocalSource {
    */
   public async load(path: string): Promise<AbiHexFile[]> {
     const abiDirectory = fs.opendirSync(path);
+    const result: AbiHexFile[] = [];
 
     if (this.abisByContracts.size) {
       console.warn('Current Abi dtos will be overriden');
@@ -49,66 +49,20 @@ export class AbiHexLocalSource {
         console.log(`Loading ${abiHexFilePath}...`);
         const abiHex = fs.readFileSync(abiHexFilePath, 'utf-8');
 
-        const dto: AbiHexFile = {
+        result.push({
           contract,
           block_num: blockNumber,
           hex: abiHex,
           filename: file.name,
-        };
+        });
 
-        if (this.abisByContracts.has(contract)) {
-          this.abisByContracts.get(contract).push(dto);
-        } else {
-          this.abisByContracts.set(contract, [dto]);
-        }
         console.log(`ABI hex file loaded ${abiHexFilePath}`);
       } catch (error) {
         console.error(error);
       }
     }
     console.log(`Loading ABI hex files finieshed`);
-    const result = [];
-
-    this.abisByContracts.forEach(dtos => {
-      dtos.sort((a, b) => (a.block_num < b.block_num ? -1 : 1));
-      result.push(...dtos);
-    });
 
     return result;
-  }
-
-  /**
-   * Get the most recent matching ABI
-   *
-   * @param {string} account
-   * @param {number} blockNum
-   * @param {boolean=} fromCurrentBlock
-   * @returns {AbiHexFile}
-   */
-  public getMostRecentAbiHex(
-    account: string,
-    blockNum: bigint,
-    fromCurrentBlock?: boolean
-  ): AbiHexFile {
-    const dtos = this.abisByContracts.get(account);
-
-    if (!dtos || dtos.length === 0) {
-      throw new AbiHexNotFoundError(account);
-    }
-
-    const revertedDtos = [...dtos].reverse();
-    let abiHex = null;
-
-    for (const dto of revertedDtos) {
-      if (
-        (fromCurrentBlock && blockNum >= BigInt(dto.block_num)) ||
-        (!fromCurrentBlock && blockNum > BigInt(dto.block_num))
-      ) {
-        abiHex = dto;
-        break;
-      }
-    }
-
-    return abiHex;
   }
 }

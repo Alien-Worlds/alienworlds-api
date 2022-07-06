@@ -7,6 +7,7 @@ import { AbiHexFile } from '../abi-hex.dto';
 import { AbiEosService } from '../../../common/abi/data/services/abieos.service';
 import { MostRecentAbiHex } from '../../domain/entities/most-recent-abi-hex';
 import { AbiHex } from '../../domain/entities/abi-hex';
+import { blockNumberDescSorter } from '../abi-hex.utils';
 
 /**
  * Represents ABI repository
@@ -32,6 +33,8 @@ export class AbiHexRepositoryImpl implements AbiHexRepository {
       const dtos: AbiHexFile[] = Array.isArray(source)
         ? source
         : await this.localSource.load(source);
+
+      dtos.sort(blockNumberDescSorter);
 
       for (const dto of dtos) {
         if (this.abisByContracts.has(dto.contract)) {
@@ -61,6 +64,7 @@ export class AbiHexRepositoryImpl implements AbiHexRepository {
   ): Result<MostRecentAbiHex> {
     try {
       const abis = this.abisByContracts.get(account);
+      let abiHex: AbiHex;
 
       if (!abis || abis.length === 0) {
         return Result.withFailure(
@@ -68,10 +72,7 @@ export class AbiHexRepositoryImpl implements AbiHexRepository {
         );
       }
 
-      const revertedAbis = [...abis].reverse();
-      let abiHex: AbiHex;
-
-      for (const abi of revertedAbis) {
+      for (const abi of abis) {
         if (
           (fromCurrentBlock && blockNum >= BigInt(abi.blockNumber)) ||
           (!fromCurrentBlock && blockNum > BigInt(abi.blockNumber))

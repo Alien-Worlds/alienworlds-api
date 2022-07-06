@@ -16,7 +16,7 @@ jest.mock('@config', () => ({
   config: { blockrangeThreads: 8, blockrangeInviolableThreads: 2 },
 }));
 
-jest.mock('@common/utils/worker.utils', () => ({
+jest.mock('@core/architecture/workers/worker.utils', () => ({
   getWorkersCount: () => 2,
 }));
 

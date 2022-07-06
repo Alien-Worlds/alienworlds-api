@@ -35,6 +35,19 @@ export class AbiHex {
   }
 
   /**
+   * Parse ABI entity to Json object
+   * @returns {AbiHexFile}
+   */
+  public toJson(): object {
+    return {
+      contract: this.contract,
+      blockNumber: this.blockNumber.toString(),
+      hex: this.hex,
+      filename: this.filename,
+    };
+  }
+
+  /**
    * Create ABI entity based on provided DTO
    *
    * @static

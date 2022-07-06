@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 
 import { Result } from '@core/architecture/domain/result';
 import { UseCase } from '@core/architecture/domain/use-case';
-import { GetMostRecentAbiHexUseCase } from 'processor/domain/use-cases/get-most-recent-abi-hex.use-case';
+import { GetMostRecentAbiHexUseCase } from '../../domain/use-cases/get-most-recent-abi-hex.use-case';
 import { ParseDataToJsonUseCase } from '@common/abi/domain/use-cases/parse-data-to-json.use-case';
 import { ActionProcessingJob } from '@common/data-processing-queue/domain/entities/action-processing.job';
 import { UploadAbiHexUseCase } from './upload-abi-hex.use-case';
@@ -16,9 +16,10 @@ export class DeserializeActionJobUseCase implements UseCase {
   public static Token = 'DESERIALIZE_ACTION_JOB_USE_CASE';
 
   /**
-   * @constructor
-   * @param {AbiRepository} abiRepository
-   * @param {AbieosService} abieosService
+   *
+   * @param {GetMostRecentAbiHexUseCase} getMostRecentAbiHexUseCase
+   * @param {UploadAbiHexUseCase} uploadAbiHexUseCase
+   * @param {ParseDataToJsonUseCase} parseDataToJsonUseCase
    */
   constructor(
     @inject(GetMostRecentAbiHexUseCase.Token)
@@ -54,7 +55,7 @@ export class DeserializeActionJobUseCase implements UseCase {
       return Result.withFailure(getMostRecentAbiFailure);
     }
 
-    // update ABI
+    // upload ABI
     if (recentAbi.hasChanged) {
       const uploadAbiResult = this.uploadAbiHexUseCase.execute(
         account,

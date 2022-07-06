@@ -9,7 +9,7 @@ import { AbiHexRepository } from '../../../domain/abi-hex.repository';
 import { GetMostRecentAbiHexUseCase } from '../get-most-recent-abi-hex.use-case';
 
 const abiRepository = {
-  getMostRecentAbi: jest.fn(() => {}),
+  getMostRecentAbiHex: jest.fn(() => {}),
 } as any;
 
 const abiRepositoryMock = abiRepository as jest.MockedObject<AbiHexRepository>;
@@ -44,7 +44,7 @@ describe('GetLastBlockUseCase Unit tests', () => {
   });
 
   it('Should call repository.updateAbi', async () => {
-    abiRepository.getMostRecentAbi = jest.fn(() => Result.withoutContent());
+    abiRepository.getMostRecentAbiHex = jest.fn(() => Result.withoutContent());
     const { content, failure } = useCase.execute('foo', 0n, false);
 
     expect(abiRepositoryMock.getMostRecentAbiHex).toBeCalledWith(
@@ -57,7 +57,7 @@ describe('GetLastBlockUseCase Unit tests', () => {
   });
 
   it('Should return a Failure object when mines repository returns a failure', async () => {
-    abiRepository.getMostRecentAbi = jest.fn(() =>
+    abiRepository.getMostRecentAbiHex = jest.fn(() =>
       Result.withFailure(Failure.withMessage('fail'))
     );
 

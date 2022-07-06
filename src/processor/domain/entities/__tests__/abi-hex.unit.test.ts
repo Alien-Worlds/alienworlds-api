@@ -4,17 +4,18 @@ import { AbiHex } from '../abi-hex';
 const dto = {
   contract: 'foo.contract',
   block_num: '0',
-  abi_hex: 'foo.hex',
+  hex: 'foo.hex',
   filename: 'foo.file',
 } as any;
 
 describe('AbiHex unit tests', () => {
-  it('AbiHex.fromDto should return Abi object based on dto', async () => {
+  it('AbiHex.fromDto should return AbiHex object based on dto', async () => {
     const abi = AbiHex.fromDto(dto);
-    expect(abi).toEqual({
+
+    expect(abi.toJson()).toEqual({
       contract: 'foo.contract',
-      blockNumber: 0n,
-      abiHex: 'foo.hex',
+      blockNumber: '0',
+      hex: 'foo.hex',
       filename: 'foo.file',
     });
   });

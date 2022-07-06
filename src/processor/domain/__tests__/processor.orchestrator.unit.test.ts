@@ -1,53 +1,103 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
-import { config, Config } from '@config';
-import * as workers from '../processor.orchestrator';
+import { getWorkersCount } from '@core/architecture/workers/worker.utils';
+import { ProcessorOrchestrator } from '../processor.orchestrator';
+import {
+  WorkerMessage,
+  WorkerMessageType,
+} from '@core/architecture/workers/worker-message';
 
-jest.mock('mongodb', jest.fn());
-jest.mock('@config');
-const configMock = config as jest.MockedObject<Config>;
+jest.mock('@core/architecture/workers/worker.utils');
 
-jest.mock('os', () => ({
-  cpus: () => ({
-    length: 10,
-  }),
-  type: jest.fn(),
-}));
+const getWorkersCountMock = getWorkersCount as jest.MockedFunction<any>;
 
-const mockedWorker = {
-  on: jest.fn(),
-  send: jest.fn(),
-};
+describe('ProcessorOrchestrator Unit tests', () => {
+  it('Should call getWorkersCount to count ', () => {
+    const orchestrator = new ProcessorOrchestrator([]);
 
-jest.mock('cluster', () => ({
-  fork: () => mockedWorker,
-}));
-
-jest.mock('../ioc.config', () => {
-  return {
-    container: {
-      get: (token: string) => ({
-        run: jest.fn(),
-      }),
-    },
-    setupIOC: jest.fn(),
-    setupProcessorIOC: jest.fn(),
-  };
-});
-
-describe('Workers Unit tests', () => {
-  it('"getProcessorWorkersCount" should return the number of processor threads, reduced by the number of inviolable threads', () => {
-    configMock.processorInviolableThreads = 4;
-    const count = workers.getProcessorWorkersCount(configMock);
-
-    expect(count).toEqual(6);
+    expect(getWorkersCountMock).toBeCalled();
   });
 
-  it('"getProcessorWorkersCount" should return the number of processor threads set in the config', () => {
-    configMock.processorThreads = 4;
-    const count = workers.getProcessorWorkersCount(configMock);
+  it('"init" should setup message handlers and init workers', async () => {
+    const orchestrator = new ProcessorOrchestrator([]);
 
-    expect(count).toEqual(4);
+    const initWorkersMock = jest
+      .spyOn(orchestrator, 'initWorkers')
+      .mockImplementation();
+    const addMessageHandlerMock = jest
+      .spyOn(orchestrator, 'addMessageHandler')
+      .mockImplementation();
+
+    await orchestrator.init();
+    expect(initWorkersMock).toBeCalled();
+    expect(JSON.stringify(addMessageHandlerMock.mock.calls)).toEqual(
+      JSON.stringify([
+        [WorkerMessageType.Error, () => {}],
+        [WorkerMessageType.Warning, () => {}],
+      ])
+    );
+
+    addMessageHandlerMock.mockClear();
+  });
+
+  it('Should replace worker with new one on worker error message', async () => {
+    const orchestrator = new ProcessorOrchestrator([]);
+
+    const initWorkersMock = jest
+      .spyOn(orchestrator, 'initWorkers')
+      .mockImplementation();
+    const removeWorkerMock = jest
+      .spyOn(orchestrator, 'removeWorker')
+      .mockImplementation();
+    const addWorkerMock = jest
+      .spyOn(orchestrator, 'addWorker')
+      .mockImplementation();
+
+    await orchestrator.init();
+
+    (orchestrator as any).workersByPid.set(0, {});
+    (orchestrator as any).onWorkerMessage(
+      WorkerMessage.create({
+        pid: 0,
+        type: WorkerMessageType.Error,
+        name: 'SOME_ERROR_NAME',
+        error: new Error('SOME_ERROR'),
+      })
+    );
+
+    expect(removeWorkerMock).toBeCalled();
+    expect(addWorkerMock).toBeCalled();
+
+    addWorkerMock.mockClear();
+    removeWorkerMock.mockClear();
+    initWorkersMock.mockClear();
+  });
+
+  it('Should log warning on worker warning message', async () => {
+    const orchestrator = new ProcessorOrchestrator([]);
+
+    const initWorkersMock = jest
+      .spyOn(orchestrator, 'initWorkers')
+      .mockImplementation();
+    const logMock = jest.spyOn(console, 'log').mockImplementation();
+
+    await orchestrator.init();
+
+    (orchestrator as any).workersByPid.set(0, {});
+    (orchestrator as any).onWorkerMessage(
+      WorkerMessage.create({
+        pid: 0,
+        type: WorkerMessageType.Warning,
+        name: 'SOME_ERROR_NAME',
+        error: new Error('SOME_ERROR'),
+      })
+    );
+
+    expect(logMock).toBeCalled();
+
+    logMock.mockClear();
+    initWorkersMock.mockClear();
   });
 });
