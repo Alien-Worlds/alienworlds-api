@@ -2,17 +2,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
 import { MineMongoSource } from '../mine.mongo.source';
 
-jest.mock('@core/storage/data-sources/mongo.source');
-
-const mongoSourceMock = new MongoSource(null);
+const mongoSourceMock = {
+  database: {
+    collection: () => ({
+      findOne: jest.fn(),
+    }),
+  },
+};
 let minesSource: MineMongoSource;
 
 describe('MineMongoSource Unit tests', () => {
   beforeEach(() => {
-    minesSource = new MineMongoSource(mongoSourceMock);
+    minesSource = new MineMongoSource(mongoSourceMock as any);
   });
 
   it('"Token" should be set', () => {
@@ -22,11 +25,7 @@ describe('MineMongoSource Unit tests', () => {
   it('Should return MineDocument object', async () => {
     const fakeDocument = { _id: 'fake.mine.document' };
     const findOneMock = jest
-      .spyOn(
-        //@ts-ignore
-        minesSource.collection,
-        'findOne'
-      )
+      .spyOn((minesSource as any).collection, 'findOne')
       .mockImplementation(() => fakeDocument);
 
     const result = await minesSource.findLastBlock();
