@@ -5,18 +5,7 @@ import 'reflect-metadata';
 import { Result } from '@core/architecture/domain/result';
 import { Container } from 'inversify';
 import { AtomicTransferRepository } from '@common/atomic-transfers/domain/repositories/atomic-transfer.repository';
-
 import { Failure } from '@core/architecture/domain/failure';
-import { CollectionMismatchError } from '../../errors/collection-mismatch.error';
-import { Mine } from '@common/mines/domain/entities/mine';
-import { NFT } from '@common/nfts/domain/entities/nft';
-import { AtomicTransfer } from '@common/atomic-transfers/domain/entities/atomic-transfer';
-import { UnhandledEntityError } from '../../errors/unhandled-entity.error';
-import {
-  DataSourceOperationError,
-  OperationErrorType,
-} from '@core/architecture/data/errors/data-source-operation.error';
-import { InsertError } from '@common/mines/domain/errors/insert.error';
 import { ProcessAssetUseCase } from '../process-asset.use-case';
 import { AssetProcessingQueueService } from '@common/data-processing-queue/domain/services/asset-processing-queue.service';
 import { AssetRepository } from '@common/assets/domain/repositories/asset.repository';
@@ -120,6 +109,7 @@ describe('ProcessAssetUseCase Unit tests', () => {
     const result = await useCase.execute(job as any);
 
     expect(atomicTransferRepositoryMock.getByAssetId).toBeCalled();
+    expect(assetProcessingQueueServiceMock.rejectJob).toBeCalled();
     expect(result.failure).toBeInstanceOf(Failure);
   });
 

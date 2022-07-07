@@ -7,6 +7,7 @@ import {
   FindOptions,
   MatchKeysAndValues,
   OptionalUnlessRequiredId,
+  WithId,
 } from 'mongodb';
 import { MongoSource } from './mongo.source';
 
@@ -37,10 +38,12 @@ export class CollectionMongoSource<T> {
    * @returns {T}
    * @throws {DataSourceWriteError}
    */
-  public async findOne(filter: Filter<T>, options?: FindOptions): Promise<T> {
+  public async findOne(
+    filter: Filter<T>,
+    options?: FindOptions
+  ): Promise<WithId<T>> {
     try {
-      const result = await this.collection.findOne(filter, options);
-      return <T>result;
+      return this.collection.findOne(filter, options);
     } catch (error) {
       throw DataSourceOperationError.fromError(error);
     }
@@ -112,6 +115,26 @@ export class CollectionMongoSource<T> {
       );
     } catch (error) {
       throw DataSourceBulkWriteError.create(error);
+    }
+  }
+
+  /**
+   * Remove document from the data source.
+   *
+   * @async
+   * @param {T} dto
+   * @returns {boolean}
+   * @throws {DataSourceWriteError}
+   */
+  public async remove(dto: T): Promise<boolean> {
+    try {
+      const { _id } = dto as WithId<T>;
+      const filter = { _id } as unknown as Filter<T>; // TODO Ugly can we fix it?
+      const { deletedCount } = await this.collection.deleteOne(filter);
+
+      return Boolean(deletedCount);
+    } catch (error) {
+      throw DataSourceOperationError.fromError(error);
     }
   }
 }

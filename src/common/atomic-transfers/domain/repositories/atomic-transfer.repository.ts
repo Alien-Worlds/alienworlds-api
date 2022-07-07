@@ -11,6 +11,7 @@ export abstract class AtomicTransferRepository {
   public static Token = 'ATOMIC_TRANSFER_REPOSITORY';
 
   public abstract add(entity: AtomicTransfer): Promise<Result<AtomicTransfer>>;
+  public abstract remove(entity: AtomicTransfer): Promise<Result<boolean>>;
   public abstract getByAssetId(
     assetId: bigint
   ): Promise<Result<AtomicTransfer>>;

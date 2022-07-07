@@ -34,7 +34,7 @@ export class AtomicTransferRepositoryImpl implements AtomicTransferRepository {
    *
    * @async
    * @param {AtomicTransfer} entity
-   * @returns {AtomicTransfer}
+   * @returns {Result<AtomicTransfer>}
    */
   public async add(entity: AtomicTransfer): Promise<Result<AtomicTransfer>> {
     try {
@@ -42,6 +42,23 @@ export class AtomicTransferRepositoryImpl implements AtomicTransferRepository {
       const id = await this.atomicTransferMongoSource.insert(dto);
       dto._id = id;
       return Result.withContent(AtomicTransfer.fromDto(dto));
+    } catch (error) {
+      return Result.withFailure(Failure.fromError(error));
+    }
+  }
+
+  /**
+   * Remove atomic transfer from the data source
+   *
+   * @async
+   * @param {AtomicTransfer} entity
+   * @returns {Result<boolean>}
+   */
+  public async remove(entity: AtomicTransfer): Promise<Result<boolean>> {
+    try {
+      const dto = entity.toDto();
+      const isRemoved = await this.atomicTransferMongoSource.remove(dto);
+      return Result.withContent(isRemoved);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }

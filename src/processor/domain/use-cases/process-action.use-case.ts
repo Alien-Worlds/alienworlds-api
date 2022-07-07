@@ -144,10 +144,16 @@ export class ProcessActionUseCase implements UseCase {
       await this.queueAssetProcessingUseCase.execute(content.assetIds);
 
     if (queueAssetsFailure) {
+      // TODO: question
+      // In case of unsuccessful queuing of assets-processing jobs,
+      // should we also delete the entry in the database?
+      // const revertResult =
+      // await this.atomicTransferRepository.remove(entity);
+      this.actionProcessingQueueService.rejectJob(job);
       return Result.withFailure(queueAssetsFailure);
     }
 
-    await this.actionProcessingQueueService.ackJob(job);
+    this.actionProcessingQueueService.ackJob(job);
     return Result.withoutContent();
   }
 

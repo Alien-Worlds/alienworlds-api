@@ -103,7 +103,9 @@ export class ProcessAssetUseCase implements UseCase {
       await this.atomicTransferRepository.getByAssetId(assetId);
 
     if (getTransferFailure) {
-      //
+      // without transfer data we cannot proceed to the next steps,
+      // so we reject the job and return Failure
+      this.assetProcessingQueueService.rejectJob(job);
       return Result.withFailure(getTransferFailure);
     }
     // Try to find asset with a matching assetId
