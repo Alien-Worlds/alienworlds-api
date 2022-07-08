@@ -18,7 +18,7 @@ const localSourceMock = {
   getMostRecentAbi: jest.fn(),
 };
 
-const abieosService = {
+const abiEosService = {
   loadAbiHex: jest.fn(),
   getTypeForAction: jest.fn(),
   getTypeForTable: jest.fn(),
@@ -29,7 +29,7 @@ describe('AbiRepositoryImpl Unit tests', () => {
   beforeEach(() => {
     repository = new AbiHexRepositoryImpl(
       localSourceMock as any,
-      abieosService as any
+      abiEosService as any
     );
   });
 
@@ -149,7 +149,7 @@ describe('AbiRepositoryImpl Unit tests', () => {
   });
 
   it('"updateAbi" should update ABI for the given account', () => {
-    abieosService.loadAbiHex.mockImplementation(() => {});
+    abiEosService.loadAbiHex.mockImplementation(() => {});
     const { content, failure } = repository.uploadAbiHex('foo', 'bar');
 
     expect(content).toBeUndefined();
@@ -157,7 +157,7 @@ describe('AbiRepositoryImpl Unit tests', () => {
   });
 
   it('"updateAbi" should return a failure if update has failed', () => {
-    abieosService.loadAbiHex.mockImplementation(() => {
+    abiEosService.loadAbiHex.mockImplementation(() => {
       throw new Error();
     });
     const { content, failure } = repository.uploadAbiHex('foo', 'bar');

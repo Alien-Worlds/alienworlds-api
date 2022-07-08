@@ -41,10 +41,15 @@ export type TypeDto = {
   type: string;
 };
 
+export type StructFieldDto = {
+  name: string;
+  type: string;
+};
+
 export type StructDto = {
   name: string;
   base: string;
-  fields: { name: string; type: string }[];
+  fields: StructFieldDto[];
 };
 
 export type CreateStructDto = {
@@ -123,9 +128,9 @@ export type MaximumSupplyFieldDto = {
 };
 
 export type TableDto = {
-  name: 'accounts' | 'stats' | string;
-  type: 'account' | 'currency_stats' | string; // Corresponds to previously defined struct
-  index_type: 'i64' | string;
+  name: string; // 'accounts' | 'stats'
+  type: string; // 'account' | 'currency_stats' ... Corresponds to previously defined struct
+  index_type: string; // 'i64'
   key_names: string[];
   key_types: string[];
 };

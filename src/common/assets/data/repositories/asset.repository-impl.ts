@@ -42,12 +42,12 @@ export class AssetRepositoryImpl implements AssetRepository {
   public async getByAssetId(assetId: bigint): Promise<Result<Asset>> {
     try {
       const dto = await this.assetMongoSource.findByAssetId(assetId);
-      if (dto) {
-        return Result.withContent(Asset.fromDto(dto));
-      }
-      return Result.withFailure(
-        Failure.fromError(new AssetNotFoundError(assetId))
-      );
+
+      return dto
+        ? Result.withContent(Asset.fromDto(dto))
+        : Result.withFailure(
+            Failure.fromError(new AssetNotFoundError(assetId))
+          );
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }

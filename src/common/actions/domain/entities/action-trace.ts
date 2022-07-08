@@ -1,8 +1,21 @@
 import {
+  ActAuthDto,
   ActDto,
   ActionTraceDto,
   ReceiptDto,
 } from '@common/actions/data/actions.dtos';
+
+export class ActAuth {
+  public static create(dto: ActAuthDto): ActAuth {
+    const { actor, permission } = dto;
+
+    return new ActAuth(actor, permission);
+  }
+  private constructor(
+    public readonly actor: string,
+    public readonly permission: string
+  ) {}
+}
 
 export class Act {
   public static create(dto: ActDto): Act {
@@ -10,12 +23,12 @@ export class Act {
 
     //parse DATA
 
-    return new Act(account, name, authorization, data);
+    return new Act(account, name, ActAuth.create(authorization), data);
   }
   private constructor(
     public readonly account: string,
     public readonly name: string,
-    public readonly authorization: { actor: string; permission: string },
+    public readonly authorization: ActAuth,
     public readonly data: Uint8Array
   ) {}
 }

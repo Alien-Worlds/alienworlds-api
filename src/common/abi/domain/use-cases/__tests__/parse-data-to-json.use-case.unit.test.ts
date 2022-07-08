@@ -3,18 +3,16 @@
 import 'reflect-metadata';
 
 import { Failure } from '@core/architecture/domain/failure';
-import { Result } from '@core/architecture/domain/result';
 import { Container } from 'inversify';
-import { AbiHexRepository } from '../../../../../processor/domain/abi-hex.repository';
 import { ParseDataToJsonUseCase } from '../parse-data-to-json.use-case';
 import { AbiEosService } from '@common/abi/data/services/abieos.service';
 
-const abieosService = {
+const abiEosService = {
   getTypeForAction: jest.fn(() => {}),
   parseDataToJson: jest.fn(() => {}),
 } as any;
 
-const abieosServiceMock = abieosService as jest.MockedObject<AbiEosService>;
+const abieosServiceMock = abiEosService as jest.MockedObject<AbiEosService>;
 
 let container: Container;
 let useCase: ParseDataToJsonUseCase;
@@ -24,7 +22,7 @@ describe('GetLastBlockUseCase Unit tests', () => {
     container = new Container();
     container
       .bind<AbiEosService>(AbiEosService.Token)
-      .toConstantValue(abieosService);
+      .toConstantValue(abiEosService);
     container
       .bind<ParseDataToJsonUseCase>(ParseDataToJsonUseCase.Token)
       .to(ParseDataToJsonUseCase);
@@ -47,8 +45,8 @@ describe('GetLastBlockUseCase Unit tests', () => {
 
   it('Should call AbieosService methods and return JSON', async () => {
     const json = { foo: 1 };
-    abieosService.getTypeForAction = jest.fn(() => 'foo.type');
-    abieosService.parseDataToJson = jest.fn(() => json);
+    abiEosService.getTypeForAction = jest.fn(() => 'foo.type');
+    abiEosService.parseDataToJson = jest.fn(() => json);
 
     const { content, failure } = useCase.execute(
       'foo',
@@ -70,7 +68,7 @@ describe('GetLastBlockUseCase Unit tests', () => {
   });
 
   it('Should return a failure ', async () => {
-    abieosService.getTypeForAction = jest.fn(() => {
+    abiEosService.getTypeForAction = jest.fn(() => {
       throw new Error();
     });
 

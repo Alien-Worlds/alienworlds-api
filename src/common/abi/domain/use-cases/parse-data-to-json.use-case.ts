@@ -13,11 +13,11 @@ export class ParseDataToJsonUseCase implements UseCase {
 
   /**
    * @constructor
-   * @param {AbiEosService} abieosService
+   * @param {AbiEosService} abiEosService
    */
   constructor(
     @inject(AbiEosService.Token)
-    private abieosService: AbiEosService
+    private abiEosService: AbiEosService
   ) {}
   public execute(
     account: string,
@@ -25,8 +25,8 @@ export class ParseDataToJsonUseCase implements UseCase {
     buffer: Buffer
   ): Result<string> {
     try {
-      const type = this.abieosService.getTypeForAction(account, name);
-      const json = this.abieosService.parseDataToJson(account, type, buffer);
+      const type = this.abiEosService.getTypeForAction(account, name);
+      const json = this.abiEosService.parseDataToJson(account, type, buffer);
 
       return Result.withContent(json);
     } catch (error) {

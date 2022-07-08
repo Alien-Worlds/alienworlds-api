@@ -13,12 +13,12 @@ const bindings = new AsyncContainerModule(async bind => {
    * ABI *.hex files
    */
   const abiLocalSource = new AbiHexLocalSource();
-  const abieosService = new AbiEosService();
+  const abiEosService = new AbiEosService();
   const abiHexRepository = new AbiHexRepositoryImpl(
     abiLocalSource,
-    abieosService
+    abiEosService
   );
-  bind<AbiEosService>(AbiEosService.Token).toConstantValue(abieosService);
+  bind<AbiEosService>(AbiEosService.Token).toConstantValue(abiEosService);
   bind<AbiHexRepository>(AbiHexRepository.Token).toConstantValue(
     abiHexRepository
   );

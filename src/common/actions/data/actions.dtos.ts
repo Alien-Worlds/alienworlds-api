@@ -21,10 +21,15 @@ export type ReceiptDto = {
 
 export type ReceiptByNameDto = [string, ReceiptDto];
 
+export type ActAuthDto = {
+  actor: string;
+  permission: string;
+};
+
 export type ActDto = {
   account: string;
   name: string;
-  authorization: { actor: string; permission: string };
+  authorization: ActAuthDto;
   data: Uint8Array;
 };
 
