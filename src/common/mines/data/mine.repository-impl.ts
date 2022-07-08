@@ -64,24 +64,24 @@ export class MineRepositoryImpl implements MineRepository {
   public async insertMany(
     mines: Mine[]
   ): Promise<Result<Mine[], InsertManyError<Mine>>> {
-    const dtos = mines.map(mine => mine.toDto());
-
     try {
+      const dtos = mines.map(mine => mine.toDto());
       // Documents may be reordered by mongodb to increase performance.
       // Applications should not depend on ordering of inserts. Therefore,
       // we will not use the result of this operation for any purpose.
       await this.minesMongoSource.insertMany(dtos);
+
+      return Result.withContent(mines);
     } catch (error) {
       // return a failure with an error containing lists
       // of items that were not inserted into the data source.
       const { writeErrors, concernError } = error as DataSourceBulkWriteError;
+
       return Result.withFailure(
         Failure.fromError(
           InsertManyError.create<Mine>(mines, writeErrors, concernError)
         )
       );
     }
-
-    return Result.withContent(mines);
   }
 }

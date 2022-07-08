@@ -1,7 +1,5 @@
 import { Long } from 'mongodb';
 
-export type TransactionId = string;
-
 /**
  * Represents the data structure of the Mine params data
  *
@@ -35,7 +33,7 @@ export type MineDocument = {
   block_num?: Long;
   block_timestamp?: Date;
   global_sequence?: Long;
-  tx_id?: TransactionId;
+  tx_id?: string;
 };
 
 /**
