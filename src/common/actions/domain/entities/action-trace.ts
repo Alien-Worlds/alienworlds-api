@@ -19,11 +19,16 @@ export class ActAuth {
 
 export class Act {
   public static create(dto: ActDto): Act {
-    const { account, name, authorization, data } = dto;
+    const { account, name, data } = dto;
 
     //parse DATA
+    let authorization: ActAuth;
 
-    return new Act(account, name, ActAuth.create(authorization), data);
+    if (dto.authorization) {
+      authorization = ActAuth.create(dto.authorization);
+    }
+
+    return new Act(account, name, authorization, data);
   }
   private constructor(
     public readonly account: string,
