@@ -98,7 +98,7 @@ describe('Block Range scan mongo source Unit tests', () => {
           {
             $or: [
               { time_stamp: { $exists: false } },
-              { time_stamp: { $lt: new Date(Date.now() - 60000) } },
+              { time_stamp: { $lt: new Date(Date.now() - 1000) } },
             ],
           },
           { '_id.scan_key': 'test' },
@@ -244,7 +244,7 @@ describe('Block Range scan mongo source Unit tests', () => {
     expect((source as any).collection.deleteOne).toBeCalledWith({
       _id: dto._id,
     });
-    expect((source as any).collection.find).toBeCalledWith({
+    expect((source as any).collection.countDocuments).toBeCalledWith({
       parent_id: dto.parent_id,
     });
   });

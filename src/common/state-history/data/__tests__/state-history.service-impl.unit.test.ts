@@ -42,6 +42,7 @@ jest.mock(
   '@common/state-history/domain/state-history.utils',
   jest.fn(() => ({
     serializeMessage: jest.fn(),
+    log: jest.fn(),
   }))
 );
 
@@ -619,31 +620,4 @@ describe('State History Service Implementation Unit tests', () => {
     expect(result.content).toBeUndefined();
     expect(result.failure).toBeInstanceOf(Failure);
   });
-  // it('"onMessage" should run error handler when message is unknown type', () => {
-  //   const error = new Error('SOME_ERROR');
-  //   const service = new StateHistoryServiceImpl(
-  //     stateHistorySourceMock,
-  //     abiRepositoryMock
-  //   );
-  //   const createStaticMock = jest.fn().mockReturnValue({
-  //     content: {},
-  //     type: 'SOME_TYPE',
-  //   });
-  //   const handleErrorMock = jest
-  //     .spyOn(service as any, 'handleError')
-  //     .mockImplementation();
-  //   StateHistoryMessage.create = createStaticMock;
-
-  //   abiRepositoryMock.getCurrentAbi.mockReturnValue({
-  //     isFailure: false,
-  //     content: {
-  //       getTypesMap: () => new Map(),
-  //     },
-  //   } as any);
-
-  //   service.onMessage(Uint8Array.from([]));
-  //   expect(handleErrorMock).toBeCalled();
-
-  //   handleErrorMock.mockClear();
-  // });
 });
