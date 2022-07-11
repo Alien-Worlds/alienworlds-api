@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { config } from '@config';
-import { AsyncContainerModule, Container, inject, injectable } from 'inversify';
+import { AsyncContainerModule, Container } from 'inversify';
 import { StateHistoryServiceImpl } from '@common/state-history/data/state-history.service-impl';
 import { AbiRepositoryImpl } from '@common/abi/data/repositories/abi.repository-impl';
 import { ProcessReceivedBlockUseCase } from 'block-range/domain/use-cases/process-received-block.use-case';
@@ -28,6 +28,8 @@ import { GetBlocksResult } from '@common/state-history/domain/entities/get-block
 import { BlockRange } from '@common/block-range/domain/entities/block-range';
 import { BlockRangeScan } from '@common/block-range-scan/domain/entities/block-range-scan';
 import { StartNextScanUseCase } from '@common/block-range-scan/domain/use-cases/start-next-scan.use-case';
+import { VerifyUnscannedBlockRangeUseCase } from '../domain/use-cases/verify-unscanned-block-range.use-case';
+import { StartBlockRangeScanUseCase } from '../domain/use-cases/start-block-range-scan.use-case';
 
 const bindings = new AsyncContainerModule(async bind => {
   ////////////////////// CORE //////////////////////
@@ -108,6 +110,12 @@ const bindings = new AsyncContainerModule(async bind => {
   bind<QueueActionProcessingUseCase>(QueueActionProcessingUseCase.Token).to(
     QueueActionProcessingUseCase
   );
+  bind<VerifyUnscannedBlockRangeUseCase>(
+    VerifyUnscannedBlockRangeUseCase.Token
+  ).to(VerifyUnscannedBlockRangeUseCase);
+  bind<StartBlockRangeScanUseCase>(StartBlockRangeScanUseCase.Token).to(
+    StartBlockRangeScanUseCase
+  );
   bind<CompleteBlockRangeScanUseCase>(CompleteBlockRangeScanUseCase.Token).to(
     CompleteBlockRangeScanUseCase
   );
@@ -120,7 +128,7 @@ const bindings = new AsyncContainerModule(async bind => {
 });
 
 export const processIoc = new Container();
-export const setupProcessIoc = async () => {
+export const setupProcessIoc = async (scanKey: string) => {
   await processIoc.loadAsync(bindings);
 
   // Set State History plugin callbacks (onReceivedBlock && onComplete)
@@ -139,20 +147,13 @@ export const setupProcessIoc = async () => {
 
   stateHistoryService.onReceivedBlock(
     async (content: GetBlocksResult, blockRange: BlockRange) => {
-      await processReceivedBlockUseCase.execute(
-        config.blockRangeScan.scanKey,
-        content,
-        blockRange
-      );
+      await processReceivedBlockUseCase.execute(scanKey, content, blockRange);
     }
   );
 
   stateHistoryService.onBlockRangeComplete(
     async (blockRangeScan: BlockRangeScan) => {
-      await completeBlockRangeScanUseCase.execute(
-        blockRangeScan,
-        config.blockRangeScan.scanKey
-      );
+      await completeBlockRangeScanUseCase.execute(blockRangeScan);
     }
   );
 };

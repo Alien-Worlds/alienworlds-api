@@ -56,7 +56,11 @@ export class BlockRangeScanMongoSource extends CollectionMongoSource<BlockRangeS
           {
             $or: [
               { time_stamp: { $exists: false } },
-              { time_stamp: { $lt: new Date(Date.now() - 60000) } },
+              /*
+              The trick to not use the same block range again on another thread/worker
+              ...Probably this could be handled better.
+              */
+              { time_stamp: { $lt: new Date(Date.now() - 1000) } },
             ],
           },
           { '_id.scan_key': scanKey },
@@ -160,8 +164,10 @@ export class BlockRangeScanMongoSource extends CollectionMongoSource<BlockRangeS
     if (parent_id) {
       await this.collection.deleteOne({ _id });
       // fetch all child nodes with parent id that matches this parent_id
-      const matchingParentResult = await this.collection.find({ parent_id });
-      if ((await matchingParentResult.count()) == 0) {
+      const matchingParentCount = await this.collection.countDocuments({
+        parent_id,
+      });
+      if (matchingParentCount == 0) {
         const parentDocument = await this.collection.findOne({
           _id: parent_id,
         });

@@ -2,15 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { BlockRangeScanRepository } from '@common/block-range-scan/domain/repositories/block-range-scan.repository';
-import { StartNextScanUseCase } from '@common/block-range-scan/domain/use-cases/start-next-scan.use-case';
-import { RequestBlocksUseCase } from '@common/state-history/domain/use-cases/request-blocks.use-case';
 import { Failure } from '@core/architecture/domain/failure';
 import { Result } from '@core/architecture/domain/result';
 import { Container } from 'inversify';
 import 'reflect-metadata';
 import { BlockRangeProcess } from '../block-range.process';
-import { BlockRangeScanReadTimeoutError } from '../errors/block-range-scan-read-timeout.error';
+import { VerifyUnscannedBlockRangeUseCase } from '../use-cases/verify-unscanned-block-range.use-case';
+import { StartBlockRangeScanUseCase } from '../use-cases/start-block-range-scan.use-case';
 
 jest.mock('@config', () => ({
   config: { blockrangeThreads: 8, blockrangeInviolableThreads: 2 },
@@ -20,15 +18,11 @@ jest.mock('@core/architecture/workers/worker.utils', () => ({
   getWorkersCount: () => 2,
 }));
 
-const startNextScanUseCaseMock = {
+const startBlockRangeScanUseCaseMock = {
   execute: jest.fn(),
 };
-const requestBlocksUseCaseMock = {
+const verifyUnscannedBlockRangeUseCaseMock = {
   execute: jest.fn(),
-};
-
-const blockRangeScanRepositoryMock = {
-  hasUnscannedNodes: jest.fn(),
 };
 
 let container: Container;
@@ -38,14 +32,13 @@ describe('BlockRange Process Unit tests', () => {
   beforeAll(() => {
     container = new Container();
     container
-      .bind<StartNextScanUseCase>(StartNextScanUseCase.Token)
-      .toConstantValue(startNextScanUseCaseMock as any);
+      .bind<StartBlockRangeScanUseCase>(StartBlockRangeScanUseCase.Token)
+      .toConstantValue(startBlockRangeScanUseCaseMock as any);
     container
-      .bind<RequestBlocksUseCase>(RequestBlocksUseCase.Token)
-      .toConstantValue(requestBlocksUseCaseMock as any);
-    container
-      .bind<BlockRangeScanRepository>(BlockRangeScanRepository.Token)
-      .toConstantValue(blockRangeScanRepositoryMock as any);
+      .bind<VerifyUnscannedBlockRangeUseCase>(
+        VerifyUnscannedBlockRangeUseCase.Token
+      )
+      .toConstantValue(verifyUnscannedBlockRangeUseCaseMock as any);
     container
       .bind<BlockRangeProcess>(BlockRangeProcess.Token)
       .to(BlockRangeProcess);
@@ -64,68 +57,29 @@ describe('BlockRange Process Unit tests', () => {
     expect(BlockRangeProcess.Token).not.toBeNull();
   });
 
-  it('Should send to main thread a message when startNextScanUseCase returns a failure', async () => {
-    const waitUntilBlockRangesAreSetMock = jest
-      .spyOn(program as any, 'waitUntilBlockRangesAreSet')
-      .mockResolvedValue(true);
+  it('Should verify unscanned nodes first and send message to the main thread when it verification fails', async () => {
+    verifyUnscannedBlockRangeUseCaseMock.execute.mockResolvedValue(
+      Result.withFailure(Failure.withMessage('FAIL'))
+    );
     const sendToMainThreadMock = jest
       .spyOn(program as any, 'sendToMainThread')
       .mockImplementation();
 
-    startNextScanUseCaseMock.execute.mockResolvedValue(
-      Result.withFailure(Failure.withMessage('FAIL'))
-    );
-
     await program.start('test');
     expect(sendToMainThreadMock).toBeCalled();
 
-    waitUntilBlockRangesAreSetMock.mockClear();
+    verifyUnscannedBlockRangeUseCaseMock.execute.mockClear();
     sendToMainThreadMock.mockClear();
-    startNextScanUseCaseMock.execute.mockClear();
   });
 
-  it('Should send to main thread a message when requestBlocksUseCase returns a failure', async () => {
-    const waitUntilBlockRangesAreSetMock = jest
-      .spyOn(program as any, 'waitUntilBlockRangesAreSet')
-      .mockResolvedValue(true);
-    const sendToMainThreadMock = jest
-      .spyOn(program as any, 'sendToMainThread')
-      .mockImplementation();
-
-    startNextScanUseCaseMock.execute.mockResolvedValue(
-      Result.withContent({ start: 0n, end: 1n })
-    );
-
-    requestBlocksUseCaseMock.execute.mockResolvedValue(
-      Result.withFailure(Failure.withMessage('FAIL'))
-    );
+  it('Should call startBlockRangeScanUseCase', async () => {
+    verifyUnscannedBlockRangeUseCaseMock.execute.mockResolvedValue(true);
 
     await program.start('test');
-    expect(sendToMainThreadMock).toBeCalled();
 
-    waitUntilBlockRangesAreSetMock.mockClear();
-    sendToMainThreadMock.mockClear();
-    startNextScanUseCaseMock.execute.mockClear();
-    requestBlocksUseCaseMock.execute.mockClear();
-  });
+    expect(startBlockRangeScanUseCaseMock.execute).toBeCalled();
 
-  it('"waitUntilBlockRangesAreSet" should reject with BlockRangeScanReadTimeoutError when blocks could not be found in the specified number of tries', async () => {
-    blockRangeScanRepositoryMock.hasUnscannedNodes.mockResolvedValue(
-      Result.withContent(false)
-    );
-    await (program as any)
-      .waitUntilBlockRangesAreSet('test', 2)
-      .catch(error => {
-        expect(error).toBeInstanceOf(BlockRangeScanReadTimeoutError);
-      });
-  });
-
-  it('"waitUntilBlockRangesAreSet" should resolve promise when blocks with the specified key are found', async () => {
-    blockRangeScanRepositoryMock.hasUnscannedNodes.mockResolvedValue(
-      Result.withContent(true)
-    );
-    const result = await (program as any);
-
-    expect(result).toBeTruthy();
+    verifyUnscannedBlockRangeUseCaseMock.execute.mockClear();
+    startBlockRangeScanUseCaseMock.execute.mockClear();
   });
 });

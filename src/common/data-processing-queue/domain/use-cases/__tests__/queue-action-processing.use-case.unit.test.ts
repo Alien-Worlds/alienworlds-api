@@ -105,30 +105,7 @@ describe('QueueActionProcessingUseCase Unit tests', () => {
     expect(failure).toBeUndefined();
   });
 
-  it('Should return a result with no content when one of the conditions is not met', async () => {
-    (config.miningContract as any) = '';
-
-    const createBufferMock = jest.fn();
-    ActionProcessingJob.createBuffer = createBufferMock;
-
-    actionProcessingQueueService.queueJob.mockReturnValue(() =>
-      Result.withoutContent()
-    );
-
-    const { content, failure } = await useCase.execute(
-      0n,
-      actionTrace,
-      'trace_id',
-      new Date('2022-07-01T09:59:29.035Z')
-    );
-
-    expect(actionProcessingQueueService.queueJob).not.toBeCalled();
-    expect(createBufferMock).not.toBeCalled();
-    expect(content).toBeUndefined();
-    expect(failure).toBeUndefined();
-  });
-
-  it('Should return a result with no content when one of the conditions is not met', async () => {
+  it('Should return a result with no content when job was queued', async () => {
     (config.miningContract as any) = 'foo.account';
 
     const createBufferMock = jest.fn();

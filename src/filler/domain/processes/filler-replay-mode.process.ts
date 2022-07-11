@@ -3,9 +3,6 @@ import { FillerOptions } from '../entities/filler-options';
 import { GetBlockRangeUseCase } from '../use-cases/get-block-range.use-case';
 import { Process } from '@core/architecture/workers/process';
 import { CreateBlockRangeScanUseCase } from '../use-cases/create-block-range-scan.use-case';
-import { config } from '@config';
-import { BlockRangeScanCreationError } from '../errors/block-range-scan-creation.error';
-import { DuplicateBlockRangeScanError } from '../errors/duplicate-block-range-scan.error';
 
 /**
  * @class
@@ -28,10 +25,8 @@ export class FillerReplayModeProcess extends Process {
    * @param {FillerOptions} options
    */
   public async start(options: FillerOptions) {
-    const {
-      blockRangeScan: { scanKey },
-    } = config;
-    const { startBlock, endBlock } = options;
+    const { startBlock, endBlock, scanKey } = options;
+
     const blocksRangeResult = await this.getBlocksRangeUseCase.execute(
       startBlock,
       endBlock,
@@ -53,27 +48,29 @@ export class FillerReplayModeProcess extends Process {
     );
 
     if (createScanResult.isFailure) {
-      const { failure } = createScanResult;
-      throw new BlockRangeScanCreationError(
-        startBlock,
-        endBlock,
-        failure.error
-      );
+      const {
+        failure: {
+          error: { message },
+        },
+      } = createScanResult;
+      this.stop(scanKey, startBlock, endBlock, 1, message);
+    } else {
+      this.stop(scanKey, startBlock, endBlock);
     }
-
-    this.stop(scanKey, startBlock, endBlock);
   }
 
   public async stop(
     scanKey: string,
     startBlock: bigint,
     endBlock: bigint,
+    exitCode?: number,
     message?: string
   ) {
     console.log(
       message ||
         `Scan nodes for the block range (${startBlock}-${endBlock}) with key "${scanKey}" have been created`
     );
-    process.exit(0);
+
+    process.exit(exitCode || 0);
   }
 }

@@ -1,86 +1,40 @@
-import { BlockRangeScanRepository } from '@common/block-range-scan/domain/repositories/block-range-scan.repository';
-import { RequestBlocksUseCase } from '@common/state-history/domain/use-cases/request-blocks.use-case';
-import { StartNextScanUseCase } from '@common/block-range-scan/domain/use-cases/start-next-scan.use-case';
-import { Process } from '@core/architecture/workers/process';
-import {
-  WorkerMessage,
-  WorkerMessageType,
-} from '@core/architecture/workers/worker-message';
 import { inject, injectable } from 'inversify';
-import { BlockRangeScanReadTimeoutError } from './errors/block-range-scan-read-timeout.error';
+import { Process } from '@core/architecture/workers/process';
+import { WorkerMessage } from '@core/architecture/workers/worker-message';
+import { VerifyUnscannedBlockRangeUseCase } from './use-cases/verify-unscanned-block-range.use-case';
+import { StartBlockRangeScanUseCase } from './use-cases/start-block-range-scan.use-case';
 
 @injectable()
 export class BlockRangeProcess extends Process {
   public static Token = 'BLOCK_RANGE_PROCESS';
 
-  @inject(StartNextScanUseCase.Token)
-  private startNextScanUseCase: StartNextScanUseCase;
+  @inject(StartBlockRangeScanUseCase.Token)
+  private startBlockRangeScanUseCase: StartBlockRangeScanUseCase;
 
-  @inject(RequestBlocksUseCase.Token)
-  private requestBlocksUseCase: RequestBlocksUseCase;
-
-  @inject(BlockRangeScanRepository.Token)
-  private blockRangeScanRepository: BlockRangeScanRepository;
-
-  private async waitUntilBlockRangesAreSet(scanKey: string, maxAttempts = 10) {
-    return new Promise((resolve, reject) => {
-      let attempt = 1;
-      const interval = setInterval(async () => {
-        const { content: hasUnscannedNodes, failure } =
-          await this.blockRangeScanRepository.hasUnscannedNodes(scanKey);
-
-        if (hasUnscannedNodes) {
-          clearInterval(interval);
-          return resolve(true);
-        }
-
-        if (++attempt === maxAttempts) {
-          reject(
-            new BlockRangeScanReadTimeoutError(failure ? failure.error : null)
-          );
-          clearInterval(interval);
-        }
-      }, 1000);
-    });
-  }
+  @inject(VerifyUnscannedBlockRangeUseCase.Token)
+  private verifyUnscannedBlockRangeUseCase: VerifyUnscannedBlockRangeUseCase;
 
   /**
    *
+   * @param {scanKey} scanKey
+   * @returns
    */
   public async start(scanKey: string) {
-    await this.waitUntilBlockRangesAreSet(scanKey);
+    // First, check if there are unscanned block ranges in the source matching the given scan key
+    const { failure: verificationFailure } =
+      await this.verifyUnscannedBlockRangeUseCase.execute(scanKey);
 
-    const { content, failure: startNextScanFailure } =
-      await this.startNextScanUseCase.execute(scanKey);
-
-    if (startNextScanFailure) {
+    // If there are no unscanned block ranges, send a message to the orchestorator so it can close this process
+    if (verificationFailure) {
       this.sendToMainThread(
-        WorkerMessage.create({
-          pid: this.id,
-          type: WorkerMessageType.Error,
-          name: startNextScanFailure.error.name,
-          error: startNextScanFailure.error,
-        })
+        WorkerMessage.fromError(this.id, verificationFailure.error)
       );
       return;
     }
 
-    const { start, end } = content;
-    const { failure: processFailure } = await this.requestBlocksUseCase.execute(
-      start,
-      end
-    );
-
-    if (processFailure) {
-      this.sendToMainThread(
-        WorkerMessage.create({
-          pid: this.id,
-          type: WorkerMessageType.Error,
-          name: processFailure.error.name,
-          error: processFailure.error,
-        })
-      );
-      return;
-    }
+    // Start a block range scan, first find the unscanned block range,
+    // connect to the state hostory plugin and process the received data
+    // (any errors will be sent to the orchestrator)
+    this.startBlockRangeScanUseCase.execute(scanKey);
   }
 }

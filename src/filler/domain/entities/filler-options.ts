@@ -10,7 +10,8 @@ export class FillerOptions {
     public readonly startBlock: bigint,
     public readonly endBlock: bigint,
     public readonly test: number,
-    public readonly replay: boolean
+    public readonly replay: boolean,
+    public readonly scanKey: string
   ) {}
 
   /**
@@ -33,12 +34,14 @@ export class FillerOptions {
 
     // if the given value is not a number use 0
     const test = isNaN(parseInt(options.test)) ? 0 : parseInt(options.test);
+    const scanKey = options.scanKey || config.blockRangeScan.scanKey;
 
     return new FillerOptions(
       startBlock,
       endBlock,
       test,
-      options.replay || false
+      options.replay || false,
+      scanKey
     );
   }
 }

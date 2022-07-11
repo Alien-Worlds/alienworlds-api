@@ -23,7 +23,7 @@
     "abis": "node -r ts-node/register -r tsconfig-paths/register dist/fetch-abis/index.js ./dist/abis",
     "mongo-indexes": "node -r ts-node/register -r tsconfig-paths/register dist/mongo_setup.js",
     "api": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/index.js\"",
-    "blockrange": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/block-range/index.js\"",
+    "blockrange": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/block-range/index.js ${flags}\"",
     "filler": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/filler/index.js ${flags}\"",
     "processor": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/processor/index.js\""
   },

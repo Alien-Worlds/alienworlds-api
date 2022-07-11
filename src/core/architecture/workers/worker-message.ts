@@ -30,6 +30,23 @@ export class WorkerMessage {
     return new WorkerMessage(pid, type, name, content, errorJson);
   }
 
+  public static fromError(pid: number, error: Error) {
+    const { message, stack, name, ...rest } = error;
+    const errorJson = {
+      message,
+      stack,
+      name,
+      ...rest,
+    };
+    return new WorkerMessage(
+      pid,
+      WorkerMessageType.Error,
+      name,
+      null,
+      errorJson
+    );
+  }
+
   private constructor(
     public readonly pid: number,
     public readonly type: string,

@@ -8,6 +8,7 @@ import { WorkerOrchestrator } from '@core/architecture/workers/worker-orchestrat
 import { injectable } from 'inversify';
 import { BlockRangeScanReadTimeoutError } from './errors/block-range-scan-read-timeout.error';
 import { getWorkersCount } from '@core/architecture/workers/worker.utils';
+import { BlockRangeInfo } from './block-range.enums';
 
 @injectable()
 export class BlockRangeOrchestrator extends WorkerOrchestrator {
@@ -28,7 +29,7 @@ export class BlockRangeOrchestrator extends WorkerOrchestrator {
           error: { name },
         } = message;
         this.removeWorker(pid);
-        console.log(message.error);
+        console.log(message.error.message);
         if (
           name !== BlockRangeScanReadTimeoutError.Token &&
           name !== NoBlockRangeFoundError.Token
@@ -47,7 +48,21 @@ export class BlockRangeOrchestrator extends WorkerOrchestrator {
     // In case of a warning, log it
     this.addMessageHandler(
       WorkerMessageType.Warning,
-      async (message: WorkerMessage) => console.log(message.error)
+      async (message: WorkerMessage) => console.log(message.error.message)
+    );
+
+    // When scanning a blocks range is finished,
+    // recreate the thread which will start working on the next range
+    this.addMessageHandler(
+      WorkerMessageType.Info,
+      async (message: WorkerMessage) => {
+        const { pid, name } = message;
+
+        if (name === BlockRangeInfo.ScanComplete) {
+          this.removeWorker(pid);
+          this.addWorker();
+        }
+      }
     );
 
     this.initWorkers();

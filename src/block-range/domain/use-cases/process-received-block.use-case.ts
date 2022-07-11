@@ -6,6 +6,8 @@ import { inject, injectable } from 'inversify';
 import { Result } from '@core/architecture/domain/result';
 import { UseCase } from '@core/architecture/domain/use-case';
 import { QueueActionProcessingUseCase } from '@common/data-processing-queue/domain/use-cases/queue-action-processing.use-case';
+import { config } from '@config';
+import { Trace } from '@common/state-history/domain/entities/trace';
 
 /**
  * @class
@@ -18,6 +20,46 @@ export class ProcessReceivedBlockUseCase implements UseCase<void> {
   private queueActionProcessingUseCase: QueueActionProcessingUseCase;
   @inject(BlockRangeScanRepository.Token)
   private blockRangeScanRepository: BlockRangeScanRepository;
+
+  /**
+   * @async
+   * @private
+   * @param {Trace} trace
+   * @param {bigint} blockNumber
+   * @param {Date} timestamp
+   */
+  private async queueActionProcessingJobs(
+    trace: Trace,
+    blockNumber: bigint,
+    timestamp: Date
+  ) {
+    const { id, actionTraces } = trace;
+
+    for (const action of actionTraces) {
+      const { type, receiver, act } = action;
+
+      if (
+        type === 'action_trace_v0' &&
+        (act.account === config.atomicAssets.contract ||
+          act.account === config.miningContract) &&
+        act.account === receiver &&
+        ['logmine', 'logrand', 'logtransfer', 'logburn', 'logmint'].includes(
+          act.name
+        )
+      ) {
+        const queueResult = await this.queueActionProcessingUseCase.execute(
+          blockNumber,
+          action,
+          id,
+          timestamp
+        );
+        // TODO How should we react if one of the actions is not queued?
+        if (queueResult.isFailure) {
+          log(queueResult.failure.error.name);
+        }
+      }
+    }
+  }
 
   /**
    * Initializes and returns a eosDAC StateReceiver object.
@@ -47,16 +89,8 @@ export class ProcessReceivedBlockUseCase implements UseCase<void> {
     // (for later work in the processor).
     if (traces.length > 0) {
       for (const trace of traces) {
-        const { type, id, actionTraces } = trace;
-        if (type === 'transaction_trace_v0') {
-          for (const action of actionTraces) {
-            await this.queueActionProcessingUseCase.execute(
-              blockNumber,
-              action,
-              id,
-              timestamp
-            );
-          }
+        if (trace.type === 'transaction_trace_v0') {
+          await this.queueActionProcessingJobs(trace, blockNumber, timestamp);
         }
       }
     }

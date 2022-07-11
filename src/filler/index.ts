@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+
 import commander from 'commander';
 import { FillerReplayModeProcess } from './domain/processes/filler-replay-mode.process';
 import { setupIOC, fillerIoc } from './ioc.config';
@@ -71,6 +72,7 @@ commander
     'Force replay (ignore head block). This option will populate a blockrange queue (must specify start block too)',
     false
   )
+  .option('-k, --scan-key <scan-key>', 'Scan key', '')
   .parse(process.argv);
 
 start(commander.opts());

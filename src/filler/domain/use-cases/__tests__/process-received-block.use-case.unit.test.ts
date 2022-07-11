@@ -8,8 +8,43 @@ import { ProcessReceivedBlockUseCase } from '../process-received-block.use-case'
 import { QueueActionProcessingUseCase } from '@common/data-processing-queue/domain/use-cases/queue-action-processing.use-case';
 import { BlockRange } from '@common/block-range/domain/entities/block-range';
 import { log } from '@common/state-history/domain/state-history.utils';
+import { ActionTrace } from '@common/actions/domain/entities/action-trace';
+import { config } from '@config';
 
 jest.mock('@common/state-history/domain/state-history.utils');
+
+const actionTrace = ActionTrace.create('action_trace_v0', {
+  action_ordinal: 1,
+  creator_action_ordinal: 1,
+  receipt: [
+    'foo',
+    {
+      receiver: 'foo.account',
+      act_digest: 'act',
+      global_sequence: '100',
+      recv_sequence: '100',
+      auth_sequence: [{ account: 'foo', sequence: 'foo_sequence' }],
+      code_sequence: 100,
+      abi_sequence: 100,
+    },
+  ],
+  receiver: 'foo.account',
+  act: {
+    account: 'foo.account',
+    name: 'logmine',
+    authorization: {
+      actor: 'foo.actor',
+      permission: 'foo.permission',
+    },
+    data: [] as any,
+  },
+  context_free: true,
+  elapsed: 'elapsed',
+  console: 'foo_console',
+  account_ram_deltas: [],
+  except: '',
+  error_code: '200',
+});
 
 const logMock = log as jest.MockedFunction<any>;
 
@@ -58,54 +93,48 @@ describe('ProcessReceivedBlockUseCase Unit tests', () => {
     expect(result.failure).toBeUndefined();
   });
 
-  it('Should log each queueActionProcessingUseCaseMock failure on each trace when the conditions are met', async () => {
+  it('Should call queueActionProcessingJobs on each trace when the conditions are met', async () => {
+    const queueActionProcessingJobsMock = jest
+      .spyOn(useCase as any, 'queueActionProcessingJobs')
+      .mockImplementation();
+
+    const result = await useCase.execute(
+      {
+        thisBlock: { blockNumber: 10n },
+        traces: [
+          {
+            type: 'transaction_trace_v0',
+            id: 'fake_id',
+            actionTraces: [actionTrace, actionTrace],
+          },
+        ],
+        block: { timestamp: new Date() },
+      } as any,
+      BlockRange.create(0n, 2n)
+    );
+
+    expect(queueActionProcessingJobsMock).toBeCalledTimes(1);
+    expect(result.content).toBeUndefined();
+    expect(result.failure).toBeUndefined();
+
+    queueActionProcessingJobsMock.mockClear();
+  });
+
+  it('"queueActionProcessingJobs" should call queueActionProcessing use case for each action trace', async () => {
+    config.atomicAssets.contract = 'foo.account';
+
     queueActionProcessingUseCaseMock.execute.mockResolvedValue(
       Result.withFailure(Failure.withMessage('something went wrong'))
     );
+    const trace = {
+      type: 'transaction_trace_v0',
+      id: 'foo.account',
+      actionTraces: [actionTrace, actionTrace],
+    };
 
-    const result = await useCase.execute(
-      {
-        thisBlock: { blockNumber: 10n },
-        traces: [
-          {
-            type: 'transaction_trace_v0',
-            id: 'fake_id',
-            actionTraces: [{}, {}],
-          },
-        ],
-        block: { timestamp: new Date() },
-      } as any,
-      BlockRange.create(0n, 2n)
-    );
+    await (useCase as any).queueActionProcessingJobs(trace, 10n, new Date());
 
     expect(queueActionProcessingUseCaseMock.execute).toBeCalledTimes(2);
     expect(logMock).toBeCalledTimes(2);
-    expect(result.content).toBeUndefined();
-    expect(result.failure).toBeUndefined();
-  });
-
-  it('Should call queueActionProcessingUseCaseMock on each trace when the conditions are met and return result without content', async () => {
-    queueActionProcessingUseCaseMock.execute.mockResolvedValue(
-      Result.withoutContent()
-    );
-
-    const result = await useCase.execute(
-      {
-        thisBlock: { blockNumber: 10n },
-        traces: [
-          {
-            type: 'transaction_trace_v0',
-            id: 'fake_id',
-            actionTraces: [{}],
-          },
-        ],
-        block: { timestamp: new Date() },
-      } as any,
-      BlockRange.create(0n, 2n)
-    );
-
-    expect(queueActionProcessingUseCaseMock.execute).toBeCalledTimes(1);
-    expect(result.content).toBeUndefined();
-    expect(result.failure).toBeUndefined();
   });
 });

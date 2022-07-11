@@ -20,6 +20,7 @@ import { StateHistorySource } from './data-sources/state-history.source';
 import { WaxConnectionState } from '../domain/state-history.enums';
 import { ConnectionChangeHandlerOptions } from './data-sources/state-history.dtos';
 import { ServiceAlreadyConnectedError } from '../domain/errors/service-already-connected.error';
+import { log } from '../domain/state-history.utils';
 
 export class StateHistoryServiceImpl implements StateHistoryService {
   private errorHandler: (error: Error) => Promise<void> | void;
@@ -47,6 +48,8 @@ export class StateHistoryServiceImpl implements StateHistoryService {
   }
 
   public onConnected({ data }: ConnectionChangeHandlerOptions) {
+    log(`StateHistory plugin connected`);
+
     const createAbiResult = this.abiRepository.createAbi(
       JSON.parse(data as string) as AbiDto
     );
@@ -57,6 +60,7 @@ export class StateHistoryServiceImpl implements StateHistoryService {
   }
 
   public onDisconnected({ previousState }: ConnectionChangeHandlerOptions) {
+    log(`StateHistory plugin disconnected`);
     if (previousState === WaxConnectionState.Disconnecting) {
       const clearAbiResult = this.abiRepository.clearCurrentAbi();
 
@@ -67,23 +71,20 @@ export class StateHistoryServiceImpl implements StateHistoryService {
   }
 
   public async onMessage(dto: Uint8Array) {
-    try {
-      const { content: abi, failure } = this.abiRepository.getCurrentAbi();
+    const { content: abi, failure } = this.abiRepository.getCurrentAbi();
 
-      if (failure) {
-        throw failure.error;
-      }
+    if (failure) {
+      await this.handleError(failure.error);
+      return;
+    }
 
-      const message = StateHistoryMessage.create(dto, abi.getTypesMap());
-      if (message.isGetStatusResult) {
-        // TODO: ?
-      } else if (message.isGetBlocksResult) {
-        await this.handleBlocksResultContent(message.content);
-      } else {
-        throw new UnhandledMessageTypeError(message.type);
-      }
-    } catch (error) {
-      await this.handleError(error);
+    const message = StateHistoryMessage.create(dto, abi.getTypesMap());
+    if (message.isGetStatusResult) {
+      // TODO: ?
+    } else if (message.isGetBlocksResult) {
+      await this.handleBlocksResultContent(message.content);
+    } else {
+      await this.handleError(new UnhandledMessageTypeError(message.type));
     }
   }
 
@@ -125,7 +126,7 @@ export class StateHistoryServiceImpl implements StateHistoryService {
         );
       }
     } catch (error) {
-      return this.handleError(new UnhandledMessageError(result, error));
+      await this.handleError(new UnhandledMessageError(result, error));
     }
   }
 
@@ -147,6 +148,7 @@ export class StateHistoryServiceImpl implements StateHistoryService {
     }
 
     if (!this.source.isConnected) {
+      log(`StateHistory plugin connecting...`);
       await this.source.connect();
       return Result.withoutContent();
     }
@@ -158,6 +160,7 @@ export class StateHistoryServiceImpl implements StateHistoryService {
 
   public async disconnect(): Promise<Result<void>> {
     if (this.source.isConnected) {
+      log(`StateHistory plugin disconnecting...`);
       await this.source.disconnect();
       return Result.withoutContent();
     }
@@ -171,6 +174,7 @@ export class StateHistoryServiceImpl implements StateHistoryService {
     blockRange: BlockRange,
     options: GetBlocksRequestOptions
   ): Promise<Result<void>> {
+    log(`StateHistory plugin trying to request blocks`);
     // still processing block range request?
     if (this.blockRangeRequest) {
       return Result.withFailure(
@@ -191,6 +195,7 @@ export class StateHistoryServiceImpl implements StateHistoryService {
         abi.getTypesMap()
       );
       this.source.send(this.blockRangeRequest.toUint8Array());
+      log(`StateHistory plugin request sent`);
       return Result.withoutContent();
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));

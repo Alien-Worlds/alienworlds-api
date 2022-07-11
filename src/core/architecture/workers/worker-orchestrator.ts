@@ -49,6 +49,10 @@ export class WorkerOrchestrator {
   public addWorker(data?: string | number | boolean | object): void {
     if (this.workersByPid.size < this.workerMaxCount) {
       this.createWorker(data);
+    } else {
+      console.log(
+        `Unable to create a new thread because the limit has already been reached`
+      );
     }
   }
 

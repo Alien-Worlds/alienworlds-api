@@ -11,11 +11,13 @@ import { GetBlockRangeUseCase } from '../../use-cases/get-block-range.use-case';
 import { CreateBlockRangeScanUseCase } from '../../../domain/use-cases/create-block-range-scan.use-case';
 import { DuplicateBlockRangeScanError } from '../../../domain/errors/duplicate-block-range-scan.error';
 import { BlockRangeScanCreationError } from '../../../domain/errors/block-range-scan-creation.error';
+import { FillerOptions } from '../../../domain/entities/filler-options';
 
 let container: Container;
 const getBlocksRangeUseCase = { execute: jest.fn() };
 const createBlockRangeScanUseCase = { execute: jest.fn() };
 let fillerProcess: FillerReplayModeProcess;
+let exitMock;
 
 describe('FillerReplayModeProcess Unit tests', () => {
   beforeAll(() => {
@@ -29,6 +31,8 @@ describe('FillerReplayModeProcess Unit tests', () => {
     container
       .bind<FillerReplayModeProcess>(FillerReplayModeProcess.Token)
       .to(FillerReplayModeProcess);
+
+    exitMock = jest.spyOn(process, 'exit').mockImplementation();
   });
 
   beforeEach(() => {
@@ -52,10 +56,12 @@ describe('FillerReplayModeProcess Unit tests', () => {
     );
 
     await fillerProcess
-      .start({
-        startBlock: 0n,
-        endBlock: 1n,
-      } as any)
+      .start(
+        FillerOptions.fromOptionValues({
+          startBlock: 0n,
+          endBlock: 1n,
+        })
+      )
       .catch(error => {
         expect(getBlocksRangeUseCase.execute).toBeCalledWith(0n, 1n, true);
         expect(error).toBeInstanceOf(Error);
@@ -73,10 +79,12 @@ describe('FillerReplayModeProcess Unit tests', () => {
       Result.withoutContent()
     );
 
-    await fillerProcess.start({
-      startBlock: 0n,
-      endBlock: 1n,
-    } as any);
+    await fillerProcess.start(
+      FillerOptions.fromOptionValues({
+        startBlock: 0n,
+        endBlock: 1n,
+      })
+    );
 
     expect(createBlockRangeScanUseCase.execute).toBeCalledWith('test', 0n, 1n);
     expect(stopMock).toBeCalledWith('test', 0n, 1n);
@@ -97,10 +105,12 @@ describe('FillerReplayModeProcess Unit tests', () => {
     );
 
     await fillerProcess
-      .start({
-        startBlock: 0n,
-        endBlock: 1n,
-      } as any)
+      .start(
+        FillerOptions.fromOptionValues({
+          startBlock: 0n,
+          endBlock: 1n,
+        })
+      )
       .catch(error => {
         expect(createBlockRangeScanUseCase.execute).toBeCalledWith(
           'test',

@@ -73,51 +73,12 @@ describe('CompleteBlockRangeScanUseCase Unit tests', () => {
       Result.withFailure(Failure.withMessage('FAIL'))
     );
 
-    const result = await useCase.execute(BlockRange.create(0n, 1n), 'test');
+    const result = await useCase.execute(BlockRange.create(0n, 1n));
 
     expect(WorkerOrchestrator.sendToOrchestrator).toBeCalled();
     expect(result.failure).toBeUndefined();
     expect(result.content).toBeUndefined();
 
     stateHistoryServiceMock.disconnect.mockClear();
-  });
-
-  it('Should send message to main thread when starting next scan failed', async () => {
-    stateHistoryServiceMock.disconnect.mockResolvedValue(
-      Result.withoutContent()
-    );
-    blockRangeScanRepositoryMock.startNextScan.mockResolvedValue(
-      Result.withFailure(Failure.withMessage('FAIL'))
-    );
-
-    const result = await useCase.execute(BlockRange.create(0n, 1n), 'test');
-
-    expect(WorkerOrchestrator.sendToOrchestrator).toBeCalled();
-    expect(result.failure).toBeUndefined();
-    expect(result.content).toBeUndefined();
-
-    stateHistoryServiceMock.disconnect.mockClear();
-    blockRangeScanRepositoryMock.startNextScan.mockClear();
-  });
-
-  it('Should send message to main thread when request for blocks failed', async () => {
-    stateHistoryServiceMock.disconnect.mockResolvedValue(
-      Result.withoutContent()
-    );
-    blockRangeScanRepositoryMock.startNextScan.mockResolvedValue(
-      Result.withContent({ start: 0n, end: 1n })
-    );
-    requestBlocksUseCaseMock.execute.mockResolvedValue(
-      Result.withFailure(Failure.withMessage('FAIL'))
-    );
-
-    const result = await useCase.execute(BlockRange.create(0n, 1n), 'test');
-
-    expect(WorkerOrchestrator.sendToOrchestrator).toBeCalled();
-    expect(result.failure).toBeUndefined();
-    expect(result.content).toBeUndefined();
-
-    stateHistoryServiceMock.disconnect.mockClear();
-    blockRangeScanRepositoryMock.startNextScan.mockClear();
   });
 });
