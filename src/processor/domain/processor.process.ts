@@ -11,6 +11,9 @@ import { inject, injectable } from 'inversify';
 import { ProcessActionUseCase } from './use-cases/process-action.use-case';
 import { ProcessAssetUseCase } from './use-cases/process-asset.use-case';
 
+/**
+ * @class
+ */
 @injectable()
 export class ProcessorProcess extends Process {
   public static Token = 'PROCESSOR_PROCESS';
@@ -28,9 +31,12 @@ export class ProcessorProcess extends Process {
   private processAssetUseCase: ProcessAssetUseCase;
 
   /**
+   * Set up processing job (asset and action) listeners
    *
+   * @async
    */
   public async start() {
+    // TODO Question... Should we create multiple (default 30) handlers?
     // for (let i = 0; i < config.processorMessageHandlerCount; i++) {
     try {
       this.actionProcessingQueueService.addJobHandler(
@@ -53,5 +59,6 @@ export class ProcessorProcess extends Process {
         })
       );
     }
+    // }
   }
 }

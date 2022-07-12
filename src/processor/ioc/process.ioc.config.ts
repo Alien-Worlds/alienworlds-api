@@ -42,7 +42,6 @@ import { ParseDataToJsonUseCase } from '@common/abi/domain/use-cases/parse-data-
 import { DeserializeActionJobUseCase } from '../domain/use-cases/deserialize-action-job.use-case';
 import { ProcessActionUseCase } from '../domain/use-cases/process-action.use-case';
 import { ProcessAssetUseCase } from '../domain/use-cases/process-asset.use-case';
-import { CreateEntityFromActionUseCase } from '../domain/use-cases/create-entity-from-action.use-case';
 import { AbiHexRepository } from '../domain/abi-hex.repository';
 import { AssetProcessingQueueService } from '@common/data-processing-queue/domain/services/asset-processing-queue.service';
 import { AssetProcessingQueueServiceImpl } from '@common/data-processing-queue/data/asset-processing-queue.service-impl';
@@ -51,6 +50,9 @@ import { QueueAssetProcessingUseCase } from '@common/data-processing-queue/domai
 import { AbiHexFile } from '../data/abi-hex.dto';
 import { UploadAbiHexUseCase } from '../domain/use-cases/upload-abi-hex.use-case';
 import { AbiHexLocalSource } from '../data/data-sources/abi-hex.local.source';
+import { UploadMineUseCase } from 'processor/domain/use-cases/upload-mine.use-case';
+import { UploadAtomicTransferUseCase } from 'processor/domain/use-cases/upload-atomic-transfer.use-case';
+import { UploadNftUseCase } from 'processor/domain/use-cases/upload-nft.use-case';
 
 const bindings = new AsyncContainerModule(async bind => {
   ////////////////////// CORE //////////////////////
@@ -188,9 +190,11 @@ const bindings = new AsyncContainerModule(async bind => {
     ProcessActionUseCase
   );
   bind<ProcessAssetUseCase>(ProcessAssetUseCase.Token).to(ProcessAssetUseCase);
-  bind<CreateEntityFromActionUseCase>(CreateEntityFromActionUseCase.Token).to(
-    CreateEntityFromActionUseCase
+  bind<UploadMineUseCase>(UploadMineUseCase.Token).to(UploadMineUseCase);
+  bind<UploadAtomicTransferUseCase>(UploadAtomicTransferUseCase.Token).to(
+    UploadAtomicTransferUseCase
   );
+  bind<UploadNftUseCase>(UploadNftUseCase.Token).to(UploadNftUseCase);
 });
 
 export const processIoc = new Container();

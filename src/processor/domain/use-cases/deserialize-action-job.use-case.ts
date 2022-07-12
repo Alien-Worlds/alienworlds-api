@@ -16,7 +16,7 @@ export class DeserializeActionJobUseCase implements UseCase {
   public static Token = 'DESERIALIZE_ACTION_JOB_USE_CASE';
 
   /**
-   *
+   * @constructor
    * @param {GetMostRecentAbiHexUseCase} getMostRecentAbiHexUseCase
    * @param {UploadAbiHexUseCase} uploadAbiHexUseCase
    * @param {ParseDataToJsonUseCase} parseDataToJsonUseCase

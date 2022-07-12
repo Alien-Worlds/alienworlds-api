@@ -5,6 +5,11 @@ import { config } from '@config';
 import { AbiHexFile } from 'processor/data/abi-hex.dto';
 import { getWorkersCount } from '@core/architecture/workers/worker.utils';
 
+/**
+ * Manages processor threads/workers.
+ *
+ * @class
+ */
 @injectable()
 export class ProcessorOrchestrator extends WorkerOrchestrator {
   public static Token = 'PROCESSOR_ORCHESTRATOR';
@@ -20,6 +25,9 @@ export class ProcessorOrchestrator extends WorkerOrchestrator {
     this.abiHexFiles = abiHex;
   }
 
+  /**
+   * @async
+   */
   public async init(): Promise<void> {
     // In case of an error, remove the worker and create a new one in its place
     this.addMessageHandler(WorkerMessageType.Error, async message => {
