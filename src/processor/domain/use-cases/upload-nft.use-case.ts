@@ -66,16 +66,19 @@ export class UploadNftUseCase implements UseCase {
       const {
         atomicAssets: { collection },
       } = config;
+      // Get template data
       const getTemplateResult =
         await this.templateSmartContractRepository.getData(
           deserializedData.template_id.toString(),
           collection
         );
+
       if (getTemplateResult.failure) {
         return Result.withFailure(getTemplateResult.failure);
       }
-      template = getTemplateResult.content;
 
+      template = getTemplateResult.content;
+      // Get schema data
       const getSchemaResult = await this.schemaSmartContractRepository.getData(
         template.schemaName,
         collection
@@ -116,12 +119,11 @@ export class UploadNftUseCase implements UseCase {
         uploadFailure.error instanceof DataSourceOperationError &&
         uploadFailure.error.isDuplicateError
       ) {
-        // In case of a duplicate, keep the happy flow on
+        this.actionProcessingQueueService.ackJob(job);
       } else {
-        // Otherwise reject message and return a failure
         this.actionProcessingQueueService.rejectJob(job);
-        return Result.withFailure(uploadFailure);
       }
+      return Result.withFailure(uploadFailure);
     }
 
     this.actionProcessingQueueService.ackJob(job);

@@ -23,8 +23,13 @@ export class AtomicTransferMongoSource extends CollectionMongoSource<AtomicTrans
    * @returns {AtomicTransferDocument}
    */
   public findByAssetId(assetId: bigint): Promise<AtomicTransferDocument> {
-    return this.findOne({
-      asset_ids: Long.fromBigInt(assetId),
-    });
+    return this.findOne(
+      {
+        asset_ids: Long.fromBigInt(assetId),
+      },
+      {
+        sort: { global_sequence: -1 },
+      }
+    );
   }
 }

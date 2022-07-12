@@ -142,6 +142,7 @@ export class NFT {
     const { blockNumber, blockTimestamp, globalSequence } = job;
     const { miner, land_id, params, rand1, rand2, rand3, template_id } = data;
     let templateRawData: TemplateDataDocument = {};
+    let templateData: NftTemplateData;
 
     if (template && schema) {
       const { immutableSerializedData } = template;
@@ -149,6 +150,8 @@ export class NFT {
         immutableSerializedData,
         ObjectSchema(schema.format)
       );
+
+      templateData = NftTemplateData.fromDto(templateRawData);
     }
 
     return new NFT(
@@ -163,7 +166,7 @@ export class NFT {
       parseToBigInt(blockNumber),
       blockTimestamp,
       parseToBigInt(globalSequence),
-      NftTemplateData.fromDto(templateRawData)
+      templateData
     );
   }
 }

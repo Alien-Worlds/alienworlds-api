@@ -22,8 +22,11 @@ describe('AtomicTransferMongoSource Unit tests', () => {
     const source = new AtomicTransferMongoSource(mongoSource);
     const findOneMock = jest.spyOn(source, 'findOne');
     source.findByAssetId(0n);
-    expect(findOneMock).toBeCalledWith({
-      asset_ids: Long.fromBigInt(0n),
-    });
+    expect(findOneMock).toBeCalledWith(
+      {
+        asset_ids: Long.fromBigInt(0n),
+      },
+      { sort: { global_sequence: -1 } }
+    );
   });
 });

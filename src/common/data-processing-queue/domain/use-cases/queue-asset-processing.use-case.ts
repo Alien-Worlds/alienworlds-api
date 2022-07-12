@@ -21,8 +21,13 @@ export class QueueAssetProcessingUseCase implements UseCase<void> {
     private assetProcessingQueueService: AssetProcessingQueueService
   ) {}
 
-  private async queueJobs(ids: bigint[]) {
-    const failures = [];
+  /**
+   *
+   * @param {bigint[]} ids
+   * @returns {Promise<bigint[]>} list of unqueued ids
+   */
+  private async queueJobs(ids: bigint[]): Promise<bigint[]> {
+    const failures: bigint[] = [];
     for (const id of ids) {
       const queueResult = await this.assetProcessingQueueService.queueJob(
         AssetProcessingJob.createBuffer(id)
@@ -41,7 +46,8 @@ export class QueueAssetProcessingUseCase implements UseCase<void> {
   public async execute(assetIds: bigint[]): Promise<Result<void>> {
     let tries = 3; //TODO Magic number
     let unqueuedIds = [...assetIds];
-
+    // before returning failure, try to queue id's several times
+    // (those that have failed in previous attempts)
     while (tries > 0) {
       unqueuedIds = await this.queueJobs(unqueuedIds);
       if (unqueuedIds.length === 0) {

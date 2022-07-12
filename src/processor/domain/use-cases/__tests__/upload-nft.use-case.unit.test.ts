@@ -112,33 +112,31 @@ describe('UploadNft Unit tests', () => {
       rand3: 3,
       template_id: 0,
     };
-    const executeMock = jest
-      .spyOn(deserializeActionJobUseCaseMock, 'execute')
-      .mockReturnValue(
-        Result.withContent<NftMessageData>(deserializedData as any)
-      );
+    deserializeActionJobUseCaseMock.execute.mockReturnValue(
+      Result.withContent<NftMessageData>(deserializedData as any)
+    );
     // @ts-ignore
     const result = await useCase.createNftEntity(message);
-    expect(executeMock).toBeCalledTimes(1);
+    expect(deserializeActionJobUseCaseMock.execute).toBeCalledTimes(1);
     expect(result.content).toEqual(
       NFT.fromMessage(message as any, deserializedData)
     );
-    expect(result.content.templateData).toEqual({});
+    expect(result.content.templateData).toBeUndefined();
 
-    executeMock.mockClear();
+    deserializeActionJobUseCaseMock.execute.mockClear();
   });
 
   it('"createNftEntity" should return a failure when deserialization has failed', async () => {
-    const executeMock = jest
-      .spyOn(deserializeActionJobUseCaseMock, 'execute')
-      .mockReturnValue(Result.withFailure(Failure.withMessage('some error')));
+    deserializeActionJobUseCaseMock.execute.mockReturnValue(
+      Result.withFailure(Failure.withMessage('some error'))
+    );
     // @ts-ignore
     const result = await useCase.createNftEntity({});
-    expect(executeMock).toBeCalledTimes(1);
+    expect(deserializeActionJobUseCaseMock.execute).toBeCalledTimes(1);
     expect(result.content).toBeUndefined();
     expect(result.failure).toBeInstanceOf(Failure);
 
-    executeMock.mockClear();
+    deserializeActionJobUseCaseMock.execute.mockClear();
   });
 
   it('"createNftEntity" should return NFT entity with templateData based on collected data and when template_id > 0', async () => {
@@ -182,9 +180,9 @@ describe('UploadNft Unit tests', () => {
     } as any;
     ObjectSchemaMock.mockReturnValue({} as any);
     deserializeMock.mockReturnValue({} as any);
-    const executeMock = jest
-      .spyOn(deserializeActionJobUseCaseMock, 'execute')
-      .mockReturnValue(Result.withContent<NftMessageData>(deserializedData));
+    deserializeActionJobUseCaseMock.execute.mockReturnValue(
+      Result.withContent<NftMessageData>(deserializedData)
+    );
     const getTemplateMock = jest
       .spyOn(templateSmartContractRepositoryMock, 'getData')
       .mockReturnValue(
@@ -197,7 +195,7 @@ describe('UploadNft Unit tests', () => {
       );
     // @ts-ignore
     const result = await useCase.createNftEntity(message);
-    expect(executeMock).toBeCalledTimes(1);
+    expect(deserializeActionJobUseCaseMock.execute).toBeCalledTimes(1);
     expect(result.content).toEqual(
       NFT.fromMessage(
         message,
@@ -208,7 +206,7 @@ describe('UploadNft Unit tests', () => {
     );
     expect(result.content.templateData).toEqual({});
 
-    executeMock.mockClear();
+    deserializeActionJobUseCaseMock.execute.mockClear();
     getTemplateMock.mockClear();
     getSchemaMock.mockClear();
     ObjectSchemaMock.mockClear();
@@ -216,16 +214,16 @@ describe('UploadNft Unit tests', () => {
   });
 
   it('"createNftEntity" should return a failure when deserialization has failed', async () => {
-    const executeMock = jest
-      .spyOn(deserializeActionJobUseCaseMock, 'execute')
-      .mockReturnValue(Result.withFailure(Failure.withMessage('some error')));
+    deserializeActionJobUseCaseMock.execute.mockReturnValue(
+      Result.withFailure(Failure.withMessage('some error'))
+    );
     // @ts-ignore
     const result = await useCase.createNftEntity({});
-    expect(executeMock).toBeCalledTimes(1);
+    expect(deserializeActionJobUseCaseMock.execute).toBeCalledTimes(1);
     expect(result.content).toBeUndefined();
     expect(result.failure).toBeInstanceOf(Failure);
 
-    executeMock.mockClear();
+    deserializeActionJobUseCaseMock.execute.mockClear();
   });
 
   it('"createNftEntity" should return a failure when the template smart contract data could not be received', async () => {
@@ -239,21 +237,19 @@ describe('UploadNft Unit tests', () => {
       transactionId: 'trx-id-01',
     } as any;
 
-    const executeMock = jest
-      .spyOn(deserializeActionJobUseCaseMock, 'execute')
-      .mockReturnValue(
-        Result.withContent<NftMessageData>({ template_id: 1 } as any)
-      );
+    deserializeActionJobUseCaseMock.execute.mockReturnValue(
+      Result.withContent<NftMessageData>({ template_id: 1 } as any)
+    );
     const getTemplateMock = jest
       .spyOn(templateSmartContractRepositoryMock, 'getData')
       .mockReturnValue(Result.withFailure(Failure.withMessage('some error')));
     // @ts-ignore
     const result = await useCase.createNftEntity(message);
-    expect(executeMock).toBeCalledTimes(1);
+    expect(deserializeActionJobUseCaseMock.execute).toBeCalledTimes(1);
     expect(result.content).toBeUndefined();
     expect(result.failure).toBeInstanceOf(Failure);
 
-    executeMock.mockClear();
+    deserializeActionJobUseCaseMock.execute.mockClear();
     getTemplateMock.mockClear();
     ObjectSchemaMock.mockClear();
     deserializeMock.mockClear();
@@ -270,11 +266,9 @@ describe('UploadNft Unit tests', () => {
       transactionId: 'trx-id-01',
     } as any;
 
-    const executeMock = jest
-      .spyOn(deserializeActionJobUseCaseMock, 'execute')
-      .mockReturnValue(
-        Result.withContent<NftMessageData>({ template_id: 1 } as any)
-      );
+    deserializeActionJobUseCaseMock.execute.mockReturnValue(
+      Result.withContent<NftMessageData>({ template_id: 1 } as any)
+    );
     const getSchemaMock = jest
       .spyOn(schemaSmartContractRepositoryMock, 'getData')
       .mockReturnValue(Result.withFailure(Failure.withMessage('some error')));
@@ -288,7 +282,7 @@ describe('UploadNft Unit tests', () => {
     expect(result.content).toBeUndefined();
     expect(result.failure).toBeInstanceOf(Failure);
 
-    executeMock.mockClear();
+    deserializeActionJobUseCaseMock.execute.mockClear();
     getTemplateMock.mockClear();
     getSchemaMock.mockClear();
     ObjectSchemaMock.mockClear();
@@ -307,7 +301,7 @@ describe('UploadNft Unit tests', () => {
     createNftEntityMock.mockClear();
   });
 
-  it('Should ack job and return empty result when inserting entity to the datatbase failed due to duplication error', async () => {
+  it('Should ack job and return failure when inserting entity to the datatbase failed due to duplication error', async () => {
     (DataSourceOperationError as any).getTypeByErrorMessage = () =>
       OperationErrorType.Duplicate;
 
@@ -323,7 +317,7 @@ describe('UploadNft Unit tests', () => {
     const result = await (useCase as any).execute({} as any, job);
 
     expect(actionProcessingQueueServiceMock.ackJob).toBeCalledWith(job);
-    expect(result.failure).toBeUndefined();
+    expect(result.failure).toBeInstanceOf(Failure);
 
     createNftEntityMock.mockClear();
     nftRepositoryMock.add.mockClear();
