@@ -36,7 +36,7 @@ export class SmartContractRepositoryImpl<EntityType, DtoType> {
    * @async
    * @param {string} bound
    * @param {string} scope
-   * @returns {Promise<Result<DtoType>>}
+   * @returns {Promise<DtoType>}
    */
   protected async getOneRowBy(bound: string, scope: string): Promise<DtoType> {
     const rows = await this.source.getTableRows<DtoType>({
