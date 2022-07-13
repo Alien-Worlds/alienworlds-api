@@ -2,7 +2,7 @@ import { injectable, unmanaged } from 'inversify';
 import { WorkerMessageType } from '@core/architecture/workers/worker-message';
 import { WorkerOrchestrator } from '@core/architecture/workers/worker-orchestrator';
 import { config } from '@config';
-import { AbiHexFile } from 'processor/data/abi-hex.dto';
+import { AbiHexFile } from '../data/abi-hex.dto';
 import { getWorkersCount } from '@core/architecture/workers/worker.utils';
 
 /**

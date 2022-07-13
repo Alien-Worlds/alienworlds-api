@@ -50,9 +50,9 @@ import { QueueAssetProcessingUseCase } from '@common/data-processing-queue/domai
 import { AbiHexFile } from '../data/abi-hex.dto';
 import { UploadAbiHexUseCase } from '../domain/use-cases/upload-abi-hex.use-case';
 import { AbiHexLocalSource } from '../data/data-sources/abi-hex.local.source';
-import { UploadMineUseCase } from 'processor/domain/use-cases/upload-mine.use-case';
-import { UploadAtomicTransferUseCase } from 'processor/domain/use-cases/upload-atomic-transfer.use-case';
-import { UploadNftUseCase } from 'processor/domain/use-cases/upload-nft.use-case';
+import { UploadMineUseCase } from '../domain/use-cases/upload-mine.use-case';
+import { UploadAtomicTransferUseCase } from '../domain/use-cases/upload-atomic-transfer.use-case';
+import { UploadNftUseCase } from '../domain/use-cases/upload-nft.use-case';
 
 const bindings = new AsyncContainerModule(async bind => {
   ////////////////////// CORE //////////////////////

@@ -8,7 +8,7 @@ import {
 import { ProcessorOrchestrator } from './domain/processor.orchestrator';
 import { processIoc, setupProcessIoc } from './ioc/process.ioc.config';
 import { ProcessorProcess } from './domain/processor.process';
-import { AbiHexFile } from 'processor/data/abi-hex.dto';
+import { AbiHexFile } from './data/abi-hex.dto';
 
 /**
  * This is the third element of the whole retrieving/processing (history) data from the blockchain.
