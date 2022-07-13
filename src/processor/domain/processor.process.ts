@@ -41,11 +41,14 @@ export class ProcessorProcess extends Process {
     try {
       this.actionProcessingQueueService.addJobHandler(
         async (job: ActionProcessingJob) => {
+          // TODO: We need some logic to handle failures
+          // (log errors etc... but not for every job so as not to flood the console with logs)
           this.processActionUseCase.execute(job);
         }
       );
       this.assetProcessingQueueService.addJobHandler(
         async (job: AssetProcessingJob) => {
+          // like above
           this.processAssetUseCase.execute(job);
         }
       );
