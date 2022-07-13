@@ -8,24 +8,23 @@ services:
       - ./:/var/www/api
 
   processor:
-    command: ['sh', '-c', 'scripts/wq.sh && yarn processor']
+    command: ['sh', '-c', 'yarn processor']
     depends_on:
       - queue
     volumes:
       - ./:/var/www/api
 
   blockrange:
-    command: ['sh', '-c', 'scripts/wq.sh && yarn blockrange']
+    command: ['sh', '-c', 'yarn blockrange']
     depends_on:
       - queue
     volumes:
       - ./:/var/www/api
 
   filler:
-    command:
-      ['sh', '-c', 'scripts/wq.sh && flags="${FILLER_FLAGS}" yarn filler']
+    command: ['sh', '-c', 'flags="${FILLER_FLAGS}" yarn filler']
     depends_on:
-      - queue
+      - db
     volumes:
       - ./:/var/www/api
 
@@ -33,7 +32,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - '27017'
+      - '27017:27017'
     volumes:
       - database:/data/db
 
@@ -41,7 +40,7 @@ services:
     image: rabbitmq:management
     restart: always
     ports:
-      - '5672'
+      - '5672:5672'
       - '15672:15672'
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:15672']

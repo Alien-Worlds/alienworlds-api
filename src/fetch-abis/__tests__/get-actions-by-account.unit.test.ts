@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { RequestError } from '@core/architecture/data/errors/request.error';
 import fetch from 'node-fetch';
 import { getActionsByAccount } from '../get-actions-by-account';
 
@@ -25,32 +26,20 @@ describe('"getActionsByAccount" unit tests', () => {
       error: 'Bad request',
       message: 'Something went wrong',
     };
-    const response = Promise.resolve({
+    const response = {
+      status: 400,
+      statusText: 'Bad request',
       ok: false,
       json: () => body,
-    });
-    fetchMock.mockImplementation(() => response);
-    const result = await getActionsByAccount('fake');
-
-    expect(result.isFailure).toEqual(true);
-    expect(result.failure.error.message).toEqual(
-      '[400] Bad request: Something went wrong'
-    );
-  });
-
-  it('Should return failure with message when response is not successful', async () => {
-    const body = {
-      status: 'error',
     };
-    const response = Promise.resolve({
-      ok: false,
-      json: () => body,
-    });
-    fetchMock.mockImplementation(() => response);
+    fetchMock.mockImplementation(() => Promise.resolve(response));
     const result = await getActionsByAccount('fake');
 
     expect(result.isFailure).toEqual(true);
-    expect(result.failure.error.message).toEqual(JSON.stringify(body));
+    expect((result.failure.error as RequestError).status).toEqual(
+      response.status
+    );
+    expect(result.failure.error.message).toEqual(response.statusText);
   });
 
   it('Should return failure with message when response is successful but without actions', async () => {

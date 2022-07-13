@@ -15,7 +15,7 @@ export enum Rarity {
  * Represents the data structure of the NFT mongoDB document
  * @type
  */
-export type NFTDocument = {
+export type NftDocument = {
   _id: string;
   miner: string;
   land_id: string;
@@ -185,14 +185,14 @@ export class NFT {
   ) {}
 
   /**
-   * Creates instances of the class NFT based on given NFTDocument.
+   * Creates instances of the class NFT based on given NftDocument.
    *
    * @static
    * @public
-   * @param {NFTDocument} dto
+   * @param {NftDocument} dto
    * @returns {NFT} instance of NFT
    */
-  public static fromDto(dto: NFTDocument): NFT {
+  public static fromDto(dto: NftDocument): NFT {
     const {
       _id,
       miner,

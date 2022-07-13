@@ -1,5 +1,5 @@
+import { parseDateToMs } from '@common/utils/date.utils';
 import { mineLuckSchema } from '../schemas';
-import { parseDate } from '../include/parsedate';
 
 /**
  * Represents the data structure of the MineLuck mongoDB document
@@ -138,14 +138,14 @@ export const createMineLuckPipeline = (from?: string, to?: string) => {
     if (typeof query.block_timestamp === 'undefined') {
       query.block_timestamp = {};
     }
-    query.block_timestamp.$gte = new Date(parseDate(from));
+    query.block_timestamp.$gte = new Date(parseDateToMs(from));
   }
 
   if (to) {
     if (typeof query.block_timestamp === 'undefined') {
       query.block_timestamp = {};
     }
-    query.block_timestamp.$lt = new Date(parseDate(to));
+    query.block_timestamp.$lt = new Date(parseDateToMs(to));
   }
 
   const pipeline = [

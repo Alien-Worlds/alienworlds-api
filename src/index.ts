@@ -3,7 +3,7 @@
 
 process.title = 'eosdac-api';
 
-import config from './config';
+import { config } from './config';
 import { buildAPI } from './api';
 
 const start = async () => {

@@ -7,7 +7,7 @@ import fastifyAutoload from 'fastify-autoload';
 import fastifyMongo from 'fastify-mongodb';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 
-import config from './config';
+import { config } from './config';
 
 export const buildAPI = async (): Promise<FastifyInstance> => {
   const api: FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify(

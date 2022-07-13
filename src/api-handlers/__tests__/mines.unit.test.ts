@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getMinesFastifyMock } from './mocks/mines.fastify.mock';
 import {
-  noTxIdMinerSearchQuery,
-  noTxIdMinesRequestQueryOptions,
-  onlyTxIdMinerSearchQuery,
-  onlyTxIdMinesRequestQueryOptions,
+  notransactionIdMinerSearchQuery,
+  notransactionIdMinesRequestQueryOptions,
+  onlytransactionIdMinerSearchQuery,
+  onlytransactionIdMinesRequestQueryOptions,
   sampleMine,
   sampleMineDocument,
   sampleMineResult,
@@ -13,10 +14,10 @@ import {
   buildQuery,
   getMinesCollection,
   getSortingDirectionByString,
-  Mine,
   MineResult,
   MinesResponse,
 } from '../mines';
+import { Mine } from '@common/mines/domain/entities/mine';
 
 describe('Mine unit tests', () => {
   it('Mine.fromDto should return Mine entity based on data provided in given MineDocument dto', async () => {
@@ -90,14 +91,14 @@ describe('"buildQuery" unit tests', () => {
   });
 
   it('Should build a query containing only the transaction ID "tx_id" when given in options', async () => {
-    expect(buildQuery(onlyTxIdMinesRequestQueryOptions)).toEqual(
-      onlyTxIdMinerSearchQuery
+    expect(buildQuery(onlytransactionIdMinesRequestQueryOptions)).toEqual(
+      onlytransactionIdMinerSearchQuery
     );
   });
 
   it('Should build a query based on a given options without "tx_id"', async () => {
-    expect(buildQuery(noTxIdMinesRequestQueryOptions)).toEqual(
-      noTxIdMinerSearchQuery
+    expect(buildQuery(notransactionIdMinesRequestQueryOptions)).toEqual(
+      notransactionIdMinerSearchQuery
     );
   });
 });

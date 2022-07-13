@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { connectMongo } from './connections/mongo';
-import config from './config';
+import { connectMongo } from '@core/storage/data-sources/connect-mongo.helper';
+import { config } from './config';
 
 (async () => {
   const mongo: any = await connectMongo(config.mongo);

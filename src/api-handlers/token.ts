@@ -2,7 +2,7 @@
 import { tokenSchema } from '../schemas';
 import fetch from 'node-fetch';
 import { Contract, ContractInterface, providers } from 'ethers';
-import config from '../config';
+import { config } from '../config';
 
 export const contractInterface = [
   {
