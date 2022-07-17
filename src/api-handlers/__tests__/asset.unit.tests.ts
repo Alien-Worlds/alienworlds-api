@@ -5,7 +5,7 @@ import {
   AssetResult,
   buildLongIntListFromString,
   getAssetsCollection,
-} from '../asset';
+} from '../asset/asset';
 import {
   emptyAssetResponse,
   long_0,

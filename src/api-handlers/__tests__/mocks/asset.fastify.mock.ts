@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AssetDocument } from '../../asset';
+import { AssetDocument } from '../../asset/asset';
 
 export const getAssetsFastifyMock = (options: {
   findResult: AssetDocument[];

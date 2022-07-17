@@ -1,13 +1,16 @@
 /* istanbul ignore file */
-import path from 'path';
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyOas from 'fastify-oas';
 import fastifyCors from 'fastify-cors';
-import fastifyAutoload from 'fastify-autoload';
 import fastifyMongo from 'fastify-mongodb';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-
-import { config } from './config';
+import { assetRoutes } from './asset/asset.routes';
+import { FastifyRoute } from 'fastify.route';
+import { config } from '@config';
+import { mineLuckRoutes } from './mineluck/mine-luck.routes';
+import { minesRoutes } from './mines/mines.routes';
+import { nftsRoutes } from './nfts/nfts.routes';
+import { tokenRoutes } from './token/token.routes';
 
 export const buildAPI = async (): Promise<FastifyInstance> => {
   const api: FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify(
@@ -34,13 +37,12 @@ export const buildAPI = async (): Promise<FastifyInstance> => {
     },
   });
 
-  api.register(fastifyAutoload, {
-    dir: path.join(__dirname, 'api-handlers'),
-    ignorePattern: /.*__tests__.*/,
-    options: {
-      prefix: '/v1/alienworlds',
-    },
-  });
+  // Mount routes
+  assetRoutes.forEach(route => new FastifyRoute(api, route));
+  mineLuckRoutes.forEach(route => new FastifyRoute(api, route));
+  minesRoutes.forEach(route => new FastifyRoute(api, route));
+  nftsRoutes.forEach(route => new FastifyRoute(api, route));
+  tokenRoutes.forEach(route => new FastifyRoute(api, route));
 
   api.register(fastifyMongo, {
     url: `${config.mongo.url}/${config.mongo.dbName}`,

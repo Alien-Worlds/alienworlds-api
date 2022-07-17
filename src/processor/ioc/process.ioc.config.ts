@@ -9,8 +9,8 @@ import { StateHistoryService } from '@common/state-history/domain/state-history.
 import { AbiRepository } from '@common/abi/domain/abi.repository';
 import { WaxSource } from '@common/state-history/data/data-sources/wax.source';
 import { MessagingAmqSource } from '@core/messaging/data/data-sources/messaging.amq.source';
-import { connectMongo } from '@core/storage/data-sources/connect-mongo.helper';
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { connectMongo } from '@core/storage/data/data-sources/connect-mongo.helper';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { ActionProcessingQueueService } from '@common/data-processing-queue/domain/services/action-processing-queue.service';
 import { ActionProcessingQueueServiceImpl } from '@common/data-processing-queue/data/action-processing-queue.service-impl';
 import { MessageRepositoryImpl } from '@core/messaging/data/repositories/message.repository-impl';

@@ -1,7 +1,7 @@
 import { AssetDocument } from '../assets.dtos';
-import { CollectionMongoSource } from '@core/storage/data-sources/collection.mongo.source';
+import { CollectionMongoSource } from '@core/storage/data/data-sources/collection.mongo.source';
 import { Long } from 'mongodb';
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 
 /**
  * Asset MongoDB data source
@@ -24,9 +24,25 @@ export class AssetMongoSource extends CollectionMongoSource<AssetDocument> {
    * @param {bigint} assetId
    * @returns {AtomicTransferDocument}
    */
-  public findByAssetId(assetId: bigint): Promise<AssetDocument> {
+  public async findByAssetId(assetId: bigint): Promise<AssetDocument> {
     return this.findOne({
       asset_ids: Long.fromBigInt(assetId),
     });
+  }
+
+  /**
+   * Find documents by assetIds
+   *
+   * @param {bigint} assetId
+   * @returns {AtomicTransferDocument}
+   */
+  public async findManyByAssetIds(
+    assetIds: bigint[]
+  ): Promise<AssetDocument[]> {
+    const cursor = await this.find({
+      asset_id: { $in: assetIds.map(id => Long.fromBigInt(id)) },
+    });
+
+    return cursor.toArray();
   }
 }

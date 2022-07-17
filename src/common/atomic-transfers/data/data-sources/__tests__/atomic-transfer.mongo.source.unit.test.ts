@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { Db, Long } from 'mongodb';
 import { AtomicTransferMongoSource } from '../atomic-transfer.mongo.source';
 

@@ -46,7 +46,7 @@ export const sampleMine = {
   bounty: 837,
   landId: '1099512958747',
   planetName: 'neri.world',
-  landOwner: 'fakeowner.wam',
+  landowner: 'fakeowner.wam',
   bagItems: [1099575138963n, 1099571561418n, 1099572783734n],
   offset: 125,
   blockNumber: 165058267n,

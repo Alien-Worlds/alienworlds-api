@@ -24,8 +24,8 @@ import { RequestBlocksUseCase } from '@common/state-history/domain/use-cases/req
 import { config } from '@config';
 import { MessagingAmqSource } from '@core/messaging/data/data-sources/messaging.amq.source';
 import { MessageRepositoryImpl } from '@core/messaging/data/repositories/message.repository-impl';
-import { connectMongo } from '@core/storage/data-sources/connect-mongo.helper';
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { connectMongo } from '@core/storage/data/data-sources/connect-mongo.helper';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { AsyncContainerModule, Container } from 'inversify';
 import { FillerOptions } from './domain/entities/filler-options';
 import { FillerDefaultModeProcess } from './domain/processes/filler-default-mode.process';

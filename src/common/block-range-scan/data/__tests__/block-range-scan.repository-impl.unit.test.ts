@@ -5,7 +5,7 @@ import { BlockRangeScan } from '@common/block-range-scan/domain/entities/block-r
 import { NoBlockRangeFoundError } from '@common/block-range-scan/domain/errors/no-block-range.found.error';
 import { config } from '@config';
 import { Failure } from '@core/architecture/domain/failure';
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { BlockRangeScanRepositoryImpl } from '../block-range-scan.repository-impl';
 import { BlockRangeScanMongoSource } from '../data-sources/block-range-scan.mongo.source';
 

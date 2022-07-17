@@ -5,17 +5,17 @@ import { Long } from 'mongodb';
  * @type
  */
 export type AssetSerializedDataSubDocument = {
-  cardid: number;
-  name: string;
-  img: string;
-  backimg: string;
-  rarity: string;
-  shine: string;
-  type: string;
-  delay: number;
-  difficulty: number;
-  ease: number;
-  luck: number;
+  cardid?: number;
+  name?: string;
+  img?: string;
+  backimg?: string;
+  rarity?: string;
+  shine?: string;
+  type?: string;
+  delay?: number;
+  difficulty?: number;
+  ease?: number;
+  luck?: number;
 };
 
 /**
@@ -23,10 +23,10 @@ export type AssetSerializedDataSubDocument = {
  * @type
  */
 export type AssetDataSubDocument = {
-  collection_name: string;
-  schema_name: string;
-  template_id: number;
-  immutable_serialized_data: AssetSerializedDataSubDocument;
+  collection_name?: string;
+  schema_name?: string;
+  template_id?: number;
+  immutable_serialized_data?: AssetSerializedDataSubDocument;
 };
 
 /**
@@ -35,7 +35,7 @@ export type AssetDataSubDocument = {
  */
 export type AssetDocument = {
   _id?: string;
-  asset_id: Long;
-  owner: string;
-  data: AssetDataSubDocument;
+  asset_id?: Long;
+  owner?: string;
+  data?: AssetDataSubDocument;
 };

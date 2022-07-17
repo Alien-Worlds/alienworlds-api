@@ -1,5 +1,10 @@
 import { Long } from 'mongodb';
-import { Asset, AssetDocument, AssetResponse, AssetResult } from '../../asset';
+import {
+  Asset,
+  AssetDocument,
+  AssetResponse,
+  AssetResult,
+} from '../../asset/asset';
 
 export const long_0 = new Long('0');
 export const long_1099535583633 = new Long('1099535583633');

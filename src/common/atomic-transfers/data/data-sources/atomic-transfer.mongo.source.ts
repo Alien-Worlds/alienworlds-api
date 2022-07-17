@@ -1,7 +1,7 @@
 import { AtomicTransferDocument } from '../atomic-transfers.dtos';
-import { CollectionMongoSource } from '@core/storage/data-sources/collection.mongo.source';
+import { CollectionMongoSource } from '@core/storage/data/data-sources/collection.mongo.source';
 import { Long } from 'mongodb';
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 
 /**
  * AtomicTransfer MongoDB data source

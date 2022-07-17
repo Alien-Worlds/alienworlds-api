@@ -11,4 +11,6 @@ export abstract class NftRepository {
   public static Token = 'NFT_REPOSITORY';
 
   public abstract add(nft: NFT): Promise<Result<NFT>>;
+  public abstract getByData(data: unknown): Promise<Result<NFT[]>>;
+  public abstract countByData(data: unknown): Promise<Result<number>>;
 }

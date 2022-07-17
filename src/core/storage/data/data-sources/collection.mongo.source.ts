@@ -1,9 +1,12 @@
 import { DataSourceBulkWriteError } from '@core/architecture/data/errors/data-source-bulk-write.error';
 import { DataSourceOperationError } from '@core/architecture/data/errors/data-source-operation.error';
 import {
+  AggregateOptions,
+  AggregationCursor,
   Collection,
   Document,
   Filter,
+  FindCursor,
   FindOptions,
   MatchKeysAndValues,
   OptionalUnlessRequiredId,
@@ -44,6 +47,44 @@ export class CollectionMongoSource<T> {
   ): Promise<WithId<T>> {
     try {
       return this.collection.findOne(filter, options);
+    } catch (error) {
+      throw DataSourceOperationError.fromError(error);
+    }
+  }
+
+  /**
+   * Find documents that matches the filter and options
+   *
+   * @async
+   * @param {Filter<T>} filter
+   * @param {FindOptions} options
+   * @returns {T[]}
+   * @throws {DataSourceWriteError}
+   */
+  public async find(
+    filter: Filter<T>,
+    options?: FindOptions
+  ): Promise<FindCursor<WithId<T>>> {
+    try {
+      return this.collection.find(filter, options);
+    } catch (error) {
+      throw DataSourceOperationError.fromError(error);
+    }
+  }
+
+  /**
+   * @async
+   * @param {Document[]} pipeline
+   * @param {AggregateOptions} options
+   * @returns {T[]}
+   * @throws {DataSourceWriteError}
+   */
+  public async aggregate(
+    pipeline: T[],
+    options?: AggregateOptions
+  ): Promise<AggregationCursor<WithId<T>>> {
+    try {
+      return this.collection.aggregate(pipeline, options);
     } catch (error) {
       throw DataSourceOperationError.fromError(error);
     }
@@ -136,5 +177,22 @@ export class CollectionMongoSource<T> {
     } catch (error) {
       throw DataSourceOperationError.fromError(error);
     }
+  }
+
+  /**
+   * Find documents by data
+   *
+   * @param {T} data
+   * @returns {AtomicTransferDocument}
+   */
+  public async findByData<DataType, OptionsType>(
+    data: DataType,
+    options?: OptionsType
+  ): Promise<WithId<T>[]> {
+    const cursor = Array.isArray(data)
+      ? await this.aggregate(data, options)
+      : await this.find(data, options);
+
+    return cursor.toArray();
   }
 }
