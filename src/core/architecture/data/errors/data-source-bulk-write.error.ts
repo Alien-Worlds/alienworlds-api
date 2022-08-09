@@ -19,7 +19,7 @@ export class DataSourceBulkWriteError extends Error {
   }
 
   /**
-   * Collect all errors of the mongodb.inserMany operation and return
+   * Collect all errors of the mongodb.insertMany operation and return
    * general insert operation error.
    *
    * @static
