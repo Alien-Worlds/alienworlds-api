@@ -63,3 +63,8 @@ export const buildAPI = async (): Promise<FastifyInstance> => {
 
   return api;
 };
+
+// @ts-ignore: Unreachable code error
+BigInt.prototype.toJSON = function (): string {
+ return this.toString();
+};
