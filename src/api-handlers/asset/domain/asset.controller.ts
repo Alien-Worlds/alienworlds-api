@@ -1,7 +1,7 @@
 import { Asset } from '@common/assets/domain/entities/asset';
 import { Result } from '@core/architecture/domain/result';
 import { inject, injectable } from 'inversify';
-import { GetAssetsOptions } from './entities/asset-request-options';
+import { GetAssetsInput } from './models/get-assets.input';
 import { GetAssetsUseCase } from './use-cases/get-assets.use-case';
 
 /**
@@ -17,10 +17,10 @@ export class AssetController {
 
   /**
    * @async
-   * @param {GetAssetsOptions} options
+   * @param {GetAssetsInput} input
    * @returns {Promise<Result<Asset[]>>}
    */
-  public async getAssets(options: GetAssetsOptions): Promise<Result<Asset[]>> {
-    return this.getAssetsUseCase.execute(options);
+  public async getAssets(input: GetAssetsInput): Promise<Result<Asset[]>> {
+    return this.getAssetsUseCase.execute(input);
   }
 }

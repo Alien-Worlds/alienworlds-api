@@ -1,8 +1,11 @@
+import { Failure } from '@core/architecture/domain/failure';
 import { Result } from '@core/architecture/domain/result';
 import { inject, injectable } from 'inversify';
-import { GetTokenInput } from './entities/get-token.input';
-import { GetTokenOutput } from './entities/get-token.output';
+import { GetTokenInput } from './models/get-token.input';
+import { InvalidTypeError } from './error/invalid-type.error';
+import { GetCirculatingSupplyUseCase } from './use-cases/get-circulating-supply.use-case';
 import { GetTokenSuppliesUseCase } from './use-cases/get-token-supplies.use-case';
+import { TokenType } from '../token.enums';
 
 /**
  * @class
@@ -12,18 +15,42 @@ export class TokenController {
   public static Token = 'TOKEN_CONTROLLER';
 
   constructor(
+    @inject(GetCirculatingSupplyUseCase.Token)
+    private getCirculatingSupplyUseCase: GetCirculatingSupplyUseCase,
     @inject(GetTokenSuppliesUseCase.Token)
     private getTokenSuppliesUseCase: GetTokenSuppliesUseCase
   ) {}
 
   /**
    * @async
-   * @param {GetTokenInput} options
-   * @returns {Promise<Result<???>>}
+   * @param {GetTokenInput} input
+   * @returns {Promise<Result<string>>}
    */
-  public async getToken(
-    options: GetTokenInput
-  ): Promise<Result<GetTokenOutput>> {
-    return null;
+  public async getToken(input: GetTokenInput): Promise<Result<string>> {
+    const { type } = input;
+
+    if (type === TokenType.Supply) {
+      const getTokenSuppliesResult =
+        await this.getTokenSuppliesUseCase.execute();
+
+      if (getTokenSuppliesResult.isFailure) {
+        return Result.withFailure(getTokenSuppliesResult.failure);
+      }
+
+      return Result.withContent(getTokenSuppliesResult.content);
+    }
+
+    if (type === TokenType.Circulating) {
+      const getCirculatingSupplyResult =
+        await this.getCirculatingSupplyUseCase.execute();
+
+      if (getCirculatingSupplyResult.isFailure) {
+        return Result.withFailure(getCirculatingSupplyResult.failure);
+      }
+
+      return Result.withContent(getCirculatingSupplyResult.content);
+    }
+
+    return Result.withFailure(Failure.fromError(new InvalidTypeError()));
   }
 }

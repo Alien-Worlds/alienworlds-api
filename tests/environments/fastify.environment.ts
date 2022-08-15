@@ -1,4 +1,4 @@
-import { buildAPI } from '../../src/api';
+import { buildAPI } from '../../src/api-handlers/api';
 import { TestEnvironment, TestHooks } from './test-environment';
 import { TestEnvironmentServer } from './api-test-environment';
 

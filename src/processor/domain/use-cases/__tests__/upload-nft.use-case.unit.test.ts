@@ -42,7 +42,11 @@ const actionProcessingQueueServiceMock = {
   ackJob: jest.fn(),
   rejectJob: jest.fn(),
 };
-const nftRepositoryMock = { add: jest.fn() };
+const nftRepositoryMock = {
+  add: jest.fn(),
+  getNfts: jest.fn(),
+  countNfts: jest.fn(),
+};
 
 let container: Container;
 let useCase: UploadNftUseCase;

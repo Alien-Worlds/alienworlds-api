@@ -43,6 +43,6 @@ export class AssetMongoSource extends CollectionMongoSource<AssetDocument> {
       asset_id: { $in: assetIds.map(id => Long.fromBigInt(id)) },
     });
 
-    return cursor.toArray();
+    return cursor;
   }
 }

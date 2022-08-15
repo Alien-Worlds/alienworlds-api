@@ -1,15 +1,24 @@
 import { inject, injectable } from 'inversify';
 import { Result } from '@core/architecture/domain/result';
 import { UseCase } from '@core/architecture/domain/use-case';
-import { GetTokenInput } from '../entities/get-token.input';
 import { EosDacService } from '@common/eos-dac/domain/eos-dac.service';
-import { TokenType } from 'api-handlers/token/token.enums';
-import { Failure } from '@core/architecture/domain/failure';
-import { InvalidTypeError } from '../error/invalid-type.error';
 import {
   excludedEthAccounts,
   excludedWaxAccounts,
-} from 'api-handlers/token/token.consts';
+  excludedBscAccounts,
+} from '../../token.consts';
+import { BscContractService } from '../services/bsc-contract.service';
+import { EthContractService } from '../services/eth-contract.service';
+
+/**
+ * Array reducer which decreases the initial value by the given current value
+ *
+ * @param {number} initial
+ * @param {number} value
+ * @returns {number}
+ */
+export const balanceReducer = (initial: number, value: number): number =>
+  initial - value;
 
 /**
  * @class
@@ -20,17 +29,12 @@ export class GetCirculatingSupplyUseCase implements UseCase<string> {
 
   constructor(
     @inject(EosDacService.Token)
-    private eosDacService: EosDacService
+    private eosDacService: EosDacService,
+    @inject(EthContractService.Token)
+    private ethContractService: EthContractService,
+    @inject(BscContractService.Token)
+    private bscContractService: BscContractService
   ) {}
-
-  private async getCurrencyBalanceByAccount(account: string) {
-    const { content: currencyBalance, failure: getCurrencyBalanceFailure } =
-      await this.eosDacService.getCurrencyBalance(account);
-
-    if (getCurrencyBalanceFailure) {
-      return Result.withFailure(getCurrencyBalanceFailure);
-    }
-  }
 
   /**
    * @async
@@ -44,30 +48,48 @@ export class GetCirculatingSupplyUseCase implements UseCase<string> {
       return Result.withFailure(getCurrencyStatsFailure);
     }
 
-    const balances = [];
+    const balances: number[] = [];
 
     for (const account of excludedWaxAccounts) {
-      const { content: currencyBalance, failure: getCurrencyBalanceFailure } =
+      const { content: waxBalance, failure: getWaxBalanceFailure } =
         await this.eosDacService.getCurrencyBalance(account);
 
-      if (getCurrencyBalanceFailure) {
-        return Result.withFailure(getCurrencyBalanceFailure);
+      if (getWaxBalanceFailure) {
+        return Result.withFailure(getWaxBalanceFailure);
       }
 
-      balances.push(currencyBalance);
+      balances.push(waxBalance);
     }
 
     for (const account of excludedEthAccounts) {
-      const { content: currencyBalance, failure: getCurrencyBalanceFailure } =
-        await this.eosDacService.getCurrencyBalance(account);
+      const { content: ethBalance, failure: getEthBalanceFailure } =
+        await this.ethContractService.getBalance(account);
 
-      if (getCurrencyBalanceFailure) {
-        return Result.withFailure(getCurrencyBalanceFailure);
+      if (getEthBalanceFailure) {
+        return Result.withFailure(getEthBalanceFailure);
       }
 
-      balances.push(currencyBalance);
+      balances.push(ethBalance / 10000);
     }
 
-    return Result.withContent(currencyStats.supply);
+    for (const account of excludedBscAccounts) {
+      const { content: bscBalance, failure: getBscBalanceFailure } =
+        await this.bscContractService.getBalance(account);
+
+      if (getBscBalanceFailure) {
+        return Result.withFailure(getBscBalanceFailure);
+      }
+
+      balances.push(bscBalance / 10000);
+    }
+
+    const supply = balances
+      .reduce(
+        balanceReducer,
+        parseFloat(currencyStats.supply.replace(' TLM', ''))
+      )
+      .toFixed(4);
+
+    return Result.withContent(supply);
   }
 }

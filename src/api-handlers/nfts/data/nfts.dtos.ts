@@ -4,7 +4,7 @@ import { Long } from 'mongodb';
  * Represents the available /nfts request query options
  * @type
  */
-export type NftsRequestOptionsDto = {
+export type NftsRequestDto = {
   limit?: number;
   global_sequence_from?: number;
   global_sequence_to?: number;

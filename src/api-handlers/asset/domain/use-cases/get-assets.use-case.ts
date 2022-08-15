@@ -3,8 +3,8 @@ import { Result } from '@core/architecture/domain/result';
 import { UseCase } from '@core/architecture/domain/use-case';
 import { AssetRepository } from '@common/assets/domain/repositories/asset.repository';
 import { Asset } from '@common/assets/domain/entities/asset';
-import { GetAssetsOptions } from '../entities/asset-request-options';
-import { GetAssetsQuery } from '../entities/get-assets.query';
+import { GetAssetsInput } from '../models/get-assets.input';
+import { GetAssetsQueryModel } from '../models/get-assets.query-model';
 import { Failure } from '@core/architecture/domain/failure';
 import { AssetsNotFoundError } from '@common/assets/domain/errors/assets-not-found.error';
 
@@ -25,16 +25,16 @@ export class GetAssetsUseCase implements UseCase<Asset[]> {
    * @param {string} scanKey
    * @returns {Promise<Result<Asset[]>>}
    */
-  public async execute(options: GetAssetsOptions): Promise<Result<Asset[]>> {
-    const { assetIds, limit, schema, owner, offset } = options;
+  public async execute(input: GetAssetsInput): Promise<Result<Asset[]>> {
+    const { assetIds, limit, schema, owner, offset } = input;
 
-    if (assetIds) {
+    if (assetIds.length > 0) {
       return this.assetRepository.getManyByAssetId(assetIds);
     }
 
     if (owner) {
-      return this.assetRepository.getByData(
-        GetAssetsQuery.create(owner, schema, offset, limit)
+      return this.assetRepository.getAssets(
+        GetAssetsQueryModel.create(owner, schema, offset, limit)
       );
     }
 

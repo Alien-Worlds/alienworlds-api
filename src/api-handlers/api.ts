@@ -1,16 +1,23 @@
 /* istanbul ignore file */
+import 'reflect-metadata';
+
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyOas from 'fastify-oas';
 import fastifyCors from 'fastify-cors';
-import fastifyMongo from 'fastify-mongodb';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { assetRoutes } from './asset/asset.routes';
-import { FastifyRoute } from 'fastify.route';
 import { config } from '@config';
-import { mineLuckRoutes } from './mineluck/mine-luck.routes';
-import { minesRoutes } from './mines/mines.routes';
-import { nftsRoutes } from './nfts/nfts.routes';
-import { tokenRoutes } from './token/token.routes';
+import { setupApiIoc } from './api.ioc.config';
+import { FastifyRoute } from '../fastify.route';
+import { GetAssetRoute } from './asset/routes/get-assets.route';
+import { AssetController } from './asset/domain/asset.controller';
+import { MineLuckController } from './mine-luck/domain/mine-luck.controller';
+import { GetMineLuckRoute } from './mine-luck/routes/get-mine-luck.route';
+import { GetMinesRoute } from './mines/routes/get-mines.route';
+import { MinesController } from './mines/domain/mines.controller';
+import { NftsController } from './nfts/domain/nfts.controller';
+import { GetNftsRoute } from './nfts/routes/get-nfts.route';
+import { TokenController } from './token/domain/token.controller';
+import { GetTokenRoute } from './token/routes/get-token.route';
 
 export const buildAPI = async (): Promise<FastifyInstance> => {
   const api: FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify(
@@ -37,16 +44,48 @@ export const buildAPI = async (): Promise<FastifyInstance> => {
     },
   });
 
-  // Mount routes
-  assetRoutes.forEach(route => new FastifyRoute(api, route));
-  mineLuckRoutes.forEach(route => new FastifyRoute(api, route));
-  minesRoutes.forEach(route => new FastifyRoute(api, route));
-  nftsRoutes.forEach(route => new FastifyRoute(api, route));
-  tokenRoutes.forEach(route => new FastifyRoute(api, route));
+  // Set IOC
+  const apiIoc = await setupApiIoc();
+  //
+  const assetController: AssetController = apiIoc.get<AssetController>(
+    AssetController.Token
+  );
+  const mineLuckController: MineLuckController = apiIoc.get<MineLuckController>(
+    MineLuckController.Token
+  );
+  const minesController: MinesController = apiIoc.get<MinesController>(
+    MinesController.Token
+  );
+  const nftsController: NftsController = apiIoc.get<NftsController>(
+    NftsController.Token
+  );
+  const tokenController: TokenController = apiIoc.get<TokenController>(
+    TokenController.Token
+  );
 
-  api.register(fastifyMongo, {
-    url: `${config.mongo.url}/${config.mongo.dbName}`,
-  });
+  // Mount routes
+  FastifyRoute.mount(
+    api,
+    GetAssetRoute.create(assetController.getAssets.bind(assetController))
+  );
+  FastifyRoute.mount(
+    api,
+    GetMineLuckRoute.create(
+      mineLuckController.getMineLuck.bind(mineLuckController)
+    )
+  );
+  FastifyRoute.mount(
+    api,
+    GetMinesRoute.create(minesController.getMines.bind(minesController))
+  );
+  FastifyRoute.mount(
+    api,
+    GetNftsRoute.create(nftsController.getNfts.bind(nftsController))
+  );
+  FastifyRoute.mount(
+    api,
+    GetTokenRoute.create(tokenController.getToken.bind(tokenController))
+  );
 
   api.register(fastifyCors, {
     allowedHeaders: 'Content-Type',

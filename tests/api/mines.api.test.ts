@@ -1,4 +1,12 @@
+import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
+
+jest.mock('ethers');
+jest.mock('../../src/api-handlers/api.ioc.utils');
+const getJsonRpcProviderMock = getJsonRpcProvider as jest.MockedFunction<
+  typeof getJsonRpcProvider
+>;
+getJsonRpcProviderMock.mockResolvedValue({} as any);
 
 const environment = createApiTestEnvironment();
 environment.initialize();
@@ -15,21 +23,21 @@ describe('Mines API Test', () => {
     expect(payload.results[0].miner).toEqual('fakeminer1.wam');
   });
 
-  it('should return Error if limit is > 5000', async () => {
+  it('should return 400 and error message when limit is > 5000', async () => {
     const response = await environment.server.inject({
       method: 'GET',
       url: '/v1/alienworlds/mines?limit=6000',
     });
 
-    expect(response.statusCode).toEqual(500);
+    expect(response.statusCode).toEqual(400);
   });
 
-  it('should return Error if wrong sort was provided', async () => {
+  it('should return 400 if wrong sort value was provided', async () => {
     const response = await environment.server.inject({
       method: 'GET',
       url: '/v1/alienworlds/mines?sort=FAKE',
     });
 
-    expect(response.statusCode).toEqual(500);
+    expect(response.statusCode).toEqual(400);
   });
 });

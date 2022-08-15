@@ -12,7 +12,7 @@ export type Response<T = unknown> = {
 export interface Request<T = unknown> {
   body: T;
   params: object;
-  query: object;
+  query: T;
   header: object;
 }
 
@@ -21,16 +21,22 @@ export type RequestHooks = {
   post?: (...args: unknown[]) => Response;
 };
 
-export type RequestValidators = {
-  request?: (...args: unknown[]) => unknown;
+export type ValidationResult = {
+  valid: boolean;
+  message?: string;
+  code?: number;
+};
+
+export type Validators = {
+  request?: (...args: unknown[]) => ValidationResult;
   response?: {
-    [status: number]: (...args: unknown[]) => unknown;
+    [status: number]: (...args: unknown[]) => ValidationResult;
   };
 };
 
 export type RouteOptions = {
   hooks?: RequestHooks;
-  validators?: RequestValidators;
+  validators?: Validators;
 };
 
 export type RouteHandler = (...args: unknown[]) => Result;

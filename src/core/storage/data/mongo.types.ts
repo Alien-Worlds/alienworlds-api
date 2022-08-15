@@ -1,11 +1,11 @@
 import { AggregateOptions, Filter, FindOptions } from 'mongodb';
 
-export type MongoAggregateArgs = {
+export type MongoAggregateParams = {
   pipeline: object[];
   options?: AggregateOptions;
 };
 
-export type MongoFindQueryArgs<T> = {
+export type MongoFindQueryParams<T = unknown> = {
   filter: Filter<T>;
-  options?: FindOptions<Document>;
+  options?: FindOptions;
 };

@@ -4,7 +4,7 @@ import { MineParamsData } from '@common/mines/data/mines.dtos';
  * Represents the available /asset request query options
  * @type
  */
-export type MinesRequestOptionsDto = {
+export type MinesRequestDto = {
   limit?: number;
   from?: string;
   to?: string;
@@ -50,5 +50,4 @@ export type MinesSearchQuery = {
   land_id?: { $in: string[] };
   planet_name?: string;
   tx_id?: string;
-  sort?: string;
 };

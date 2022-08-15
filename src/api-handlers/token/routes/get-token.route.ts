@@ -1,24 +1,31 @@
 import { GetRoute } from '@core/api/route';
 import { Request, RouteHandler } from '@core/api/api.types';
 import { Result } from '@core/architecture/domain/result';
-import { GetTokenInput } from '../domain/entities/get-token.input';
-import { GetTokenOutput } from '../domain/entities/get-token.output';
+import { GetTokenInput } from '../domain/models/get-token.input';
+import { TokenRequestDto } from '../data/token.dtos';
+import { TokenType } from '../token.enums';
 
 /**
  *
  * @param {Result<NFT[]>} result
  * @returns
  */
-export const parseHandlerResultToResponse = (
-  result: Result<GetTokenOutput>
-) => {
+export const parseHandlerResultToResponse = (result: Result<string>) => {
   if (result.isFailure) {
     // handle failure
+    const { error } = result.failure;
+    return {
+      status: 500,
+      body: error.message,
+    };
   }
   const { content } = result;
+
+  const supply = parseFloat(content.replace(' TLM', '')).toFixed(4);
+
   return {
     status: 200,
-    body: content.toJson(),
+    body: supply,
   };
 };
 
@@ -35,9 +42,9 @@ export const parseRequestOptionsToHandlerInput = (request: Request) => {
 /**
  * @class
  */
-export class GetNftsRoute extends GetRoute {
+export class GetTokenRoute extends GetRoute {
   public static create(handler: RouteHandler) {
-    return new GetNftsRoute(handler);
+    return new GetTokenRoute(handler);
   }
 
   private constructor(handler: RouteHandler) {
@@ -45,6 +52,22 @@ export class GetNftsRoute extends GetRoute {
       hooks: {
         pre: parseRequestOptionsToHandlerInput,
         post: parseHandlerResultToResponse,
+      },
+      validators: {
+        request: (request: Request<TokenRequestDto>) => {
+          if (request.query.type) {
+            const type = request.query.type.toLowerCase();
+
+            if (type !== TokenType.Circulating && type !== TokenType.Supply) {
+              return {
+                valid: false,
+                message: `type: should be "circulating" or "supply"`,
+              };
+            }
+          }
+
+          return { valid: true };
+        },
       },
     });
   }

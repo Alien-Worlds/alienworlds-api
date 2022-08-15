@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { Result } from '@core/architecture/domain/result';
 import { UseCase } from '@core/architecture/domain/use-case';
-import { GetMinesOptions } from '../entities/mines-request-options';
+import { GetMinesInput } from '../models/get-mines.input';
 import { MineRepository } from '@common/mines/domain/mine.repository';
 import { Mine } from '@common/mines/domain/entities/mine';
-import { getSortingDirectionByString } from '@common/utils/api.utils';
+import { GetMinesQueryModel } from '../models/get-mines.query-model';
 
 /**
  * @class
@@ -23,8 +23,7 @@ export class GetMinesUseCase implements UseCase<Mine[]> {
    * @param {string} scanKey
    * @returns {Promise<Result<Asset[]>>}
    */
-  public async execute(options: GetMinesOptions): Promise<Result<Mine[]>> {
-    const sort = getSortingDirectionByString(options.sort);
-    return this.mineRepository.getByData();
+  public async execute(input: GetMinesInput): Promise<Result<Mine[]>> {
+    return this.mineRepository.getMines(GetMinesQueryModel.create(input));
   }
 }

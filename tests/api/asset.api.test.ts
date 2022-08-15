@@ -1,3 +1,4 @@
+import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
 import {
   fakeowner1ToolWorldsSchemaAssetsResponse,
@@ -6,17 +7,24 @@ import {
   fakeowner0AssetsResponse,
 } from './fixtures/asset.fixture';
 
+jest.mock('ethers');
+jest.mock('../../src/api-handlers/api.ioc.utils');
+const getJsonRpcProviderMock = getJsonRpcProvider as jest.MockedFunction<
+  typeof getJsonRpcProvider
+>;
+getJsonRpcProviderMock.mockResolvedValue({} as any);
+
 const environment = createApiTestEnvironment();
 environment.initialize();
 
 describe('Asset API Test', () => {
-  it('Should return 200', async () => {
+  it('Should return 200 and empty rsults array', async () => {
     const response = await environment.server.inject({
       method: 'GET',
       url: '/v1/alienworlds/asset',
     });
-
     expect(response.statusCode).toEqual(200);
+    expect(response.body).toEqual(JSON.stringify({ results: [] }));
   });
 
   it('Should return a response with an asset with the given "id"', async () => {
@@ -35,7 +43,9 @@ describe('Asset API Test', () => {
     });
 
     const { results } = JSON.parse(response.body);
-    expect(results).toEqual(expect.arrayContaining(fakeowner0AssetsResponse.results));
+    expect(results).toEqual(
+      expect.arrayContaining(fakeowner0AssetsResponse.results)
+    );
   });
 
   it('Should return a response with one assset in the given range based on the "owner", "limit" and "offset" options', async () => {
@@ -64,6 +74,8 @@ describe('Asset API Test', () => {
     });
 
     const { results } = JSON.parse(response.body);
-    expect(results).toEqual(expect.arrayContaining(fakeowner1ToolWorldsSchemaAssetsResponse.results));
+    expect(results).toEqual(
+      expect.arrayContaining(fakeowner1ToolWorldsSchemaAssetsResponse.results)
+    );
   });
 });

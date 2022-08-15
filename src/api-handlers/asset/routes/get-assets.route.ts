@@ -2,8 +2,9 @@ import { Asset } from '@common/assets/domain/entities/asset';
 import { GetRoute } from '@core/api/route';
 import { Request, RouteHandler } from '@core/api/api.types';
 import { Result } from '@core/architecture/domain/result';
-import { GetAssetsOptions } from '../domain/entities/asset-request-options';
-import { AssetResponseBody } from '../domain/entities/asset-response-body';
+import { GetAssetsInput } from '../domain/models/get-assets.input';
+import { GetAssetsOutput } from '../domain/models/get-assets.output';
+import { AssetsNotFoundError } from '@common/assets/domain/errors/assets-not-found.error';
 
 /**
  *
@@ -12,11 +13,16 @@ import { AssetResponseBody } from '../domain/entities/asset-response-body';
  */
 export const parseHandlerResultToResponse = (result: Result<Asset[]>) => {
   if (result.isFailure) {
-    // handle failure
+    if (result.failure.error instanceof AssetsNotFoundError) {
+      return {
+        status: 200,
+        body: { results: [] },
+      };
+    }
   }
   return {
     status: 200,
-    body: AssetResponseBody.fromEntities(result.content),
+    body: GetAssetsOutput.fromEntities(result.content),
   };
 };
 
@@ -27,7 +33,7 @@ export const parseHandlerResultToResponse = (result: Result<Asset[]>) => {
  */
 export const parseRequestOptionsToHandlerInput = (request: Request) => {
   // parse DTO (query) to the options required by the controller method
-  return GetAssetsOptions.fromDto(request.query || {});
+  return GetAssetsInput.fromRequest(request.query || {});
 };
 
 /**

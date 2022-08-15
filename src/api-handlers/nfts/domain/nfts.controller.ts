@@ -1,11 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { Failure } from '@core/architecture/domain/failure';
 import { Result } from '@core/architecture/domain/result';
 import { GetNftsUseCase } from './use-cases/get-nfts.use-case';
-import { GetNftsInput } from './entities/get-nfts.input';
-import { LimitExceededError } from '@common/api/domain/errors/limit-exceeded.error';
+import { GetNftsInput } from './models/get-nfts.input';
 import { CountNftsUseCase } from './use-cases/count-nfts.use-case';
-import { GetNftsOutput } from './entities/get-nfts.output';
+import { GetNftsOutput } from './models/get-nfts.output';
 
 /**
  * @class
@@ -21,25 +19,19 @@ export class NftsController {
 
   /**
    * @async
-   * @param {GetNftsInput} options
+   * @param {GetNftsInput} input
    * @returns {Promise<Result<NFT[]>>}
    */
-  public async getNfts(options: GetNftsInput): Promise<Result<GetNftsOutput>> {
-    //
-    if (options.limit > 1000) {
-      return Result.withFailure(
-        Failure.fromError(new LimitExceededError(1000))
-      );
-    }
+  public async getNfts(input: GetNftsInput): Promise<Result<GetNftsOutput>> {
     const { content: nfts, failure: getNftsFailure } =
-      await this.getNftsUseCase.execute(options);
+      await this.getNftsUseCase.execute(input);
 
     if (getNftsFailure) {
       return Result.withFailure(getNftsFailure);
     }
 
     const { content: size, failure: countNftsFailure } =
-      await this.countNftsUseCase.execute(options);
+      await this.countNftsUseCase.execute(input);
 
     if (countNftsFailure) {
       return Result.withFailure(countNftsFailure);

@@ -2,11 +2,10 @@ import { DataSourceBulkWriteError } from '@core/architecture/data/errors/data-so
 import { DataSourceOperationError } from '@core/architecture/data/errors/data-source-operation.error';
 import {
   AggregateOptions,
-  AggregationCursor,
   Collection,
+  CountDocumentsOptions,
   Document,
   Filter,
-  FindCursor,
   FindOptions,
   MatchKeysAndValues,
   OptionalUnlessRequiredId,
@@ -61,12 +60,44 @@ export class CollectionMongoSource<T> {
    * @returns {T[]}
    * @throws {DataSourceWriteError}
    */
-  public async find(
-    filter: Filter<T>,
-    options?: FindOptions
-  ): Promise<FindCursor<WithId<T>>> {
+  public async find(filter: Filter<T>, options?: FindOptions): Promise<T[]> {
     try {
-      return this.collection.find(filter, options);
+      const { sort, limit, skip } = options || {};
+      let cursor = await this.collection.find<T>(filter);
+
+      if (sort) {
+        cursor = cursor.sort(sort);
+      }
+
+      if (skip) {
+        cursor = cursor.skip(skip);
+      }
+
+      if (limit) {
+        cursor = cursor.limit(limit);
+      }
+
+      return cursor.toArray();
+    } catch (error) {
+      throw DataSourceOperationError.fromError(error);
+    }
+  }
+
+  /**
+   * Count documents that matches the filter and options
+   *
+   * @async
+   * @param {Filter<T>} filter
+   * @param {FindOptions} options
+   * @returns {T[]}
+   * @throws {DataSourceWriteError}
+   */
+  public async count(
+    filter: Filter<T>,
+    options?: CountDocumentsOptions
+  ): Promise<number> {
+    try {
+      return this.collection.countDocuments(filter, options);
     } catch (error) {
       throw DataSourceOperationError.fromError(error);
     }
@@ -80,11 +111,12 @@ export class CollectionMongoSource<T> {
    * @throws {DataSourceWriteError}
    */
   public async aggregate(
-    pipeline: T[],
+    pipeline: Document[],
     options?: AggregateOptions
-  ): Promise<AggregationCursor<WithId<T>>> {
+  ): Promise<T[]> {
     try {
-      return this.collection.aggregate(pipeline, options);
+      const cursor = await this.collection.aggregate<T>(pipeline, options);
+      return cursor.toArray();
     } catch (error) {
       throw DataSourceOperationError.fromError(error);
     }
@@ -177,22 +209,5 @@ export class CollectionMongoSource<T> {
     } catch (error) {
       throw DataSourceOperationError.fromError(error);
     }
-  }
-
-  /**
-   * Find documents by data
-   *
-   * @param {T} data
-   * @returns {AtomicTransferDocument}
-   */
-  public async findByData<DataType, OptionsType>(
-    data: DataType,
-    options?: OptionsType
-  ): Promise<WithId<T>[]> {
-    const cursor = Array.isArray(data)
-      ? await this.aggregate(data, options)
-      : await this.find(data, options);
-
-    return cursor.toArray();
   }
 }
