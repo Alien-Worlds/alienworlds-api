@@ -77,7 +77,7 @@ export class GetMinesQueryModel extends QueryModel {
       sort,
     } = this;
 
-    let filter: Filter<MineDocument> = {};
+    const filter: Filter<MineDocument> = {};
 
     if (miner) {
       filter.miner = miner;
@@ -115,7 +115,7 @@ export class GetMinesQueryModel extends QueryModel {
     }
 
     if (txId) {
-      filter = { tx_id: txId };
+      filter.tx_id = txId;
     }
 
     const options: FindOptions = {};

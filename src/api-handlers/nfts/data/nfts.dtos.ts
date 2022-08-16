@@ -8,7 +8,7 @@ export type NftsRequestDto = {
   limit?: number;
   global_sequence_from?: number;
   global_sequence_to?: number;
-  sort?: 'asc' | 'desc';
+  sort?: string;
   miner?: string;
   rarity?: string;
   land_id?: string;

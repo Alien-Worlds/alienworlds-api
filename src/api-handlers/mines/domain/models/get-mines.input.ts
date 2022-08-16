@@ -42,8 +42,6 @@ export class GetMinesInput {
    *
    * @constructor
    * @private
-   * @param {string} from
-   * @param {string} to
    */
   private constructor(
     public readonly limit: number,

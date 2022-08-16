@@ -35,7 +35,7 @@ export class MineLuckRepositoryImpl implements MineLuckRepository {
     }
   }
 
-  private buildMongoAggregationPipeline(from: string, to: string): object[] {
+  private buildMongoAggregationPipeline(from?: string, to?: string): object[] {
     const query: { block_timestamp?: { $gte?: Date; $lt?: Date } } = {};
 
     if (from && to) {
