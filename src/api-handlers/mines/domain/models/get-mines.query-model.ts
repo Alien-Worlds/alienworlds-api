@@ -121,13 +121,12 @@ export class GetMinesQueryModel extends QueryModel {
     const options: FindOptions = {};
 
     if (limit) {
-      options.limit = limit;
+      options.limit = Number(limit);
     }
 
     if (sort && sort.toLowerCase() === 'asc') {
       options.sort = { global_sequence: 1 };
-    }
-    if (sort && sort.toLowerCase() === 'desc') {
+    } else {
       options.sort = { global_sequence: -1 };
     }
 

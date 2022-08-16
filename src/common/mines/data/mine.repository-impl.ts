@@ -10,7 +10,6 @@ import { InsertError } from '../domain/errors/insert.error';
 import { QueryModel } from '@core/architecture/domain/query-model';
 import { MongoFindQueryParams } from '@core/storage/data/mongo.types';
 import { MineDocument } from './mines.dtos';
-import { option } from 'commander';
 
 /**
  * @class
