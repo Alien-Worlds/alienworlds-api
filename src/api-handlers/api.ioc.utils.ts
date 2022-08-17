@@ -6,10 +6,12 @@ export const getJsonRpcProvider = async (
   new Promise((resolve, reject) => {
     try {
       const provider = new providers.JsonRpcProvider(url);
-      provider.addListener('network', () => {
-        return resolve(provider);
-      });
+      // TO DO: find a way to check if it is connected
+      // provider.addListener('network', () => {
+      //   return resolve(provider);
+      // });
+      resolve(provider);
     } catch (error) {
-      return reject(error);
+      reject(error);
     }
   });

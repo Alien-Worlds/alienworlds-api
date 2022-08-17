@@ -83,13 +83,13 @@ export class GetCirculatingSupplyUseCase implements UseCase<string> {
       balances.push(bscBalance / 10000);
     }
 
-    const supply = balances
+    const circulating = balances
       .reduce(
         balanceReducer,
         parseFloat(currencyStats.supply.replace(' TLM', ''))
       )
       .toFixed(4);
 
-    return Result.withContent(supply);
+    return Result.withContent(circulating);
   }
 }

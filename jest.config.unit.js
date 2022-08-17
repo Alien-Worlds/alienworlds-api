@@ -15,6 +15,7 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.ts',
     '!**/use-case.ts',
+    '!**/route.ts',
     '!**/*.fixture.ts',
     '!**/*.mock.ts',
     '!**/*.error.ts',
@@ -23,6 +24,7 @@ module.exports = {
     '!**/schemas/**',
     '!src/**/index.ts',
     '!src/**/*.repository.ts',
+    '!src/**/*.service.ts',
     '!src/**/*.enums.ts',
     '!src/**/*.dtos.ts',
     '!src/**/*.types.ts',

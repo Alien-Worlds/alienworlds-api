@@ -3,7 +3,7 @@
  * @type
  */
 export type TokenRequestDto = {
-  type?: 'circulating' | 'supply';
+  type?: string;
   offset?: number;
   id?: string;
   owner?: string;

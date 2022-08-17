@@ -33,22 +33,14 @@ export class TokenController {
       const getTokenSuppliesResult =
         await this.getTokenSuppliesUseCase.execute();
 
-      if (getTokenSuppliesResult.isFailure) {
-        return Result.withFailure(getTokenSuppliesResult.failure);
-      }
-
-      return Result.withContent(getTokenSuppliesResult.content);
+      return getTokenSuppliesResult;
     }
 
     if (type === TokenType.Circulating) {
       const getCirculatingSupplyResult =
         await this.getCirculatingSupplyUseCase.execute();
 
-      if (getCirculatingSupplyResult.isFailure) {
-        return Result.withFailure(getCirculatingSupplyResult.failure);
-      }
-
-      return Result.withContent(getCirculatingSupplyResult.content);
+      return getCirculatingSupplyResult;
     }
 
     return Result.withFailure(Failure.fromError(new InvalidTypeError()));

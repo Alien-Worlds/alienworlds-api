@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Asset } from '@common/assets/domain/entities/asset';
+import { AssetsNotFoundError } from '@common/assets/domain/errors/assets-not-found.error';
 import { Failure } from '@core/architecture/domain/failure';
 import { Long } from 'mongodb';
 import { AssetRepositoryImpl } from '../asset.repository-impl';
@@ -86,5 +87,83 @@ describe('AssetRepositoryImpl unit tests', () => {
     const result = await repository.update(Asset.fromDto(dto));
     expect(result.content).toBeUndefined();
     expect(result.failure).toBeInstanceOf(Failure);
+  });
+
+  it('Should return assets', async () => {
+    const assetsMongoSourceMock = {
+      find: () => [dto],
+    } as any;
+    const queryModel = {
+      toQueryParams: () => ({}),
+    };
+    const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
+    const result = await repository.getAssets(queryModel as any);
+    expect(result.content).toEqual([Asset.fromDto(dto)]);
+  });
+
+  it('Should result with a failure when no assets were wound', async () => {
+    const assetsMongoSourceMock = {
+      find: () => [],
+    } as any;
+    const queryModel = {
+      toQueryParams: () => ({}),
+    };
+    const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
+    const result = await repository.getAssets(queryModel as any);
+    expect(result.failure.error).toBeInstanceOf(AssetsNotFoundError);
+  });
+
+  it('Should result with a failure when fetching assets fails', async () => {
+    const assetsMongoSourceMock = {
+      find: () => {
+        throw new Error('some error');
+      },
+    } as any;
+    const queryModel = {
+      toQueryParams: () => ({}),
+    };
+    const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
+    const result = await repository.getAssets(queryModel as any);
+
+    expect(result.isFailure).toBeTruthy();
+  });
+
+  it('Should return assets by assetId', async () => {
+    const assetsMongoSourceMock = {
+      findManyByAssetIds: () => [dto],
+    } as any;
+    const queryModel = {
+      toQueryParams: () => ({}),
+    };
+    const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
+    const result = await repository.getManyByAssetId(queryModel as any);
+    expect(result.content).toEqual([Asset.fromDto(dto)]);
+  });
+
+  it('Should result with a failure when no assets matching assetId were wound', async () => {
+    const assetsMongoSourceMock = {
+      findManyByAssetIds: () => [],
+    } as any;
+    const queryModel = {
+      toQueryParams: () => ({}),
+    };
+    const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
+    const result = await repository.getManyByAssetId(queryModel as any);
+    expect(result.failure.error).toBeInstanceOf(AssetsNotFoundError);
+  });
+
+  it('Should result with a failure when fetching assets by assetId fails', async () => {
+    const assetsMongoSourceMock = {
+      findManyByAssetIds: () => {
+        throw new Error('some error');
+      },
+    } as any;
+    const queryModel = {
+      toQueryParams: () => ({}),
+    };
+    const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
+    const result = await repository.getManyByAssetId(queryModel as any);
+
+    expect(result.isFailure).toBeTruthy();
   });
 });

@@ -3,10 +3,8 @@ import { Result } from '@core/architecture/domain/result';
 import { ContractService } from '../domain/services/contract.service';
 import { ContractInterface } from './token.dtos';
 
-export class ContractServiceImpl extends ContractService {
-  constructor(private contract: ContractInterface) {
-    super();
-  }
+export class ContractServiceImpl implements ContractService {
+  constructor(private contract: ContractInterface) {}
 
   /**
    * Get balance of the given account

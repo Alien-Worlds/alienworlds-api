@@ -26,7 +26,7 @@ export class AssetMongoSource extends CollectionMongoSource<AssetDocument> {
    */
   public async findByAssetId(assetId: bigint): Promise<AssetDocument> {
     return this.findOne({
-      asset_ids: Long.fromBigInt(assetId),
+      asset_id: Long.fromBigInt(assetId),
     });
   }
 
