@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { connectMongo } from '@core/storage/data/data-sources/connect-mongo.helper';
+import { connectMongo } from '@core/storage/data/data-sources/mongo.helpers';
 import { config } from './config';
 
 (async () => {

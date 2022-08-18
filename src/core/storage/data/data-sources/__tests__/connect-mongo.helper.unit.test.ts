@@ -1,4 +1,4 @@
-import { connectMongo } from '../connect-mongo.helper';
+import { connectMongo } from '../mongo.helpers';
 
 const mockedDb = 'mockedDb';
 

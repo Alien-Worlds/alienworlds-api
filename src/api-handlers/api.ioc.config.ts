@@ -1,4 +1,5 @@
 import { AsyncContainerModule, Container } from 'inversify';
+import { config } from '@config';
 import { AssetMongoSource } from '@common/assets/data/data-sources/asset.mongo.source';
 import { AssetRepositoryImpl } from '@common/assets/data/repositories/asset.repository-impl';
 import { AssetRepository } from '@common/assets/domain/repositories/asset.repository';
@@ -10,8 +11,6 @@ import { MineRepository } from '@common/mines/domain/mine.repository';
 import { NftMongoSource } from '@common/nfts/data/data-sources/nft.mongo.source';
 import { NftRepositoryImpl } from '@common/nfts/data/repositories/nft.repository-impl';
 import { NftRepository } from '@common/nfts/domain/repositories/nft.repository';
-import { config } from '@config';
-import { connectMongo } from '@core/storage/data/data-sources/connect-mongo.helper';
 import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { Contract } from 'ethers';
 import { AssetController } from './asset/domain/asset.controller';
@@ -33,12 +32,20 @@ import { GetTokenSuppliesUseCase } from './token/domain/use-cases/get-token-supp
 import { CountNftsUseCase } from './nfts/domain/use-cases/count-nfts.use-case';
 import { getJsonRpcProvider } from './api.ioc.utils';
 import { ContractInterface } from './token/data/token.dtos';
+import { MongoClient } from 'mongodb';
+
+/**
+ * MONGO
+ */
+const { url, dbName } = config.mongo;
+const client = new MongoClient(url);
 
 const bindings = new AsyncContainerModule(async bind => {
   /**
    * MONGO DB (source & repositories)
    */
-  const db = await connectMongo(config.mongo);
+  await client.connect();
+  const db = client.db(dbName);
   const mongoSource = new MongoSource(db);
   const mineRepository = new MineRepositoryImpl(
     new MineMongoSource(mongoSource)
@@ -152,4 +159,8 @@ export const apiIoc = new Container();
 export const setupApiIoc = async () => {
   await apiIoc.loadAsync(bindings);
   return apiIoc;
+};
+export const disposeApiIoc = async () => {
+  await client.close();
+  apiIoc.unbindAll();
 };

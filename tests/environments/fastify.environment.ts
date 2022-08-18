@@ -1,6 +1,7 @@
 import { buildAPI } from '../../src/api-handlers/api';
 import { TestEnvironment, TestHooks } from './test-environment';
 import { TestEnvironmentServer } from './api-test-environment';
+import { disposeApiIoc } from '../../src/api-handlers/api.ioc.config';
 
 export class FastifyTestEnvironment implements TestEnvironment {
   private _server;
@@ -26,6 +27,7 @@ export class FastifyTestEnvironment implements TestEnvironment {
     }
 
     afterAll(async () => {
+      await disposeApiIoc();
       if (hooks?.afterAll) {
         await hooks.afterAll();
       }

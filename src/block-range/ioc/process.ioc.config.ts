@@ -15,7 +15,7 @@ import { GetCurrentAbiUseCase } from '@common/abi/domain/use-cases/get-current-a
 import { BlockRangeScanMongoSource } from '@common/block-range-scan/data/data-sources/block-range-scan.mongo.source';
 import { BlockRangeScanRepository } from '@common/block-range-scan/domain/repositories/block-range-scan.repository';
 import { BlockRangeScanRepositoryImpl } from '@common/block-range-scan/data/block-range-scan.repository-impl';
-import { connectMongo } from '@core/storage/data/data-sources/connect-mongo.helper';
+import { connectMongo } from '@core/storage/data/data-sources/mongo.helpers';
 import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { ActionProcessingQueueService } from '@common/data-processing-queue/domain/services/action-processing-queue.service';
 import { ActionProcessingQueueServiceImpl } from '@common/data-processing-queue/data/action-processing-queue.service-impl';
