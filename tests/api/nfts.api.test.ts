@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
+import { ListNftsOutput } from '../../src/api-handlers/nfts/domain/models/list-nfts.output';
 import { createApiTestEnvironment } from '../environments';
 import {
   emptyNftsResponse,
@@ -11,35 +14,45 @@ import {
   rareNftsResponse,
 } from './fixtures/nfts.fixture';
 
+jest.mock('ethers');
+jest.mock('../../src/api-handlers/api.ioc.utils');
+const getJsonRpcProviderMock = getJsonRpcProvider as jest.MockedFunction<
+  typeof getJsonRpcProvider
+>;
+getJsonRpcProviderMock.mockResolvedValue({} as any);
+
 const environment = createApiTestEnvironment();
 environment.initialize();
 
 describe('NFTS API Test', () => {
-  it('Should return 200', async () => {
+  it('Should return empty list when no nfts were found', async () => {
     const response = await environment.server.inject({
       method: 'GET',
-      url: '/v1/alienworlds/nfts?land_id=1099512961112',
+      url: '/v1/alienworlds/nfts?land_id=0000000001',
     });
 
     expect(response.statusCode).toEqual(200);
+    expect(response.body).toEqual(
+      JSON.stringify(ListNftsOutput.create().toJson())
+    );
   });
 
-  it('Should return Error if limit is > 1000', async () => {
+  it('Should return 400 if limit is > 1000', async () => {
     const response = await environment.server.inject({
       method: 'GET',
       url: '/v1/alienworlds/nfts?limit=2000',
     });
 
-    expect(response.statusCode).toEqual(500);
+    expect(response.statusCode).toEqual(400);
   });
 
-  it('Should return Error if wrong sort was provided', async () => {
+  it('Should return 400 if wrong sort was provided', async () => {
     const response = await environment.server.inject({
       method: 'GET',
       url: '/v1/alienworlds/nfts?sort=FAKE',
     });
 
-    expect(response.statusCode).toEqual(500);
+    expect(response.statusCode).toEqual(400);
   });
 
   it('Should return the amount of nft corresponding to the given "limit"', async () => {

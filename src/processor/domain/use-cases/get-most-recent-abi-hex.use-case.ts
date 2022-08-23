@@ -9,7 +9,7 @@ import { MostRecentAbiHex } from '../entities/most-recent-abi-hex';
  */
 @injectable()
 export class GetMostRecentAbiHexUseCase implements UseCase {
-  public static Token = 'GET_MOST_RECENT_ABI_HEX_USE_CASE';
+  public static Token = 'LIST_MOST_RECENT_ABI_HEX_USE_CASE';
 
   /**
    * @constructor

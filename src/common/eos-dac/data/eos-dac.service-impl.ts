@@ -97,10 +97,11 @@ export class EosDacServiceImpl {
         }),
         headers: { 'Content-Type': 'application/json' },
       };
-      const dto = this.sendRequest(
+      const dto = await this.sendRequest(
         `${config.endpoints[0]}/v1/chain/get_currency_balance`,
         options
       );
+
       // map dto to float number
       const [balance] = dto[0].split(' ');
       return Result.withContent(parseFloat(balance));

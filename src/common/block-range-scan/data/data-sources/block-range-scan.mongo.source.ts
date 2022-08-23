@@ -1,7 +1,7 @@
 import { BlockNumberOutOfRangeError } from '@common/block-range-scan/domain/errors/block-number-out-of-range.error';
 import { parseToBigInt } from '@common/utils/dto.utils';
-import { CollectionMongoSource } from '@core/storage/data-sources/collection.mongo.source';
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { CollectionMongoSource } from '@core/storage/data/data-sources/collection.mongo.source';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { Long } from 'mongodb';
 import { BlockRangeScanDocument } from '../block-range-scan.dtos';
 

@@ -51,3 +51,18 @@ export type MineMessageData = {
   bag_items?: string[];
   offset?: number;
 };
+
+/**
+ * Represents the possible search query options
+ * @type
+ */
+export type MinesSearchQuery = {
+  block_timestamp?: { $gte?: Date; $lt?: Date };
+  global_sequence?: { $gte?: number; $lt?: number };
+  miner?: string;
+  landowner?: { $in: string[] };
+  land_id?: { $in: string[] };
+  planet_name?: string;
+  tx_id?: string;
+  sort?: string;
+};

@@ -16,7 +16,7 @@
     "lint-prettier": "yarn prettier --check \"src/\"",
     "lint-prettier-fix": "yarn prettier --write \"src/\"",
     "test:unit": "jest --config=jest.config.unit.js",
-    "test:api": "jest --config=jest.config.api.js",
+    "test:api": "jest --config=jest.config.api.js --detectOpenHandles",
     "build": "node ./scripts/create-env.js && yarn clean && tsc && yarn abis",
     "build-tests:api": "node ./scripts/create-env.js && yarn clean && tsc",
     "clean": "rm -rf ./dist",

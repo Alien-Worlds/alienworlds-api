@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BlockNumberOutOfRangeError } from '@common/block-range-scan/domain/errors/block-number-out-of-range.error';
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { Long } from 'mongodb';
 import { BlockRangeScanMongoSource } from '../block-range-scan.mongo.source';
 

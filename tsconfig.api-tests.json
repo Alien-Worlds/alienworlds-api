@@ -17,11 +17,12 @@
       "@core/*": ["core/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/api-handlers/*"],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
     "**/*.fixture.ts",
-    "**/__mocks__/**"
+    "**/__mocks__/**",
+    "**/__tests__/**"
   ]
 }

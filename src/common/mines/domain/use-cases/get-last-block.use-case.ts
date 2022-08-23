@@ -9,7 +9,7 @@ import { MineRepository } from '../mine.repository';
  */
 @injectable()
 export class GetLastBlockUseCase implements UseCase<Mine> {
-  public static Token = 'GET_LAST_BLOCK_USE_CASE';
+  public static Token = 'LIST_LAST_BLOCK_USE_CASE';
 
   /**
    * @constructor

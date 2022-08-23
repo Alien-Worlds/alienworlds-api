@@ -1,6 +1,7 @@
-import { buildAPI } from '../../src/api';
+import { buildAPI } from '../../src/api-handlers/api';
 import { TestEnvironment, TestHooks } from './test-environment';
 import { TestEnvironmentServer } from './api-test-environment';
+import { disposeApiIoc } from '../../src/api-handlers/api.ioc.config';
 
 export class FastifyTestEnvironment implements TestEnvironment {
   private _server;
@@ -31,6 +32,7 @@ export class FastifyTestEnvironment implements TestEnvironment {
       }
       if (this._server) {
         await this._server.close();
+        await disposeApiIoc();
       }
     });
   }

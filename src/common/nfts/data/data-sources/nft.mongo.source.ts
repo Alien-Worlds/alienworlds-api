@@ -1,7 +1,7 @@
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { DataSourceOperationError } from '@core/architecture/data/errors/data-source-operation.error';
 import { NftDocument } from '../nfts.dtos';
-import { CollectionMongoSource } from '@core/storage/data-sources/collection.mongo.source';
+import { CollectionMongoSource } from '@core/storage/data/data-sources/collection.mongo.source';
 
 /**
  * NFTs data source from the mongo database

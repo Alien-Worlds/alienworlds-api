@@ -7,6 +7,9 @@ import { MineRepository } from '../domain/mine.repository';
 import { MineMongoSource } from './data-sources/mine.mongo.source';
 import { DataSourceOperationError } from '@core/architecture/data/errors/data-source-operation.error';
 import { InsertError } from '../domain/errors/insert.error';
+import { QueryModel } from '@core/architecture/domain/query-model';
+import { MongoFindQueryParams } from '@core/storage/data/mongo.types';
+import { MineDocument } from './mines.dtos';
 
 /**
  * @class
@@ -17,6 +20,18 @@ export class MineRepositoryImpl implements MineRepository {
    * @param {MineMongoSource} minesMongoSource
    */
   constructor(private minesMongoSource: MineMongoSource) {}
+
+  public async listMines(
+    model: QueryModel<MongoFindQueryParams<MineDocument>>
+  ): Promise<Result<Mine[], Error>> {
+    try {
+      const { options, filter } = model.toQueryParams();
+      const dtos = await this.minesMongoSource.find(filter, options);
+      return Result.withContent(dtos.map(Mine.fromDto));
+    } catch (error) {
+      return Result.withFailure(Failure.fromError(error));
+    }
+  }
 
   /**
    * Gets the last block indexed

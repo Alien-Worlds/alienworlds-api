@@ -1,6 +1,6 @@
 import { MineDocument } from '../mines.dtos';
-import { CollectionMongoSource } from '@core/storage/data-sources/collection.mongo.source';
-import { MongoSource } from '@core/storage/data-sources/mongo.source';
+import { CollectionMongoSource } from '@core/storage/data/data-sources/collection.mongo.source';
+import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 
 /**
  * Mines data source from the mongo database

@@ -1,3 +1,4 @@
+import { QueryModel } from '@core/architecture/domain/query-model';
 import { Result } from '@core/architecture/domain/result';
 import { injectable } from 'inversify';
 import { Mine } from './entities/mine';
@@ -12,6 +13,7 @@ import { InsertError } from './errors/insert.error';
 export abstract class MineRepository {
   public static Token = 'MINE_REPOSITORY';
 
+  public abstract listMines(model: QueryModel): Promise<Result<Mine[]>>;
   public abstract getLastBlock(): Promise<Result<Mine>>;
   public abstract insertOne(
     mines: Mine
