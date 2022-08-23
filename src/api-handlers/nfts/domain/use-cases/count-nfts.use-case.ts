@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Result } from '@core/architecture/domain/result';
 import { UseCase } from '@core/architecture/domain/use-case';
 import { NftRepository } from '@common/nfts/domain/repositories/nft.repository';
-import { GetNftsInput } from '../models/get-nfts.input';
+import { ListNftsInput } from '../models/list-nfts.input';
 import { CountNftsQueryModel } from '../models/count-nfts.query-model';
 
 /**
@@ -22,7 +22,7 @@ export class CountNftsUseCase implements UseCase<number> {
    * @param {string} scanKey
    * @returns {Promise<Result<NFT[]>>}
    */
-  public async execute(model: GetNftsInput): Promise<Result<number>> {
+  public async execute(model: ListNftsInput): Promise<Result<number>> {
     return this.nftRepository.countNfts(CountNftsQueryModel.create(model));
   }
 }

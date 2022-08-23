@@ -4,7 +4,7 @@ import { MineParamsData } from '@common/mines/data/mines.dtos';
  * Represents the available /asset request query options
  * @type
  */
-export type MinesRequestDto = {
+export type ListMinesRequestDto = {
   limit?: number;
   from?: string;
   to?: string;
@@ -22,7 +22,7 @@ export type MinesRequestDto = {
  *
  * @type
  */
-export type MinesResultDto = {
+export type MineResultDto = {
   _id: string;
   miner: string;
   params: MineParamsData;
@@ -36,18 +36,4 @@ export type MinesResultDto = {
   block_timestamp: Date;
   global_sequence: number;
   tx_id: string;
-};
-
-/**
- * Represents the possible search query options
- * @type
- */
-export type MinesSearchQuery = {
-  block_timestamp?: { $gte?: Date; $lt?: Date };
-  global_sequence?: { $gte?: number; $lt?: number };
-  miner?: string;
-  landowner?: { $in: string[] };
-  land_id?: { $in: string[] };
-  planet_name?: string;
-  tx_id?: string;
 };

@@ -83,7 +83,7 @@ export class AssetRepositoryImpl implements AssetRepository {
    * @param {QueryModel} query
    * @returns {Promise<Result<Asset[]>>}
    */
-  public async getAssets(
+  public async listAssets(
     query: QueryModel<MongoFindQueryParams<AssetDocument>>
   ): Promise<Result<Asset[]>> {
     try {

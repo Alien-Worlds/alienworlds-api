@@ -1,8 +1,8 @@
 import { Result } from '@core/architecture/domain/result';
 import { inject, injectable } from 'inversify';
 import { MineLuck } from './entities/mine-luck';
-import { GetMineLuckInput } from './models/get-mine-luck.input';
-import { GetMineLuckUseCase } from './use-cases/get-mine-luck.use-case';
+import { ListMineLuckInput } from './models/list-mine-luck.input';
+import { ListMineLuckUseCase } from './use-cases/list-mine-luck.use-case';
 
 /**
  * @class
@@ -12,18 +12,18 @@ export class MineLuckController {
   public static Token = 'MINELUCK_CONTROLLER';
 
   constructor(
-    @inject(GetMineLuckUseCase.Token)
-    private getMineLuckUseCase: GetMineLuckUseCase
+    @inject(ListMineLuckUseCase.Token)
+    private listMineLuckUseCase: ListMineLuckUseCase
   ) {}
 
   /**
    * @async
-   * @param {GetMineLuckInput} options
+   * @param {ListMineLuckInput} options
    * @returns {Promise<Result<MineLuck[]>>}
    */
-  public async getMineLuck(
-    input: GetMineLuckInput
+  public async listMineLuck(
+    input: ListMineLuckInput
   ): Promise<Result<MineLuck[]>> {
-    return this.getMineLuckUseCase.execute(input);
+    return this.listMineLuckUseCase.execute(input);
   }
 }

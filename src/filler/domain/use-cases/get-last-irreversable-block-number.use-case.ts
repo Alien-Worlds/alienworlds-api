@@ -12,7 +12,7 @@ import { LastIrreversableBlockNotFoundError } from '../errors/last-irreversable-
  */
 @injectable()
 export class GetLastIrreversableBlockNumUseCase implements UseCase<bigint> {
-  public static Token = 'GET_LAST_IRREVERSABLE_BLOCK_NUMBER_USE_CASE';
+  public static Token = 'LIST_LAST_IRREVERSABLE_BLOCK_NUMBER_USE_CASE';
 
   /**
    * @constructor

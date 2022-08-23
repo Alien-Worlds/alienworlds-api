@@ -15,5 +15,5 @@ export abstract class AssetRepository {
   public abstract update(entity: Asset): Promise<Result<Asset>>;
   public abstract getByAssetId(assetId: bigint): Promise<Result<Asset>>;
   public abstract getManyByAssetId(assetId: bigint[]): Promise<Result<Asset[]>>;
-  public abstract getAssets(query: QueryModel): Promise<Result<Asset[]>>;
+  public abstract listAssets(query: QueryModel): Promise<Result<Asset[]>>;
 }

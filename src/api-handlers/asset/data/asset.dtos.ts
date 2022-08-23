@@ -2,7 +2,7 @@
  * Represents the available /asset request query options
  * @type
  */
-export type AssetRequestDto = {
+export type ListAssetsRequestDto = {
   limit?: number;
   offset?: number;
   id?: string;

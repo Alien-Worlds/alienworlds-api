@@ -4,7 +4,7 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 import { CountNftsUseCase } from '../count-nfts.use-case';
-import { GetNftsInput } from '../../models/get-nfts.input';
+import { ListNftsInput } from '../../models/list-nfts.input';
 import { NftRepository } from '@common/nfts/domain/repositories/nft.repository';
 
 const nftRepository = {
@@ -51,7 +51,7 @@ describe('Asset Controller Unit tests', () => {
   });
 
   it('Should call nftRepository.countNfts', async () => {
-    await useCase.execute(GetNftsInput.fromDto(dto));
+    await useCase.execute(ListNftsInput.fromDto(dto));
 
     expect(nftRepository.countNfts).toBeCalled();
   });

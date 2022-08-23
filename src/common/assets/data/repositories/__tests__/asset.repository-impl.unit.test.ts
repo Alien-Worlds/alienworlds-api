@@ -97,7 +97,7 @@ describe('AssetRepositoryImpl unit tests', () => {
       toQueryParams: () => ({}),
     };
     const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
-    const result = await repository.getAssets(queryModel as any);
+    const result = await repository.listAssets(queryModel as any);
     expect(result.content).toEqual([Asset.fromDto(dto)]);
   });
 
@@ -109,7 +109,7 @@ describe('AssetRepositoryImpl unit tests', () => {
       toQueryParams: () => ({}),
     };
     const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
-    const result = await repository.getAssets(queryModel as any);
+    const result = await repository.listAssets(queryModel as any);
     expect(result.failure.error).toBeInstanceOf(AssetsNotFoundError);
   });
 
@@ -123,7 +123,7 @@ describe('AssetRepositoryImpl unit tests', () => {
       toQueryParams: () => ({}),
     };
     const repository = new AssetRepositoryImpl(assetsMongoSourceMock);
-    const result = await repository.getAssets(queryModel as any);
+    const result = await repository.listAssets(queryModel as any);
 
     expect(result.isFailure).toBeTruthy();
   });

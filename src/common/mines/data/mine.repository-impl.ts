@@ -21,7 +21,7 @@ export class MineRepositoryImpl implements MineRepository {
    */
   constructor(private minesMongoSource: MineMongoSource) {}
 
-  public async getMines(
+  public async listMines(
     model: QueryModel<MongoFindQueryParams<MineDocument>>
   ): Promise<Result<Mine[], Error>> {
     try {

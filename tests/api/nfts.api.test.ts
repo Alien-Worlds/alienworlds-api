@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
-import { GetNftsOutput } from '../../src/api-handlers/nfts/domain/models/get-nfts.output';
+import { ListNftsOutput } from '../../src/api-handlers/nfts/domain/models/list-nfts.output';
 import { createApiTestEnvironment } from '../environments';
 import {
   emptyNftsResponse,
@@ -32,7 +33,7 @@ describe('NFTS API Test', () => {
 
     expect(response.statusCode).toEqual(200);
     expect(response.body).toEqual(
-      JSON.stringify(GetNftsOutput.create().toJson())
+      JSON.stringify(ListNftsOutput.create().toJson())
     );
   });
 

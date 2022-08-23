@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify';
 import { Result } from '@core/architecture/domain/result';
-import { GetNftsUseCase } from './use-cases/get-nfts.use-case';
-import { GetNftsInput } from './models/get-nfts.input';
+import { ListNftsUseCase } from './use-cases/list-nfts.use-case';
+import { ListNftsInput } from './models/list-nfts.input';
 import { CountNftsUseCase } from './use-cases/count-nfts.use-case';
-import { GetNftsOutput } from './models/get-nfts.output';
+import { ListNftsOutput } from './models/list-nfts.output';
 
 /**
  * @class
@@ -13,21 +13,21 @@ export class NftsController {
   public static Token = 'NFTS_CONTROLLER';
 
   constructor(
-    @inject(GetNftsUseCase.Token) private getNftsUseCase: GetNftsUseCase,
+    @inject(ListNftsUseCase.Token) private listNftsUseCase: ListNftsUseCase,
     @inject(CountNftsUseCase.Token) private countNftsUseCase: CountNftsUseCase
   ) {}
 
   /**
    * @async
-   * @param {GetNftsInput} input
+   * @param {ListNftsInput} input
    * @returns {Promise<Result<NFT[]>>}
    */
-  public async getNfts(input: GetNftsInput): Promise<Result<GetNftsOutput>> {
-    const { content: nfts, failure: getNftsFailure } =
-      await this.getNftsUseCase.execute(input);
+  public async listNfts(input: ListNftsInput): Promise<Result<ListNftsOutput>> {
+    const { content: nfts, failure: listNftsFailure } =
+      await this.listNftsUseCase.execute(input);
 
-    if (getNftsFailure) {
-      return Result.withFailure(getNftsFailure);
+    if (listNftsFailure) {
+      return Result.withFailure(listNftsFailure);
     }
 
     const { content: size, failure: countNftsFailure } =
@@ -37,6 +37,6 @@ export class NftsController {
       return Result.withFailure(countNftsFailure);
     }
 
-    return Result.withContent(GetNftsOutput.create(nfts, size));
+    return Result.withContent(ListNftsOutput.create(nfts, size));
   }
 }

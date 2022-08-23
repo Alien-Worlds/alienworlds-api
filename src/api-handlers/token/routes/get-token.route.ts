@@ -10,7 +10,7 @@ import { TokenType } from '../token.enums';
  * @param {Result<NFT[]>} result
  * @returns
  */
-export const parseHandlerResultToResponse = (result: Result<string>) => {
+export const parseResultToControllerOutput = (result: Result<string>) => {
   if (result.isFailure) {
     // handle failure
     const { error } = result.failure;
@@ -34,7 +34,7 @@ export const parseHandlerResultToResponse = (result: Result<string>) => {
  * @param {Request} request
  * @returns
  */
-export const parseRequestOptionsToHandlerInput = (request: Request) => {
+export const parseRequestToControllerInput = (request: Request) => {
   // parse DTO (query) to the options required by the controller method
   return GetTokenInput.fromDto(request.query || {});
 };
@@ -50,8 +50,8 @@ export class GetTokenRoute extends GetRoute {
   private constructor(handler: RouteHandler) {
     super('/v1/alienworlds/token', handler, {
       hooks: {
-        pre: parseRequestOptionsToHandlerInput,
-        post: parseHandlerResultToResponse,
+        pre: parseRequestToControllerInput,
+        post: parseResultToControllerOutput,
       },
       validators: {
         request: (request: Request<TokenRequestDto>) => {

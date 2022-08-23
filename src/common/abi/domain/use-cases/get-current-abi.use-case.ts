@@ -9,7 +9,7 @@ import { Abi } from '../entities/abi';
  */
 @injectable()
 export class GetCurrentAbiUseCase implements UseCase {
-  public static Token = 'GET_CURRENT_ABI_USE_CASE';
+  public static Token = 'LIST_CURRENT_ABI_USE_CASE';
 
   /**
    * @constructor

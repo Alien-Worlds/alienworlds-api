@@ -1,8 +1,8 @@
 import { Asset } from '@common/assets/domain/entities/asset';
 import { Result } from '@core/architecture/domain/result';
 import { inject, injectable } from 'inversify';
-import { GetAssetsInput } from './models/get-assets.input';
-import { GetAssetsUseCase } from './use-cases/get-assets.use-case';
+import { ListAssetsInput } from './models/list-assets.input';
+import { ListAssetsUseCase } from './use-cases/list-assets.use-case';
 
 /**
  * @class
@@ -12,15 +12,16 @@ export class AssetController {
   public static Token = 'ASSET_CONTROLLER';
 
   constructor(
-    @inject(GetAssetsUseCase.Token) private getAssetsUseCase: GetAssetsUseCase
+    @inject(ListAssetsUseCase.Token)
+    private listAssetsUseCase: ListAssetsUseCase
   ) {}
 
   /**
    * @async
-   * @param {GetAssetsInput} input
+   * @param {ListAssetsInput} input
    * @returns {Promise<Result<Asset[]>>}
    */
-  public async getAssets(input: GetAssetsInput): Promise<Result<Asset[]>> {
-    return this.getAssetsUseCase.execute(input);
+  public async listAssets(input: ListAssetsInput): Promise<Result<Asset[]>> {
+    return this.listAssetsUseCase.execute(input);
   }
 }

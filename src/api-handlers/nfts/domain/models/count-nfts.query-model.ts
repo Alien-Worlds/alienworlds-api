@@ -1,15 +1,15 @@
 import { NftDocument } from '@common/nfts/data/nfts.dtos';
 import { MongoFindQueryParams } from '@core/storage/data/mongo.types';
-import { GetNftsInput } from './get-nfts.input';
-import { GetNftsQueryModel } from './get-nfts.query-model';
+import { ListNftsInput } from './list-nfts.input';
+import { ListNftsQueryModel } from './list-nfts.query-model';
 
-export class CountNftsQueryModel extends GetNftsQueryModel {
+export class CountNftsQueryModel extends ListNftsQueryModel {
   /**
    *
    * @param options
    * @returns
    */
-  public static create(model: GetNftsInput): CountNftsQueryModel {
+  public static create(model: ListNftsInput): CountNftsQueryModel {
     const {
       from,
       to,

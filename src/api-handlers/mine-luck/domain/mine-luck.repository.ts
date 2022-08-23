@@ -10,7 +10,7 @@ import { MineLuck } from './entities/mine-luck';
 export abstract class MineLuckRepository {
   public static Token = 'MINE_LUCK_REPOSITORY';
 
-  public abstract getMineLuck(
+  public abstract listMineLuck(
     from: string,
     to: string
   ): Promise<Result<MineLuck[]>>;

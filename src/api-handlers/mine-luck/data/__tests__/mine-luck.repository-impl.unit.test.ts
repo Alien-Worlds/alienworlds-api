@@ -22,9 +22,9 @@ describe('MineLuckRepositoryImpl Unit tests', () => {
   it('Should result with the list of MineLuck entities', async () => {
     const repository = new MineLuckRepositoryImpl(minesMongoSourceMock as any);
 
-    const result = await repository.getMineLuck(
-      '2021-12-06T10:00:0.000Z',
-      '2021-12-06T11:00:0.000Z'
+    const result = await repository.listMineLuck(
+      '2021-12-06T10:00:00.000Z',
+      '2021-12-06T11:00:00.000Z'
     );
 
     expect(result.content).toEqual([MineLuck.fromDto(dto)]);
@@ -36,9 +36,9 @@ describe('MineLuckRepositoryImpl Unit tests', () => {
     });
     const repository = new MineLuckRepositoryImpl(minesMongoSourceMock as any);
 
-    const result = await repository.getMineLuck(
-      '2021-12-06T10:00:0.000Z',
-      '2021-12-06T11:00:0.000Z'
+    const result = await repository.listMineLuck(
+      '2021-12-06T10:00:00.000Z',
+      '2021-12-06T11:00:00.000Z'
     );
 
     expect(result.isFailure).toEqual(true);
@@ -51,8 +51,8 @@ describe('MineLuckRepositoryImpl Unit tests', () => {
     const repository = new MineLuckRepositoryImpl(minesMongoSourceMock as any);
 
     const pipeline = (repository as any).buildMongoAggregationPipeline(
-      '2021-12-06T10:00:0.000Z',
-      '2021-12-06T11:00:0.000Z'
+      '2021-12-06T10:00:00.000Z',
+      '2021-12-06T11:00:00.000Z'
     );
 
     expect(pipeline).toEqual([
@@ -115,7 +115,7 @@ describe('MineLuckRepositoryImpl Unit tests', () => {
     const repository = new MineLuckRepositoryImpl(minesMongoSourceMock as any);
 
     const pipeline = (repository as any).buildMongoAggregationPipeline(
-      '2021-12-06T10:00:0.000Z'
+      '2021-12-06T10:00:00.000Z'
     );
 
     expect(pipeline[0]['$match']['block_timestamp']['$gte']).toEqual(
@@ -131,7 +131,7 @@ describe('MineLuckRepositoryImpl Unit tests', () => {
 
     const pipeline = (repository as any).buildMongoAggregationPipeline(
       null,
-      '2021-12-06T11:00:0.000Z'
+      '2021-12-06T11:00:00.000Z'
     );
     expect(pipeline[0]['$match']['block_timestamp']['$lt']).toEqual(
       new Date('2021-12-06T11:00:00.000Z')

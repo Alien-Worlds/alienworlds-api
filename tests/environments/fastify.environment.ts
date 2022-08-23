@@ -27,12 +27,12 @@ export class FastifyTestEnvironment implements TestEnvironment {
     }
 
     afterAll(async () => {
-      await disposeApiIoc();
       if (hooks?.afterAll) {
         await hooks.afterAll();
       }
       if (this._server) {
         await this._server.close();
+        await disposeApiIoc();
       }
     });
   }

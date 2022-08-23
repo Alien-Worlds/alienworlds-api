@@ -13,7 +13,7 @@ import { InsertError } from './errors/insert.error';
 export abstract class MineRepository {
   public static Token = 'MINE_REPOSITORY';
 
-  public abstract getMines(model: QueryModel): Promise<Result<Mine[]>>;
+  public abstract listMines(model: QueryModel): Promise<Result<Mine[]>>;
   public abstract getLastBlock(): Promise<Result<Mine>>;
   public abstract insertOne(
     mines: Mine

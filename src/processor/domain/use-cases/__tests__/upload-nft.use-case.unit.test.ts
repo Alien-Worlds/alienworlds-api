@@ -44,7 +44,7 @@ const actionProcessingQueueServiceMock = {
 };
 const nftRepositoryMock = {
   add: jest.fn(),
-  getNfts: jest.fn(),
+  listNfts: jest.fn(),
   countNfts: jest.fn(),
 };
 

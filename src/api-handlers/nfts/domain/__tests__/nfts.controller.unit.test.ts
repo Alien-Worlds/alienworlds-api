@@ -4,13 +4,13 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 import { NftsController } from '../nfts.controller';
-import { GetNftsUseCase } from '../use-cases/get-nfts.use-case';
+import { ListNftsUseCase } from '../use-cases/list-nfts.use-case';
 import { CountNftsUseCase } from '../use-cases/count-nfts.use-case';
-import { GetNftsInput } from '../models/get-nfts.input';
+import { ListNftsInput } from '../models/list-nfts.input';
 import { Result } from '@core/architecture/domain/result';
 import { Failure } from '@core/architecture/domain/failure';
 
-const getNftsUseCase = {
+const listNftsUseCase = {
   execute: jest.fn(),
 };
 
@@ -37,8 +37,8 @@ describe('Nfts Controller Unit tests', () => {
   beforeAll(() => {
     container = new Container();
     container
-      .bind<GetNftsUseCase>(GetNftsUseCase.Token)
-      .toConstantValue(getNftsUseCase as any);
+      .bind<ListNftsUseCase>(ListNftsUseCase.Token)
+      .toConstantValue(listNftsUseCase as any);
     container
       .bind<CountNftsUseCase>(CountNftsUseCase.Token)
       .toConstantValue(countNftsUseCase as any);
@@ -58,30 +58,30 @@ describe('Nfts Controller Unit tests', () => {
     expect(NftsController.Token).not.toBeNull();
   });
 
-  it('Should execute getNftsUseCase and countNftsUseCase', async () => {
-    getNftsUseCase.execute.mockResolvedValue(Result.withContent([]));
+  it('Should execute listNftsUseCase and countNftsUseCase', async () => {
+    listNftsUseCase.execute.mockResolvedValue(Result.withContent([]));
     countNftsUseCase.execute.mockResolvedValue(Result.withContent(1));
-    await controller.getNfts(GetNftsInput.fromDto(dto));
+    await controller.listNfts(ListNftsInput.fromDto(dto));
 
-    expect(getNftsUseCase.execute).toBeCalled();
+    expect(listNftsUseCase.execute).toBeCalled();
     expect(countNftsUseCase.execute).toBeCalled();
   });
 
-  it('Should return a failure when getNftsUseCase fails', async () => {
-    getNftsUseCase.execute.mockResolvedValue(
+  it('Should return a failure when listNftsUseCase fails', async () => {
+    listNftsUseCase.execute.mockResolvedValue(
       Result.withFailure(Failure.withMessage('error'))
     );
-    const result = await controller.getNfts(GetNftsInput.fromDto(dto));
+    const result = await controller.listNfts(ListNftsInput.fromDto(dto));
 
     expect(result.isFailure).toBeTruthy();
   });
 
   it('Should return a failure when countNftsUseCase fails', async () => {
-    getNftsUseCase.execute.mockResolvedValue(Result.withContent([]));
+    listNftsUseCase.execute.mockResolvedValue(Result.withContent([]));
     countNftsUseCase.execute.mockResolvedValue(
       Result.withFailure(Failure.withMessage('error'))
     );
-    const result = await controller.getNfts(GetNftsInput.fromDto(dto));
+    const result = await controller.listNfts(ListNftsInput.fromDto(dto));
 
     expect(result.isFailure).toBeTruthy();
   });

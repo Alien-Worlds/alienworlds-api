@@ -82,7 +82,7 @@ describe('NftRepositoryImpl Unit tests', () => {
       toQueryParams: () => ({}),
     };
     const repository = new NftRepositoryImpl(nftsMongoSourceMock);
-    const result = await repository.getNfts(queryModel as any);
+    const result = await repository.listNfts(queryModel as any);
     expect(result.content).toEqual([NFT.fromDto(nftDto)]);
   });
 
@@ -94,7 +94,7 @@ describe('NftRepositoryImpl Unit tests', () => {
       toQueryParams: () => ({}),
     };
     const repository = new NftRepositoryImpl(nftsMongoSourceMock);
-    const result = await repository.getNfts(queryModel as any);
+    const result = await repository.listNfts(queryModel as any);
     expect(result.failure.error).toBeInstanceOf(NftsNotFoundError);
   });
 
@@ -108,7 +108,7 @@ describe('NftRepositoryImpl Unit tests', () => {
       toQueryParams: () => ({}),
     };
     const repository = new NftRepositoryImpl(nftsMongoSourceMock);
-    const result = await repository.getNfts(queryModel as any);
+    const result = await repository.listNfts(queryModel as any);
 
     expect(result.isFailure).toBeTruthy();
   });

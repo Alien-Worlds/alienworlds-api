@@ -14,15 +14,15 @@ import { NftRepository } from '@common/nfts/domain/repositories/nft.repository';
 import { MongoSource } from '@core/storage/data/data-sources/mongo.source';
 import { Contract } from 'ethers';
 import { AssetController } from './asset/domain/asset.controller';
-import { GetAssetsUseCase } from './asset/domain/use-cases/get-assets.use-case';
+import { ListAssetsUseCase } from './asset/domain/use-cases/list-assets.use-case';
 import { MineLuckRepositoryImpl } from './mine-luck/data/mine-luck.repository-impl';
 import { MineLuckController } from './mine-luck/domain/mine-luck.controller';
 import { MineLuckRepository } from './mine-luck/domain/mine-luck.repository';
-import { GetMineLuckUseCase } from './mine-luck/domain/use-cases/get-mine-luck.use-case';
+import { ListMineLuckUseCase } from './mine-luck/domain/use-cases/list-mine-luck.use-case';
 import { MinesController } from './mines/domain/mines.controller';
-import { GetMinesUseCase } from './mines/domain/use-cases/get-mines.use-case';
+import { ListMinesUseCase } from './mines/domain/use-cases/list-mines.use-case';
 import { NftsController } from './nfts/domain/nfts.controller';
-import { GetNftsUseCase } from './nfts/domain/use-cases/get-nfts.use-case';
+import { ListNftsUseCase } from './nfts/domain/use-cases/list-nfts.use-case';
 import { ContractServiceImpl } from './token/data/contract.service-impl';
 import { BscContractService } from './token/domain/services/bsc-contract.service';
 import { EthContractService } from './token/domain/services/eth-contract.service';
@@ -50,14 +50,13 @@ const bindings = new AsyncContainerModule(async bind => {
   const mineRepository = new MineRepositoryImpl(
     new MineMongoSource(mongoSource)
   );
-
   bind<MineRepository>(MineRepository.Token).toConstantValue(mineRepository);
 
   /**
    * MINES
    */
   bind<MinesController>(MinesController.Token).to(MinesController);
-  bind<GetMinesUseCase>(GetMinesUseCase.Token).to(GetMinesUseCase);
+  bind<ListMinesUseCase>(ListMinesUseCase.Token).to(ListMinesUseCase);
 
   /**
    * ASSET
@@ -65,7 +64,7 @@ const bindings = new AsyncContainerModule(async bind => {
   bind<AssetRepository>(AssetRepository.Token).toConstantValue(
     new AssetRepositoryImpl(new AssetMongoSource(mongoSource))
   );
-  bind<GetAssetsUseCase>(GetAssetsUseCase.Token).to(GetAssetsUseCase);
+  bind<ListAssetsUseCase>(ListAssetsUseCase.Token).to(ListAssetsUseCase);
   bind<AssetController>(AssetController.Token).to(AssetController);
 
   /**
@@ -78,7 +77,7 @@ const bindings = new AsyncContainerModule(async bind => {
     mineLuckRepository
   );
   bind<MineLuckController>(MineLuckController.Token).to(MineLuckController);
-  bind<GetMineLuckUseCase>(GetMineLuckUseCase.Token).to(GetMineLuckUseCase);
+  bind<ListMineLuckUseCase>(ListMineLuckUseCase.Token).to(ListMineLuckUseCase);
 
   /**
    * NFTS
@@ -86,7 +85,7 @@ const bindings = new AsyncContainerModule(async bind => {
   bind<NftRepository>(NftRepository.Token).toConstantValue(
     new NftRepositoryImpl(new NftMongoSource(mongoSource))
   );
-  bind<GetNftsUseCase>(GetNftsUseCase.Token).to(GetNftsUseCase);
+  bind<ListNftsUseCase>(ListNftsUseCase.Token).to(ListNftsUseCase);
   bind<CountNftsUseCase>(CountNftsUseCase.Token).to(CountNftsUseCase);
   bind<NftsController>(NftsController.Token).to(NftsController);
 

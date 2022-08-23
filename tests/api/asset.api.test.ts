@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
 import {

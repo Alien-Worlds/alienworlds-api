@@ -8,7 +8,7 @@ import { EosDacService } from '@common/eos-dac/domain/eos-dac.service';
  */
 @injectable()
 export class GetTokenSuppliesUseCase implements UseCase<string> {
-  public static Token = 'GET_TOKEN_SUPPLIES_USE_CASE';
+  public static Token = 'LIST_TOKEN_SUPPLIES_USE_CASE';
 
   constructor(
     @inject(EosDacService.Token)

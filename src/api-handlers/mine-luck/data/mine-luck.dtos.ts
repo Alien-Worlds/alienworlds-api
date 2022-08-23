@@ -16,7 +16,7 @@ export type MineLuckDocument = {
  * Represents the data structure of the MineLuck request body
  * @type
  */
-export type MineLuckRequestDto = {
+export type ListMineLuckRequestDto = {
   query?: {
     from?: string;
     to?: string;
@@ -27,7 +27,7 @@ export type MineLuckRequestDto = {
  *
  * @type
  */
-export type MineLuckResultDto = {
+export type ListMineLuckResultDto = {
   total_luck: number;
   total_mines: number;
   planets: string[];

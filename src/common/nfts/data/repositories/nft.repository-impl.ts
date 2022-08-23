@@ -23,7 +23,7 @@ export class NftRepositoryImpl implements NftRepository {
    * @param {QueryModel<MongoFindQueryParams<NftDocument>>} model
    * @returns {Promise<Result<NFT[]>>}
    */
-  public async getNfts(
+  public async listNfts(
     model: QueryModel<MongoFindQueryParams<NftDocument>>
   ): Promise<Result<NFT[]>> {
     try {

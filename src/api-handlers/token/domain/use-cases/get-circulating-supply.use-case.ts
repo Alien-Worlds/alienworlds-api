@@ -25,7 +25,7 @@ export const balanceReducer = (initial: number, value: number): number =>
  */
 @injectable()
 export class GetCirculatingSupplyUseCase implements UseCase<string> {
-  public static Token = 'GET_CIRCULATING_SUPPLY_USE_CASE';
+  public static Token = 'LIST_CIRCULATING_SUPPLY_USE_CASE';
 
   constructor(
     @inject(EosDacService.Token)

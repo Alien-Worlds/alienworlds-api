@@ -4,10 +4,10 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 import { MineLuckController } from '../mine-luck.controller';
-import { GetMineLuckUseCase } from '../use-cases/get-mine-luck.use-case';
-import { GetMineLuckInput } from '../models/get-mine-luck.input';
+import { ListMineLuckUseCase } from '../use-cases/list-mine-luck.use-case';
+import { ListMineLuckInput } from '../models/list-mine-luck.input';
 
-const getMineLuckUseCase = {
+const listMineLuckUseCase = {
   execute: jest.fn(() => []),
 } as any;
 
@@ -25,8 +25,8 @@ describe('Asset Controller Unit tests', () => {
   beforeAll(() => {
     container = new Container();
     container
-      .bind<GetMineLuckUseCase>(GetMineLuckUseCase.Token)
-      .toConstantValue(getMineLuckUseCase);
+      .bind<ListMineLuckUseCase>(ListMineLuckUseCase.Token)
+      .toConstantValue(listMineLuckUseCase);
     container
       .bind<MineLuckController>(MineLuckController.Token)
       .to(MineLuckController);
@@ -45,9 +45,9 @@ describe('Asset Controller Unit tests', () => {
     expect(MineLuckController.Token).not.toBeNull();
   });
 
-  it('Should execute GetMineLuckUseCase', async () => {
-    await controller.getMineLuck(GetMineLuckInput.fromDto(dto));
+  it('Should execute ListMineLuckUseCase', async () => {
+    await controller.listMineLuck(ListMineLuckInput.fromDto(dto));
 
-    expect(getMineLuckUseCase.execute).toBeCalled();
+    expect(listMineLuckUseCase.execute).toBeCalled();
   });
 });

@@ -11,7 +11,7 @@ import { GetLastIrreversableBlockNumUseCase } from './get-last-irreversable-bloc
  */
 @injectable()
 export class GetBlockRangeUseCase implements UseCase<BlockRange> {
-  public static Token = 'GET_BLOCK_RANGE_USE_CASE';
+  public static Token = 'LIST_BLOCK_RANGE_USE_CASE';
 
   constructor(
     @inject(GetLastBlockUseCase.Token)

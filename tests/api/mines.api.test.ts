@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
-import { GetMinesOutput } from '../../src/api-handlers/mines/domain/models/get-mines.output';
+import { ListMinesOutput } from '../../src/api-handlers/mines/domain/models/list-mines.output';
 import { createApiTestEnvironment } from '../environments';
 import {
   emptyMinesResponse,
@@ -33,7 +33,7 @@ describe('Mines API Test', () => {
 
     expect(response.statusCode).toEqual(200);
     expect(response.body).toEqual(
-      JSON.stringify(GetMinesOutput.fromEntities([]).toJson())
+      JSON.stringify(ListMinesOutput.fromEntities([]).toJson())
     );
   });
 

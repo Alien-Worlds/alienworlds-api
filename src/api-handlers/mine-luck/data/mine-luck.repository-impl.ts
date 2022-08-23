@@ -21,7 +21,7 @@ export class MineLuckRepositoryImpl implements MineLuckRepository {
    * @param {string} to
    * @returns {Promise<Result<MineLuck[]>>}
    */
-  public async getMineLuck(
+  public async listMineLuck(
     from: string,
     to: string
   ): Promise<Result<MineLuck[]>> {

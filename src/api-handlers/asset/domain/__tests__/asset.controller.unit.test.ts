@@ -4,10 +4,10 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 import { AssetController } from '../asset.controller';
-import { GetAssetsUseCase } from '../use-cases/get-assets.use-case';
-import { GetAssetsInput } from '../models/get-assets.input';
+import { ListAssetsUseCase } from '../use-cases/list-assets.use-case';
+import { ListAssetsInput } from '../models/list-assets.input';
 
-const getAssetsUseCase = {
+const listAssetsUseCase = {
   execute: jest.fn(() => {}),
 } as any;
 
@@ -18,8 +18,8 @@ describe('Asset Controller Unit tests', () => {
   beforeAll(() => {
     container = new Container();
     container
-      .bind<GetAssetsUseCase>(GetAssetsUseCase.Token)
-      .toConstantValue(getAssetsUseCase);
+      .bind<ListAssetsUseCase>(ListAssetsUseCase.Token)
+      .toConstantValue(listAssetsUseCase);
     container.bind<AssetController>(AssetController.Token).to(AssetController);
   });
 
@@ -36,9 +36,9 @@ describe('Asset Controller Unit tests', () => {
     expect(AssetController.Token).not.toBeNull();
   });
 
-  it('Should call GetAssetsUseCase execute', async () => {
-    await controller.getAssets(GetAssetsInput.fromRequest({}));
+  it('Should call ListAssetsUseCase execute', async () => {
+    await controller.listAssets(ListAssetsInput.fromRequest({}));
 
-    expect(getAssetsUseCase.execute).toBeCalled();
+    expect(listAssetsUseCase.execute).toBeCalled();
   });
 });

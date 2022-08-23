@@ -8,14 +8,14 @@ import { IncomingMessage, Server, ServerResponse } from 'http';
 import { config } from '@config';
 import { setupApiIoc } from './api.ioc.config';
 import { FastifyRoute } from '../fastify.route';
-import { GetAssetRoute } from './asset/routes/get-assets.route';
+import { GetAssetRoute } from './asset/routes/list-assets.route';
 import { AssetController } from './asset/domain/asset.controller';
 import { MineLuckController } from './mine-luck/domain/mine-luck.controller';
-import { GetMineLuckRoute } from './mine-luck/routes/get-mine-luck.route';
-import { GetMinesRoute } from './mines/routes/get-mines.route';
+import { ListMineLuckRoute } from './mine-luck/routes/list-mine-luck.route';
+import { ListMinesRoute } from './mines/routes/list-mines.route';
 import { MinesController } from './mines/domain/mines.controller';
 import { NftsController } from './nfts/domain/nfts.controller';
-import { GetNftsRoute } from './nfts/routes/get-nfts.route';
+import { ListNftsRoute } from './nfts/routes/list-nfts.route';
 import { TokenController } from './token/domain/token.controller';
 import { GetTokenRoute } from './token/routes/get-token.route';
 
@@ -66,21 +66,21 @@ export const buildAPI = async (): Promise<FastifyInstance> => {
   // Mount routes
   FastifyRoute.mount(
     api,
-    GetAssetRoute.create(assetController.getAssets.bind(assetController))
+    GetAssetRoute.create(assetController.listAssets.bind(assetController))
   );
   FastifyRoute.mount(
     api,
-    GetMineLuckRoute.create(
-      mineLuckController.getMineLuck.bind(mineLuckController)
+    ListMineLuckRoute.create(
+      mineLuckController.listMineLuck.bind(mineLuckController)
     )
   );
   FastifyRoute.mount(
     api,
-    GetMinesRoute.create(minesController.getMines.bind(minesController))
+    ListMinesRoute.create(minesController.listMines.bind(minesController))
   );
   FastifyRoute.mount(
     api,
-    GetNftsRoute.create(nftsController.getNfts.bind(nftsController))
+    ListNftsRoute.create(nftsController.listNfts.bind(nftsController))
   );
   FastifyRoute.mount(
     api,

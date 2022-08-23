@@ -3,11 +3,11 @@
 import 'reflect-metadata';
 
 import { Container } from 'inversify';
-import { GetMinesUseCase } from '../use-cases/get-mines.use-case';
+import { ListMinesUseCase } from '../use-cases/list-mines.use-case';
 import { MinesController } from '../mines.controller';
-import { GetMinesInput } from '../models/get-mines.input';
+import { ListMinesInput } from '../models/list-mines.input';
 
-const getMinesUseCase = {
+const listMinesUseCase = {
   execute: jest.fn(() => []),
 } as any;
 
@@ -32,8 +32,8 @@ describe('Mines Controller Unit tests', () => {
   beforeAll(() => {
     container = new Container();
     container
-      .bind<GetMinesUseCase>(GetMinesUseCase.Token)
-      .toConstantValue(getMinesUseCase);
+      .bind<ListMinesUseCase>(ListMinesUseCase.Token)
+      .toConstantValue(listMinesUseCase);
     container.bind<MinesController>(MinesController.Token).to(MinesController);
   });
 
@@ -50,9 +50,9 @@ describe('Mines Controller Unit tests', () => {
     expect(MinesController.Token).not.toBeNull();
   });
 
-  it('Should execute GetMinesUseCase', async () => {
-    await controller.getMines(GetMinesInput.fromRequest(dto));
+  it('Should execute ListMinesUseCase', async () => {
+    await controller.listMines(ListMinesInput.fromRequest(dto));
 
-    expect(getMinesUseCase.execute).toBeCalled();
+    expect(listMinesUseCase.execute).toBeCalled();
   });
 });
