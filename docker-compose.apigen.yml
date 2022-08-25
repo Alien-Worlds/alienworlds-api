@@ -11,7 +11,12 @@ services:
       - ./openapi:/var/www/api/openapi
 
   api:
-    command: ['sh', '-c', 'yarn mongo-indexes && yarn api']
+    command:
+      [
+        'sh',
+        '-c',
+        'yarn setup-database --url ${MONGO_URL} --name ${MONGO_DB_NAME} && yarn api',
+      ]
     restart: 'no'
     depends_on:
       - db

@@ -34,6 +34,5 @@ module.exports = {
     '!src/**/*.ioc.config.ts',
     '!src/**/eos-rpc.source.ts',
     '!src/**/state-history.source.ts',
-    '!src/mongo_setup.ts',
   ],
 };

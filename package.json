@@ -17,15 +17,12 @@
     "lint-prettier-fix": "yarn prettier --write \"src/\"",
     "test:unit": "jest --config=jest.config.unit.js",
     "test:api": "jest --config=jest.config.api.js --detectOpenHandles",
-    "build": "node ./scripts/create-env.js && yarn clean && tsc && yarn abis",
-    "build-tests:api": "node ./scripts/create-env.js && yarn clean && tsc",
+    "build": "node ./scripts/create-env.js && yarn clean && tsc",
     "clean": "rm -rf ./dist",
-    "abis": "node -r ts-node/register -r tsconfig-paths/register dist/fetch-abis/index.js ./dist/abis",
-    "mongo-indexes": "node -r ts-node/register -r tsconfig-paths/register dist/mongo_setup.js",
-    "api": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/index.js\"",
-    "blockrange": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/block-range/index.js ${flags}\"",
-    "filler": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/filler/index.js ${flags}\"",
-    "processor": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/processor/index.js\""
+    "setup-database": "node ./scripts/setup-database.js",
+    "api:prod": "node -r ts-node/register -r tsconfig-paths/register index.js",
+    "api:dev": "node -r ts-node/register -r tsconfig-paths/register dist/index.js",
+    "api:dev-watch": "tsc-watch --onSuccess \"node -r ts-node/register -r tsconfig-paths/register dist/index.js\""
   },
   "husky": {
     "hooks": {
@@ -40,29 +37,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@eosdacio/eosio-statereceiver": "^1.1.0",
-    "@eosrio/node-abieos": "^2.1.0-beta.0",
     "@types/node": "^14.14.22",
-    "amqplib": "^0.6.0",
-    "atomicassets": "^1.2.2",
-    "axon": "^2.0.3",
     "commander": "^7.0.0",
-    "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
-    "eosjs": "^21.0.3",
     "ethers": "^5.1.0",
     "fastify": "^3.25.0",
     "fastify-autoload": "^3.9.0",
     "fastify-cors": "^6.0.2",
     "fastify-mongodb": "^4.1.1",
     "fastify-oas": "^3.0.8",
-    "file-exists": "^5.0.1",
     "http": "^0.0.1-security",
     "mongodb": "^4.4.0",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.8.2",
     "@types/jest": "^27.0.3",
     "@types/node-fetch": "^2.6.1",
     "@typescript-eslint/eslint-plugin": "^5.9.1",
@@ -86,7 +74,7 @@
     "ts-jest": "^27.1.3",
     "ts-node": "^10.7.0",
     "tsc-watch": "^4.6.0",
-    "tsconfig-paths": "^3.14.0",
+    "tsconfig-replace-paths": "^0.0.11",
     "typescript": "^4.5.4"
   }
 }

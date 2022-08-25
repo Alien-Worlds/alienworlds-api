@@ -1,17 +1,9 @@
-import { ActionProcessingJob } from '@common/data-processing-queue/domain/entities/action-processing.job';
-import { SchemaSmartContractData } from '@common/smart-contracts/domain/entities/schema-smart-contract-data';
-import { TemplateSmartContractData } from '@common/smart-contracts/domain/entities/template-smart-contract-data';
 import {
   parseToBigInt,
   removeUndefinedProperties,
 } from '@common/utils/dto.utils';
-import { deserialize, ObjectSchema } from 'atomicassets';
 import { Long } from 'mongodb';
-import {
-  NftDocument,
-  NftMessageData,
-  TemplateDataDocument,
-} from '../../data/nfts.dtos';
+import { NftDocument } from '../../data/nfts.dtos';
 import { NftParams } from './nft-params';
 import { NftTemplateData } from './nft-template-data';
 
@@ -119,54 +111,6 @@ export class NFT {
       block_timestamp,
       parseToBigInt(global_sequence),
       NftTemplateData.fromDto(template_data || {})
-    );
-  }
-
-  /**
-   * Create an NFT entity from messages, deserialized data,
-   * and optionally smart contract data - required for template data.
-   *
-   * @static
-   * @param {ActionProcessingJob} job
-   * @param {NftTemplateData} data
-   * @param {TemplateSmartContractData} template
-   * @param {SchemaSmartContractData} schema
-   * @returns {NFT}
-   */
-  public static fromMessage(
-    job: ActionProcessingJob,
-    data: NftMessageData,
-    template?: TemplateSmartContractData,
-    schema?: SchemaSmartContractData
-  ): NFT {
-    const { blockNumber, blockTimestamp, globalSequence } = job;
-    const { miner, land_id, params, rand1, rand2, rand3, template_id } = data;
-    let templateRawData: TemplateDataDocument = {};
-    let templateData: NftTemplateData;
-
-    if (template && schema) {
-      const { immutableSerializedData } = template;
-      templateRawData = deserialize(
-        immutableSerializedData,
-        ObjectSchema(schema.format)
-      );
-
-      templateData = NftTemplateData.fromDto(templateRawData);
-    }
-
-    return new NFT(
-      '',
-      miner,
-      land_id,
-      NftParams.fromDto(params),
-      rand1,
-      rand2,
-      rand3,
-      template_id,
-      parseToBigInt(blockNumber),
-      blockTimestamp,
-      parseToBigInt(globalSequence),
-      templateData
     );
   }
 }

@@ -95,40 +95,4 @@ describe('Mine Unit tests', () => {
 
     expect(entity.toDto()).toEqual(dto);
   });
-
-  it('Should create entity based on the message', () => {
-    const message = {
-      transactionId: 'fake.trx.id',
-      blockNumber: 0n,
-      blockTimestamp: new Date(1642706981000),
-      globalSequence: 0n,
-    } as any;
-    const data = {
-      miner: 'fake.miner',
-      params: paramsDto,
-      bounty: '0',
-      land_id: 'fake.land_id',
-      planet_name: 'fake.planet',
-      landowner: 'fake.landowner',
-      bag_items: ['0'],
-      offset: 0,
-    } as any;
-    const entity = Mine.fromMessage(message, data);
-
-    expect(entity).toEqual({
-      id: '',
-      miner: 'fake.miner',
-      params: MineParams.fromDto(paramsDto),
-      bounty: 0,
-      landId: 'fake.land_id',
-      planetName: 'fake.planet',
-      landowner: 'fake.landowner',
-      bagItems: [0n],
-      offset: 0,
-      blockNumber: 0n,
-      blockTimestamp: new Date(1642706981000),
-      globalSequence: 0n,
-      transactionId: 'fake.trx.id',
-    });
-  });
 });

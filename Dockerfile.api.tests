@@ -26,4 +26,4 @@ COPY package.json tsconfig.json yarn.lock jest.config.js jest.config.api.js /var
 WORKDIR /var/www/api
 
 RUN yarn
-RUN yarn build-tests:api
+RUN yarn build

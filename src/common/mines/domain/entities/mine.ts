@@ -5,7 +5,6 @@ import {
 import { MineDocument, MineMessageData } from '../../data/mines.dtos';
 import { MineParamsData } from '@common/mines/data/mines.dtos';
 import { Long } from 'mongodb';
-import { ActionProcessingJob } from '@common/data-processing-queue/domain/entities/action-processing.job';
 
 /**
  * Mine params entity.
@@ -183,45 +182,6 @@ export class Mine {
       block_timestamp,
       parseToBigInt(global_sequence),
       tx_id
-    );
-  }
-  /**
-   *
-   * @param message
-   * @param deserializedData
-   * @returns
-   */
-  public static fromMessage(
-    message: ActionProcessingJob,
-    deserializedData: MineMessageData
-  ): Mine {
-    const { transactionId, blockNumber, blockTimestamp, globalSequence } =
-      message;
-    const {
-      miner,
-      params,
-      bounty,
-      land_id,
-      planet_name,
-      landowner,
-      bag_items,
-      offset,
-    } = deserializedData;
-
-    return new Mine(
-      '',
-      miner,
-      MineParams.fromDto(params),
-      parseInt(bounty.split(' ')[0].replace('.', '')),
-      land_id,
-      planet_name,
-      landowner,
-      bag_items.map(item => parseToBigInt(item)),
-      offset,
-      blockNumber,
-      blockTimestamp,
-      globalSequence,
-      transactionId
     );
   }
 }

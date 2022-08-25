@@ -2,16 +2,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Long } from 'mongodb';
-import { deserialize, ObjectSchema } from 'atomicassets';
 import { NFT } from '../nft';
 import { NftParams } from '../nft-params';
 import { NftTemplateData } from '../nft-template-data';
-
-jest.mock('atomicassets');
-const ObjectSchemaMock = ObjectSchema as jest.MockedFunction<
-  typeof ObjectSchema
->;
-const deserializeMock = deserialize as jest.MockedFunction<typeof deserialize>;
 
 const blockTimestamp = new Date(1645815926208);
 const nftParamsDto = {
@@ -106,35 +99,6 @@ describe('NFT Unit tests', () => {
   it('Should create dto based on entity', () => {
     nftDto._id = 'foo';
     const entity = NFT.fromDto(nftDto);
-    expect(entity.toDto()).toEqual(nftDto);
-  });
-
-  it('Should create an nft entity from the action processing job', () => {
-    nftDto._id = undefined;
-    ObjectSchemaMock.mockReturnValue({} as any);
-    deserializeMock.mockReturnValue(
-      assetDataDto.immutable_serialized_data as any
-    );
-    const data = {
-      miner: 'fake.foo',
-      land_id: 'fake.land',
-      params: nftParamsDto,
-      rand1: 1,
-      rand2: 2,
-      rand3: 3,
-      template_id: 11,
-    };
-    const entity = NFT.fromMessage(
-      {
-        blockNumber: 0n,
-        blockTimestamp,
-        globalSequence: 0n,
-      } as any,
-      data as any,
-      {} as any,
-      {} as any
-    );
-
     expect(entity.toDto()).toEqual(nftDto);
   });
 });

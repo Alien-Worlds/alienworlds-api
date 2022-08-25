@@ -4,10 +4,6 @@ import {
   removeUndefinedProperties,
 } from '@common/utils/dto.utils';
 import { AssetDataSubDocument } from '@common/assets/data/assets.dtos';
-import { AssetSmartContractData } from '@common/smart-contracts/domain/entities/asset-smart-contract-data';
-import { SchemaSmartContractData } from '@common/smart-contracts/domain/entities/schema-smart-contract-data';
-import { TemplateSmartContractData } from '@common/smart-contracts/domain/entities/template-smart-contract-data';
-import { deserialize, ObjectSchema } from 'atomicassets';
 import { ImmutableSerializedData } from './immutable-serialized-data';
 import { Long } from 'mongodb';
 
@@ -68,35 +64,6 @@ export class AssetData {
       schema_name,
       template_id,
       ImmutableSerializedData.fromDto(immutable_serialized_data)
-    );
-  }
-
-  /**
-   * Creates Asset class data instances based on data from
-   * smart contract tables (assets, templates, schemas).
-   *
-   * @static
-   * @public
-   * @param {AssetSmartContractData} asset
-   * @param {TemplateSmartContractData} template
-   * @param {SchemaSmartContractData} schema
-   * @returns {AssetData} instance of Asset
-   */
-  public static fromSmartContractsData(
-    asset: AssetSmartContractData,
-    template: TemplateSmartContractData,
-    schema: SchemaSmartContractData
-  ): AssetData {
-    const immutableSerializedData = deserialize(
-      template.immutableSerializedData,
-      ObjectSchema(schema.format)
-    );
-
-    return new AssetData(
-      asset.collectionName,
-      asset.schemaName,
-      asset.templateId,
-      ImmutableSerializedData.fromDto(immutableSerializedData)
     );
   }
 }

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /* istanbul ignore file */
 
-process.title = 'eosdac-api';
+process.title = 'alienworlds-api';
 
-import { buildAPI } from 'api-handlers/api';
-import { config } from './config';
+import { buildAPI } from './api';
+import { config } from '@config';
 
 const start = async () => {
   try {

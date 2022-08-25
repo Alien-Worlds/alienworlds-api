@@ -1,13 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { deserialize, ObjectSchema } from 'atomicassets';
 import { Long } from 'mongodb';
 import { Asset, AssetData } from '../asset';
-
-jest.mock('atomicassets');
-const ObjectSchemaMock = ObjectSchema as jest.MockedFunction<
-  typeof ObjectSchema
->;
-const deserializeMock = deserialize as jest.MockedFunction<typeof deserialize>;
 
 const assetDataDto = {
   collection_name: 'foo.collection',
@@ -33,22 +26,6 @@ const assetDto = {
   owner: 'foo.owner',
   data: assetDataDto,
 };
-
-const assetSmartContractData = {
-  collectionName: 'foo.collection',
-  schemaName: 'foo.schema',
-  templateId: 123,
-} as any;
-const templateSmartContractData = {
-  schemaName: 'foo.schema',
-  immutableSerializedData: Uint8Array.from([]),
-} as any;
-const schemaSmartContractData = {
-  format: {
-    name: 'foo.name',
-    type: 'foo.type',
-  },
-} as any;
 
 describe('AssetData unit tests', () => {
   it('AssetData.fromDto should return AssetData object based on data provided in given dto', async () => {
@@ -76,36 +53,6 @@ describe('AssetData unit tests', () => {
   it('AssetData.toDto should return a dto based on entity', async () => {
     const assetData = AssetData.fromDto(assetDataDto);
     expect(assetData.toDto()).toEqual(assetDataDto);
-  });
-
-  it('AssetData.fromSmartContractsData should return AssetData object based on data provided smart contracts', async () => {
-    ObjectSchemaMock.mockReturnValue({} as any);
-    deserializeMock.mockReturnValue(
-      assetDataDto.immutable_serialized_data as any
-    );
-    const assetData = AssetData.fromSmartContractsData(
-      assetSmartContractData,
-      templateSmartContractData,
-      schemaSmartContractData
-    );
-    expect(assetData).toEqual({
-      collectionName: 'foo.collection',
-      immutableSerializedData: {
-        backImage: 'foo.backimg',
-        cardId: 12,
-        delay: 0,
-        difficulty: 1,
-        ease: 10,
-        image: 'foo.img',
-        luck: 100,
-        name: 'foo',
-        rarity: 'rare',
-        shine: 'stone',
-        type: 'any',
-      },
-      schemaName: 'foo.schema',
-      templateId: 123,
-    });
   });
 });
 
