@@ -257,6 +257,7 @@ class AlienAPIProcessor {
 
       switch (combined) {
         case 'm.federation::logmine':
+        case `${this.config.notify_contract}::logmine`:
           const [bounty_str] = data.bounty.split(' ');
           store_data.bounty = parseInt(bounty_str.replace('.', ''));
           store_data.block_num = Long.fromString(block_num.toString());
