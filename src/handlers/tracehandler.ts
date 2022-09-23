@@ -11,6 +11,7 @@ export class TraceHandler {
   amq: any;
   stats: StatsDisplay;
   filtered_actions: Array<string>;
+  abi_update_action = 'eosio::setabi';
 
   constructor({ config, amq, stats }) {
     this.config = config;
@@ -33,7 +34,7 @@ export class TraceHandler {
       `${this.config.atomicassets.contract}::logtransfer`,
       `${this.config.atomicassets.contract}::logburn`,
       `${this.config.atomicassets.contract}::logmint`,
-      'eosio::setabi',
+      this.abi_update_action,
     ];
   }
 
@@ -53,7 +54,7 @@ export class TraceHandler {
     }
   }
 
-  serialize(block_num, block_timestamp, trx, trace, action) {
+  serialize(block_num, block_timestamp, trx, trace) {
     const sb_action = new Serialize.SerialBuffer({
       textEncoder: new TextEncoder(),
       textDecoder: new TextDecoder(),
@@ -87,6 +88,11 @@ export class TraceHandler {
     ]);
   }
 
+  setabiConcernsUs(trace) {
+    const account = trace.act.data.account;
+    return account && this.config.abi_fetch_contracts.includes(account);
+  }
+
   handleAction(block_num, block_timestamp, trx, action) {
     const [api_message, trace] = action;
 
@@ -101,13 +107,10 @@ export class TraceHandler {
 
     if (!this.filtered_actions.includes(action_name)) return;
 
-    const buffers = this.serialize(
-      block_num,
-      block_timestamp,
-      trx,
-      trace,
-      action
-    );
+    if (action_name === this.abi_update_action && !this.setabiConcernsUs(trace))
+      return;
+
+    const buffers = this.serialize(block_num, block_timestamp, trx, trace);
     this.amq.send('action', buffers);
     this.stats.add(trace.act.name);
   }
