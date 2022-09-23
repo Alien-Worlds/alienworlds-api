@@ -10,6 +10,7 @@ export class TraceHandler {
   current_abi: String;
   amq: any;
   stats: StatsDisplay;
+  filtered_actions: Array<string>;
 
   constructor({ config, amq, stats }) {
     this.config = config;
@@ -25,7 +26,15 @@ export class TraceHandler {
       textEncoder: new TextEncoder(),
     });
 
-    // nodeAbieos.load_abi_hex("m.federation", JSON.stringify(mining_abi));
+    this.filtered_actions = [
+      `${this.config.notify_contract}::logmine`,
+      `${this.config.mining_contract}::logmine`,
+      `${this.config.mining_contract}::logrand`,
+      `${this.config.atomicassets.contract}::logtransfer`,
+      `${this.config.atomicassets.contract}::logburn`,
+      `${this.config.atomicassets.contract}::logmint`,
+      'eosio::setabi',
+    ];
   }
 
   int32ToBuffer(num) {
@@ -34,102 +43,79 @@ export class TraceHandler {
     return arr;
   }
 
+  handleTrace(block_num, block_timestamp, trace) {
+    const [api_message, trx] = trace;
+
+    if (api_message !== 'transaction_trace_v0') return;
+    this.stats.add('txs');
+    for (const action of trx.action_traces) {
+      this.handleAction(block_num, block_timestamp, trx, action);
+    }
+  }
+
+  serialize(block_num, block_timestamp, trx, trace, action) {
+    const sb_action = new Serialize.SerialBuffer({
+      textEncoder: new TextEncoder(),
+      textDecoder: new TextDecoder(),
+    });
+
+    sb_action.pushName(trace.act.account);
+    sb_action.pushName(trace.act.name);
+    sb_action.pushBytes(trace.act.data);
+
+    const block_buffer = Buffer.allocUnsafe(8);
+    block_buffer.writeBigInt64BE(BigInt(block_num), 0);
+    const timestamp_buffer = this.int32ToBuffer(
+      block_timestamp.getTime() / 1000
+    );
+    const trx_id_buffer = Buffer.from(trx.id, 'hex');
+    const recv_buffer = Buffer.allocUnsafe(8);
+    recv_buffer.writeBigInt64BE(BigInt(trace.receipt[1].recv_sequence), 0);
+    const global_buffer = Buffer.allocUnsafe(8);
+    global_buffer.writeBigInt64BE(BigInt(trace.receipt[1].global_sequence), 0);
+
+    const action_buffer = Buffer.from(sb_action.array);
+    // this.logger.info(`Publishing action`)
+    // console.log(`Sending ${trace.act.name} to queue`);
+    return Buffer.concat([
+      block_buffer,
+      timestamp_buffer,
+      trx_id_buffer,
+      recv_buffer,
+      global_buffer,
+      action_buffer,
+    ]);
+  }
+
+  handleAction(block_num, block_timestamp, trx, action) {
+    const [api_message, trace] = action;
+
+    if (api_message !== 'action_trace_v0') return;
+
+    this.stats.add('actions');
+
+    // console.log('handleAction: trace: ' + JSON.stringify(trace, null, 2));
+    if (trace.receiver !== trace.act.account) return;
+
+    const action_name = `${trace.receiver}::${trace.act.name}`;
+
+    if (!this.filtered_actions.includes(action_name)) return;
+
+    const buffers = this.serialize(
+      block_num,
+      block_timestamp,
+      trx,
+      trace,
+      action
+    );
+    this.amq.send('action', buffers);
+    this.stats.add(trace.act.name);
+  }
+
   async processTrace(block_num, traces, block_timestamp) {
     this.stats.add('blocks');
-
     for (const trace of traces) {
-      switch (trace[0]) {
-        case 'transaction_trace_v0': {
-          const trx = trace[1];
-          this.stats.add('txs');
-
-          for (let action of trx.action_traces) {
-            switch (action[0]) {
-              case 'action_trace_v0':
-                if (
-                  action[1].act.account === this.config.mining_contract ||
-                  action[1].act.account === this.config.atomicassets.contract ||
-                  action[1].act.account === this.config.notify_contract
-                ) {
-                  this.stats.add('actions');
-
-                  switch (action[1].act.name) {
-                    case 'logmine':
-                    case 'logrand':
-                    case 'logtransfer':
-                    case 'logburn':
-                    case 'logmint': {
-                      // case 'logsetdata':
-                      // case 'lognewtempl':
-                      //     const json = await this.deserializer.deserialize(action[1].act.account, action[1].act.name, action[1].act.data, block_num);
-                      //     const type = nodeAbieos.get_type_for_action(action[1].act.account, action[1].act.name);
-                      //     const json = nodeAbieos.bin_to_json(action[1].act.account, type, Buffer.from(action[1].act.data));
-                      //     console.log(action[1].act.name, json);
-                      // console.log(action[1].act.authorization)
-                      // if (action[1].receipt[1].global_sequence == '3024635758'){
-                      // const data = await this.eos_api.deserializeActions([action[1].act])
-                      // console.log(data[0], action[1], action[1].receipt[1].global_sequence)
-                      // console.log(action[1])
-                      // process.exit(0)
-                      // }
-
-                      if (action[1].receiver !== action[1].act.account) {
-                        continue;
-                      }
-                      // console.log(action[1])
-
-                      const sb_action = new Serialize.SerialBuffer({
-                        textEncoder: new TextEncoder(),
-                        textDecoder: new TextDecoder(),
-                      });
-
-                      sb_action.pushName(action[1].act.account);
-                      sb_action.pushName(action[1].act.name);
-                      sb_action.pushBytes(action[1].act.data);
-
-                      const block_buffer = Buffer.allocUnsafe(8);
-                      block_buffer.writeBigInt64BE(BigInt(block_num), 0);
-                      const timestamp_buffer = this.int32ToBuffer(
-                        block_timestamp.getTime() / 1000
-                      );
-                      const trx_id_buffer = Buffer.from(trx.id, 'hex');
-                      const recv_buffer = Buffer.allocUnsafe(8);
-                      recv_buffer.writeBigInt64BE(
-                        BigInt(action[1].receipt[1].recv_sequence),
-                        0
-                      );
-                      const global_buffer = Buffer.allocUnsafe(8);
-                      global_buffer.writeBigInt64BE(
-                        BigInt(action[1].receipt[1].global_sequence),
-                        0
-                      );
-
-                      const action_buffer = Buffer.from(sb_action.array);
-                      // this.logger.info(`Publishing action`)
-                      // console.log(`Sending ${action[1].act.name} to queue`);
-                      this.amq.send(
-                        'action',
-                        Buffer.concat([
-                          block_buffer,
-                          timestamp_buffer,
-                          trx_id_buffer,
-                          recv_buffer,
-                          global_buffer,
-                          action_buffer,
-                        ])
-                      );
-
-                      this.stats.add(action[1].act.name);
-                      break;
-                    }
-                  }
-                }
-
-                break;
-            }
-          }
-        }
-      }
+      this.handleTrace(block_num, block_timestamp, trace);
     }
   }
 }
