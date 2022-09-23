@@ -6,6 +6,7 @@ module.exports = {
     endpoints: ["https://wax.eosdac.io"],
     mining_contract: 'm.federation',
     notify_contract: 'notify.world',
+    abi_fetch_contracts: ['m.federation', 'atomicassets'],
     bsc_endpoint: '',
     eth_endpoint: '',
     bsc_token_contract: '',
