@@ -48,7 +48,8 @@ export class TraceHandler {
               case 'action_trace_v0':
                 if (
                   action[1].act.account === this.config.mining_contract ||
-                  action[1].act.account === this.config.atomicassets.contract
+                  action[1].act.account === this.config.atomicassets.contract ||
+                  action[1].act.account === this.config.notify_contract
                 ) {
                   this.stats.add('actions');
 
