@@ -7,6 +7,7 @@ module.exports = {
   mining_contract: 'm.federation',
   notify_contract: 'notify.world',
   abi_fetch_contracts: ['m.federation', 'atomicassets', 'notify.world'],
+  hyperion_endpoint: 'https://api.waxsweden.org',
   bsc_endpoint: '',
   eth_endpoint: '',
   bsc_token_contract: '',

@@ -11,7 +11,7 @@ const fetch_abis = async directory => {
     const contract = contracts[c];
 
     console.log(`Getting abi actions for ${contract} into ${directory}`);
-    const url = `https://api.waxsweden.org/v2/history/get_actions?account=${contract}&filter=eosio:setabi&limit=100&sort=1`;
+    const url = `${config.hyperion_endpoint}/v2/history/get_actions?account=${contract}&filter=eosio:setabi&limit=100&sort=1`;
     const res = await fetch(url);
     const json = await res.json();
     for (let i = 0; i < json.actions.length; i++) {
