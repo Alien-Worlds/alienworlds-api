@@ -4,7 +4,7 @@
 const fetch_abis = async directory => {
   const fetch = require('node-fetch');
   const fs = require('fs');
-  const contracts = ['m.federation', 'atomicassets'];
+  const contracts = ['m.federation', 'atomicassets', 'notify.world'];
 
   for (let c = 0; c < contracts.length; c++) {
     const contract = contracts[c];
