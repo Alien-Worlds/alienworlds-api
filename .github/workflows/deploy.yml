@@ -1,0 +1,53 @@
+name: Deploy Packages & Docs
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOCKER_REGISTRY: ghcr.io/alien-worlds
+  FILLER_FLAGS:
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    types: [closed]
+
+jobs:
+  docker:
+    name: "Build Docker"
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'push') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Building dependencies
+        run: docker compose run api yarn
+
+      - name: Pushing Images to Registry
+        run: docker compose push
+
+      - name: Generating OpenAPI definition
+        run: docker compose -f docker-compose.yml -f docker-compose.apigen.yml run apigen && docker compose down
+
+      - name: Deploying Redoc
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./openapi
+          publish_branch: docs
+
+#TODO: Deploy API to Production
