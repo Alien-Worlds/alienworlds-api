@@ -2,11 +2,15 @@
 import { existsSync, statSync } from 'fs';
 import AppConfig from './app-config';
 
-const envPath = process.env.NODE_ENV
+let envPath = process.env.NODE_ENV
   ? `./.env-${process.env.NODE_ENV}`
   : `./.env`;
 
-if (!existsSync(envPath)) {
+if (existsSync(`./.env-${process.env.NODE_ENV}`)) {
+  envPath = `./.env-${process.env.NODE_ENV}`;
+} else if (existsSync(`./.env`)) {
+  envPath = `./.env`;
+} else {
   throw new Error(
     `Configuration file not found. Please check path: ${envPath}`
   );

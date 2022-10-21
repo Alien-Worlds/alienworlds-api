@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { pathsToModuleNameMapper } = require('ts-jest');
 const config = require('./jest.config.js');
-const { compilerOptions } = require('./tsconfig.json');
 
 module.exports = {
   ...config,
@@ -9,9 +7,6 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jest-environment-node',
   testMatch: ['**/__tests__/**/*.unit.test.ts'],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: '<rootDir>/src/',
-  }),
   collectCoverageFrom: [
     'src/**/*.ts',
     '!**/use-case.ts',
@@ -29,8 +24,10 @@ module.exports = {
     '!src/**/*.dtos.ts',
     '!src/**/*.types.ts',
     '!src/**/*.route.ts',
+    '!src/**/api.routes.ts',
     '!src/**/worker.ts',
     '!src/**/ioc.config.ts',
+    '!src/**/api.ioc.utils.ts',
     '!src/**/*.ioc.config.ts',
     '!src/**/eos-rpc.source.ts',
     '!src/**/state-history.source.ts',

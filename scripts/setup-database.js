@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const commander = require('commander');
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require('@alien-worlds/api-core');
 
 const start = async options => {
   const { url, name } = options;

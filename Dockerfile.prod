@@ -1,0 +1,36 @@
+# BUILDER
+
+FROM node:17-alpine3.12 AS api-prod-builder
+
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
+
+RUN apk add --no-cache --virtual build-dependencies python2 g++ make
+
+RUN apk add curl
+
+RUN mkdir -p /var/www/api
+
+WORKDIR /var/www/api
+
+ADD scripts /var/www/api/scripts
+ADD src /var/www/api/src
+
+COPY package.json .npmrc tsconfig.json tsconfig.build.json yarn.lock /var/www/api/
+
+RUN yarn
+RUN yarn build:prod
+
+# API PRODUCTION
+
+FROM node:17-alpine3.12 AS api-prod
+
+ENV NODE_ENV=production
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
+
+WORKDIR /var/www/api
+
+COPY package.json .npmrc .env ./
+RUN yarn --production
+COPY --from=api-prod-builder /var/www/api/build ./build

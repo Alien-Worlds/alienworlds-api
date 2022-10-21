@@ -15,3 +15,9 @@ export const getJsonRpcProvider = async (
       reject(error);
     }
   });
+
+export abstract class ApiTestsMongoHelper {
+  public static Token = 'API_TESTS_MONGO_HELPER';
+
+  public abstract close(): Promise<void>;
+}

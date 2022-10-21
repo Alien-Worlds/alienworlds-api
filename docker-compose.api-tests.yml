@@ -5,6 +5,8 @@ services:
       context: .
       target: api-tests-runner
       dockerfile: Dockerfile.api.tests
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
     command: ['sh', '-c', 'yarn test:api']
     depends_on:
       - mongo-seed

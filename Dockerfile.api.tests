@@ -9,19 +9,17 @@ CMD mongoimport --host db --db alienworlds_mainnet --collection mines --type jso
 
 FROM node:17-alpine3.12 AS api-tests-runner
 
-ENV NODE_ENV=api-tests
+RUN apk add --no-cache --virtual build-dependencies python2 g++ make
 
 RUN apk add curl
-RUN npm install -g typescript
 
-RUN mkdir -p /var/www/api/tests/api
+RUN mkdir -p /var/www/api
 
-ADD scripts /var/www/api/scripts
-ADD src /var/www/api/src
-ADD tests/environments /var/www/api/tests/environments
-ADD tests/api /var/www/api/tests/api
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
-COPY package.json tsconfig.json yarn.lock jest.config.js jest.config.api.js /var/www/api/
+COPY . /var/www/api
+COPY .env-test /var/www/api/.env-test
 
 WORKDIR /var/www/api
 

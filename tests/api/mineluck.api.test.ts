@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
-import { ListMineLuckOutput } from '../../src/api-handlers/mine-luck/domain/models/list-mine-luck.output';
+import { getJsonRpcProvider } from '../../src/ioc/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
+import { ListMineLuckOutput } from '../../src/endpoints/mine-luck/domain/models/list-mine-luck.output';
 import {
   emptyMineluckResponse,
   mineluckOnlyJanuary2022Response,
@@ -9,7 +9,7 @@ import {
 } from './fixtures/mineluck.fixture';
 
 jest.mock('ethers');
-jest.mock('../../src/api-handlers/api.ioc.utils');
+jest.mock('../../src/ioc/api.ioc.utils');
 const getJsonRpcProviderMock = getJsonRpcProvider as jest.MockedFunction<
   typeof getJsonRpcProvider
 >;
@@ -48,7 +48,7 @@ describe('Mineluck check', () => {
       method: 'GET',
       url: '/v1/alienworlds/mineluck?from=2023-04-11T14:27:41',
     });
-
+    console.log(response.body);
     const data: ListMineLuckOutput = JSON.parse(response.body);
     expect(data).toEqual(emptyMineluckResponse);
   });

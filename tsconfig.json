@@ -2,24 +2,14 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "commonjs",
+    "esModuleInterop": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
+    "declaration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "outDir": "dist/",
-    "baseUrl": "src",
-    "paths": {
-      "@common/*": ["common/*"],
-      "@config": ["config/index"],
-      "@config/types": ["config/config.types"],
-      "@core/*": ["core/*"]
-    }
+    "outDir": "build"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.fixture.ts"],
-  "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  }
+  "exclude": ["node_modules", "build"]
 }

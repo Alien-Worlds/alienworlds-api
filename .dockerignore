@@ -1,4 +1,7 @@
-node_modules
-dist
-.postman
+node_modules/
+build/
+coverage/
+.husky/
+.postman/
+.github/
 */.env*

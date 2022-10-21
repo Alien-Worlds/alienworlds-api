@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 /* istanbul ignore file */
+import 'reflect-metadata';
 
 process.title = 'alienworlds-api';
 
 import { buildAPI } from './api';
-import { config } from '@config';
+import { config } from './config';
+import { Container } from 'inversify';
 
 const start = async () => {
   try {
-    const api = await buildAPI();
+    const ioc = new Container();
+    const api = await buildAPI(ioc);
     await api.listen(config.port, config.host);
   } catch (err) {
     console.log(err);

@@ -1,33 +1,27 @@
 /* istanbul ignore file */
-import 'reflect-metadata';
 
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyOas from 'fastify-oas';
 import fastifyCors from 'fastify-cors';
-import { IncomingMessage, Server, ServerResponse } from 'http';
-import { config } from '@config';
-import { setupApiIoc } from './ioc/api.ioc.config';
-import { AssetController } from 'features/asset/domain/asset.controller';
-import { MineLuckController } from 'features/mine-luck/domain/mine-luck.controller';
-import { MinesController } from 'features/mines/domain/mines.controller';
-import { NftsController } from 'features/nfts/domain/nfts.controller';
-import { TokenController } from 'features/token/domain/token.controller';
-import { FastifyRoute } from '@core/api/fastify.route';
-import { GetAssetRoute } from 'features/asset/routes/list-assets.route';
-import { ListMineLuckRoute } from 'features/mine-luck/routes/list-mine-luck.route';
-import { ListMinesRoute } from 'features/mines/routes/list-mines.route';
-import { ListNftsRoute } from 'features/nfts/routes/list-nfts.route';
-import { GetTokenRoute } from 'features/token/routes/get-token.route';
+import { config } from './config';
+import { setupEndpointDependencies } from './ioc/api.ioc.config';
+import { Container } from 'inversify';
+import { mountRoutes } from './api.routes';
 
-export const buildAPI = async (): Promise<FastifyInstance> => {
-  const api: FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify(
-    {
-      ignoreTrailingSlash: true,
-      trustProxy: true,
-      logger: true,
-    }
-  );
+export const buildAPI = async (ioc: Container): Promise<FastifyInstance> => {
+  const api: FastifyInstance = fastify({
+    ignoreTrailingSlash: true,
+    trustProxy: true,
+    logger: true,
+  });
 
+  // handle endpoints ioc bindings
+  await setupEndpointDependencies(ioc, config);
+
+  // mount routes
+  mountRoutes(api, ioc);
+
+  // fastify setup
   api.register(fastifyOas, {
     routePrefix: config.docs.routePrefix,
     exposeRoute: config.docs.exposeRoute,
@@ -43,48 +37,6 @@ export const buildAPI = async (): Promise<FastifyInstance> => {
       produces: ['application/json'],
     },
   });
-  // Set IOC
-  const apiIoc = await setupApiIoc();
-  //
-  const assetController: AssetController = apiIoc.get<AssetController>(
-    AssetController.Token
-  );
-  const mineLuckController: MineLuckController = apiIoc.get<MineLuckController>(
-    MineLuckController.Token
-  );
-  const minesController: MinesController = apiIoc.get<MinesController>(
-    MinesController.Token
-  );
-  const nftsController: NftsController = apiIoc.get<NftsController>(
-    NftsController.Token
-  );
-  const tokenController: TokenController = apiIoc.get<TokenController>(
-    TokenController.Token
-  );
-
-  // Mount routes
-  FastifyRoute.mount(
-    api,
-    GetAssetRoute.create(assetController.listAssets.bind(assetController))
-  );
-  FastifyRoute.mount(
-    api,
-    ListMineLuckRoute.create(
-      mineLuckController.listMineLuck.bind(mineLuckController)
-    )
-  );
-  FastifyRoute.mount(
-    api,
-    ListMinesRoute.create(minesController.listMines.bind(minesController))
-  );
-  FastifyRoute.mount(
-    api,
-    ListNftsRoute.create(nftsController.listNfts.bind(nftsController))
-  );
-  FastifyRoute.mount(
-    api,
-    GetTokenRoute.create(tokenController.getToken.bind(tokenController))
-  );
 
   api.register(fastifyCors, {
     allowedHeaders: 'Content-Type',

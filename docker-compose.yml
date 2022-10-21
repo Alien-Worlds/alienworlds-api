@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
         NODE_ENV: '${NODE_ENV}'
       cache_from:
         - ${DOCKER_REGISTRY}/alienworlds_api

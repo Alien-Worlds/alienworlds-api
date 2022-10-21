@@ -5,10 +5,12 @@ services:
       [
         'sh',
         '-c',
-        'yarn setup-database --url ${MONGO_URL} --name ${MONGO_DB_NAME} && yarn api:dev',
+        'yarn setup-database --url ${MONGO_URL} --name ${MONGO_DB_NAME} && start:watch',
       ]
     depends_on:
       - db
+    networks:
+      - common_network
     volumes:
       - ./:/var/www/api
 
@@ -17,6 +19,8 @@ services:
     restart: always
     ports:
       - '27017:27017'
+    networks:
+      - common_network
     volumes:
       - database:/data/db
 
@@ -32,3 +36,5 @@ services:
 
 volumes:
   database:
+networks:
+  common_network:

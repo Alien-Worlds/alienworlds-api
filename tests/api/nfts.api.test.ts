@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
-import { ListNftsOutput } from '../../src/api-handlers/nfts/domain/models/list-nfts.output';
+import { getJsonRpcProvider } from '../../src/ioc/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
+import { ListNftsOutput } from '../../src/endpoints/nfts/domain/models/list-nfts.output';
 import {
   emptyNftsResponse,
   fakeLandId,
@@ -15,7 +15,7 @@ import {
 } from './fixtures/nfts.fixture';
 
 jest.mock('ethers');
-jest.mock('../../src/api-handlers/api.ioc.utils');
+jest.mock('../../src/ioc/api.ioc.utils');
 const getJsonRpcProviderMock = getJsonRpcProvider as jest.MockedFunction<
   typeof getJsonRpcProvider
 >;
