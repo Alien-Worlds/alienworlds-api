@@ -1,6 +1,6 @@
 import { Mine, MineRepository } from '@alien-worlds/alienworlds-api-common';
 import { Result, UseCase } from '@alien-worlds/api-core';
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '@alien-worlds/api-core';
 import { ListMinesInput } from '../models/list-mines.input';
 import { ListMinesQueryModel } from '../models/list-mines.query-model';
 

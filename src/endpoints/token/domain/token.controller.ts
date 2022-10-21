@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '@alien-worlds/api-core';
 import { GetTokenInput } from './models/get-token.input';
 import { InvalidTypeError } from './error/invalid-type.error';
 import { GetCirculatingSupplyUseCase } from './use-cases/get-circulating-supply.use-case';

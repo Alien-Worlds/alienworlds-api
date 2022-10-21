@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { ListMinesUseCase } from '../list-mines.use-case';
 import { ListMinesInput } from '../../models/list-mines.input';
 import { MineRepository } from '@alien-worlds/alienworlds-api-common';

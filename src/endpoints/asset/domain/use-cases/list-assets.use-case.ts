@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '@alien-worlds/api-core';
 import { ListAssetsInput } from '../models/list-assets.input';
 import { ListAssetsQueryModel } from '../models/list-assets.query-model';
 import { Result, UseCase } from '@alien-worlds/api-core';

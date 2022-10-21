@@ -1,4 +1,4 @@
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import {
   MineMongoSource,
   MineMapper,

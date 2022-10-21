@@ -1,6 +1,6 @@
 import { Asset } from '@alien-worlds/alienworlds-api-common';
 import { Result } from '@alien-worlds/api-core';
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '@alien-worlds/api-core';
 import { ListAssetsInput } from './models/list-assets.input';
 import { ListAssetsUseCase } from './use-cases/list-assets.use-case';
 

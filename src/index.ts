@@ -6,7 +6,7 @@ process.title = 'alienworlds-api';
 
 import { buildAPI } from './api';
 import { config } from './config';
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 
 const start = async () => {
   try {

@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '@alien-worlds/api-core';
 import { Mine } from '@alien-worlds/alienworlds-api-common';
 import { Result } from '@alien-worlds/api-core';
 import { ListMinesInput } from './models/list-mines.input';

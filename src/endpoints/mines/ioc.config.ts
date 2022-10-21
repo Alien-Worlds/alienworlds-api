@@ -1,4 +1,4 @@
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { bindMinesRepository } from '@alien-worlds/alienworlds-api-common';
 import { MongoSource } from '@alien-worlds/api-core';
 import { ListMinesUseCase } from './domain/use-cases/list-mines.use-case';

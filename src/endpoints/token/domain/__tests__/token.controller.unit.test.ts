@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { TokenController } from '../token.controller';
 import { GetCirculatingSupplyUseCase } from '../use-cases/get-circulating-supply.use-case';
 import { GetTokenSuppliesUseCase } from '../use-cases/get-token-supplies.use-case';

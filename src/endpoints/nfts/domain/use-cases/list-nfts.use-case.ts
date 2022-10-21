@@ -1,6 +1,6 @@
 import { Nft, NftRepository } from '@alien-worlds/alienworlds-api-common';
 import { Result, UseCase } from '@alien-worlds/api-core';
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '@alien-worlds/api-core';
 import { ListNftsInput } from '../models/list-nfts.input';
 import { ListNftsQueryModel } from '../models/list-nfts.query-model';
 

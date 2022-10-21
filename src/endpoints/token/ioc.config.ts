@@ -1,4 +1,4 @@
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { Contract, providers } from 'ethers';
 import { TokenController } from './domain/token.controller';
 import { GetTokenSuppliesUseCase } from './domain/use-cases/get-token-supplies.use-case';

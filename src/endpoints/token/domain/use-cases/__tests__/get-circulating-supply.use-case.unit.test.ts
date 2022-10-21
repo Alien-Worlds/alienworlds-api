@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { EthContractService } from '../../services/eth-contract.service';
 import { BscContractService } from '../../services/bsc-contract.service';
 import { GetCirculatingSupplyUseCase } from '../get-circulating-supply.use-case';

@@ -1,5 +1,5 @@
 import { Result } from '@alien-worlds/api-core';
-import { injectable } from 'inversify';
+import { injectable } from '@alien-worlds/api-core';
 import { CurrencyStats } from '../entities/currecy-stats';
 import { EosDacInfo } from '../entities/eos-dac-info';
 

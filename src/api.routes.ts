@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { FastifyRoute } from './fastify.route';
 import { AssetController } from './endpoints/asset/domain/asset.controller';
 import { GetAssetRoute } from './endpoints/asset/routes/list-assets.route';

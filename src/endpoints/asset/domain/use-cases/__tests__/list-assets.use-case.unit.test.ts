@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { ListAssetsUseCase } from '../list-assets.use-case';
 import { ListAssetsInput } from '../../models/list-assets.input';
 import { AssetRepository } from '@alien-worlds/alienworlds-api-common';

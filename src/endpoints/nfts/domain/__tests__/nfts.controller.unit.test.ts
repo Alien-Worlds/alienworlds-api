@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { NftsController } from '../nfts.controller';
 import { ListNftsUseCase } from '../use-cases/list-nfts.use-case';
 import { CountNftsUseCase } from '../use-cases/count-nfts.use-case';

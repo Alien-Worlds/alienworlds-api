@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '@alien-worlds/api-core';
 import { ListNftsUseCase } from './use-cases/list-nfts.use-case';
 import { ListNftsInput } from './models/list-nfts.input';
 import { CountNftsUseCase } from './use-cases/count-nfts.use-case';

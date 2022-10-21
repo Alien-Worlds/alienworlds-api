@@ -1,5 +1,5 @@
 import { Result } from '@alien-worlds/api-core';
-import { injectable } from 'inversify';
+import { injectable } from '@alien-worlds/api-core';
 
 /**
  * @abstract

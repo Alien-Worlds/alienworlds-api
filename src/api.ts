@@ -5,7 +5,7 @@ import fastifyOas from 'fastify-oas';
 import fastifyCors from 'fastify-cors';
 import { config } from './config';
 import { setupEndpointDependencies } from './ioc/api.ioc.config';
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { mountRoutes } from './api.routes';
 
 export const buildAPI = async (ioc: Container): Promise<FastifyInstance> => {

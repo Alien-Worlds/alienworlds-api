@@ -1,4 +1,4 @@
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { ApiTestsMongoHelper, getJsonRpcProvider } from './api.ioc.utils';
 import {
   MongoSource,

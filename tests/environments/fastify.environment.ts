@@ -1,7 +1,7 @@
 import { buildAPI } from '../../src/api';
 import { TestEnvironment, TestHooks } from './test-environment';
 import { TestEnvironmentServer } from './api-test-environment';
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { ApiTestsMongoHelper } from '../../src/ioc/api.ioc.utils';
 
 export class FastifyTestEnvironment implements TestEnvironment {

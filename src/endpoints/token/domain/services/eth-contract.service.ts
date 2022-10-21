@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '@alien-worlds/api-core';
 import { ContractService } from './contract.service';
 
 /**

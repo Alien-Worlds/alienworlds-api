@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '@alien-worlds/api-core';
 import { Result, UseCase } from '@alien-worlds/api-core';
 import { MineLuck } from '../entities/mine-luck';
 import { ListMineLuckInput } from '../models/list-mine-luck.input';

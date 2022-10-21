@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { Container } from 'inversify';
+import { Container } from '@alien-worlds/api-core';
 import { MineLuckController } from '../mine-luck.controller';
 import { ListMineLuckUseCase } from '../use-cases/list-mine-luck.use-case';
 import { ListMineLuckInput } from '../models/list-mine-luck.input';
