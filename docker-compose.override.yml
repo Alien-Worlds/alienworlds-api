@@ -1,30 +1,16 @@
 version: '3.7'
 services:
   api:
-    command: ['sh', '-c', 'yarn mongo-indexes && yarn api']
+    command:
+      [
+        'sh',
+        '-c',
+        'yarn setup-database --url ${MONGO_URL} --name ${MONGO_DB_NAME} && start:watch',
+      ]
     depends_on:
       - db
-    volumes:
-      - ./:/var/www/api
-
-  processor:
-    command: ['sh', '-c', 'yarn processor']
-    depends_on:
-      - queue
-    volumes:
-      - ./:/var/www/api
-
-  blockrange:
-    command: ['sh', '-c', 'yarn blockrange']
-    depends_on:
-      - queue
-    volumes:
-      - ./:/var/www/api
-
-  filler:
-    command: ['sh', '-c', 'flags="${FILLER_FLAGS}" yarn filler']
-    depends_on:
-      - db
+    networks:
+      - common_network
     volumes:
       - ./:/var/www/api
 
@@ -33,20 +19,10 @@ services:
     restart: always
     ports:
       - '27017:27017'
+    networks:
+      - common_network
     volumes:
       - database:/data/db
-
-  queue: # login guest:guest
-    image: rabbitmq:management
-    restart: always
-    ports:
-      - '5672:5672'
-      - '15672:15672'
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:15672']
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   apidoc:
     image: redocly/redoc
@@ -60,3 +36,5 @@ services:
 
 volumes:
   database:
+networks:
+  common_network:

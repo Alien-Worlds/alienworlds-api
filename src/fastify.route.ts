@@ -1,4 +1,4 @@
-import { Route } from '@core/api/route';
+import { Route } from '@alien-worlds/api-core';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 

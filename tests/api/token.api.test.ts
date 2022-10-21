@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Contract } from 'ethers';
-import { getJsonRpcProvider } from '../../src/api-handlers/api.ioc.utils';
+import { getJsonRpcProvider } from '../../src/ioc/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
 
 jest.mock('ethers');
-jest.mock('../../src/api-handlers/api.ioc.utils');
+jest.mock('../../src/ioc/api.ioc.utils');
 const getJsonRpcProviderMock = getJsonRpcProvider as jest.MockedFunction<
   typeof getJsonRpcProvider
 >;

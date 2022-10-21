@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  api-prod:
+    image: ${DOCKER_REGISTRY}/alienworlds_api
+    build:
+      context: .
+      target: api-prod
+      dockerfile: Dockerfile.prod
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
+        NODE_ENV: '${NODE_ENV}'
+      cache_from:
+        - ${DOCKER_REGISTRY}/alienworlds_api
+    command: ['sh', '-c', 'yarn start']
+    environment:
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      NODE_ENV: '${NODE_ENV}'
+    restart: always
+    ports:
+      - '8800:8800'
+    depends_on:
+      - db
+
+  db:
+    image: mongo
+    ports:
+      - '27017'
+    volumes:
+      - database:/data/db
+
+volumes:
+  database:

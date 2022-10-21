@@ -9,15 +9,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "dist/",
-    "baseUrl": "src",
-    "paths": {
-      "@common/*": ["common/*"],
-      "@config": ["config/index"],
-      "@config/types": ["config/config.types"],
-      "@core/*": ["core/*"]
-    }
+    "baseUrl": "src"
   },
-  "include": ["src/api-handlers/*"],
+  "include": ["src/*"],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",

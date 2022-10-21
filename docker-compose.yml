@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
         NODE_ENV: '${NODE_ENV}'
       cache_from:
         - ${DOCKER_REGISTRY}/alienworlds_api
@@ -14,42 +15,3 @@ services:
     restart: on-failure
     ports:
       - '8800:8800'
-
-  processor:
-    image: ${DOCKER_REGISTRY}/alienworlds_processor
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: '${NODE_ENV}'
-      cache_from:
-        - ${DOCKER_REGISTRY}/alienworlds_processor
-    environment:
-      NODE_ENV: '${NODE_ENV}'
-    restart: on-failure
-
-  blockrange:
-    image: ${DOCKER_REGISTRY}/alienworlds_blockrange
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: '${NODE_ENV}'
-      cache_from:
-        - ${DOCKER_REGISTRY}/alienworlds_blockrange
-    environment:
-      NODE_ENV: '${NODE_ENV}'
-    restart: on-failure
-
-  filler:
-    image: ${DOCKER_REGISTRY}/alienworlds_filler
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: '${NODE_ENV}'
-      cache_from:
-        - ${DOCKER_REGISTRY}/alienworlds_filler
-    environment:
-      NODE_ENV: '${NODE_ENV}'
-    restart: on-failure
