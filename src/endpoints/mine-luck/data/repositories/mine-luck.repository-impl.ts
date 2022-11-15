@@ -22,10 +22,10 @@ export class MineLuckRepositoryImpl extends RepositoryImpl<Mine, MineDocument> {
         to
       ).toQueryParams();
 
-      const dtos = await this.mongoSource.aggregate<MineLuckDto>(
+      const dtos = await this.source.aggregate<MineLuckDto>({
         pipeline,
-        options
-      );
+        options,
+      });
 
       return Result.withContent(dtos.map(MineLuck.fromDto));
     } catch (error) {
