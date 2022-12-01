@@ -2,20 +2,20 @@
 # yarn lockfile v1
 
 
-"@alien-worlds/alienworlds-api-common@^0.0.11":
-  version "0.0.11"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.11/f3a6531e0ecf778b5ee2a407e8cd9519dd8832a9#f3a6531e0ecf778b5ee2a407e8cd9519dd8832a9"
-  integrity sha512-kh5+rgf5TEApDOXZvpSg7M2E3qGfR1d/yNps1rPHlXIiGTo9UJ+lCe3u2iZYNWlzj4IiFH+Qh5pvvZWIn/oJZw==
+"@alien-worlds/alienworlds-api-common@^0.0.12":
+  version "0.0.12"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.12/f5cc9008a4080e7c4c2bc95d4381cb90535809fe#f5cc9008a4080e7c4c2bc95d4381cb90535809fe"
+  integrity sha512-gHjDe8ho5XBjVB1pyWh3v+snQ/YX4Mh2NKWEpeZW2ItxybOOIlq2fB9xiAYE+3T6RMYbCopyr2HLKFZ1+FwEEg==
   dependencies:
-    "@alien-worlds/api-core" "^0.0.31"
+    "@alien-worlds/api-core" "^0.0.35"
     atomicassets "^1.5.1"
     crypto "^1.0.1"
     eosjs "^22.1.0"
 
-"@alien-worlds/api-core@^0.0.31":
-  version "0.0.31"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.31/60fa52cb71261cf088b4ef8d8e080711a926e9f9#60fa52cb71261cf088b4ef8d8e080711a926e9f9"
-  integrity sha512-oF8+/cu+TnZPs7Tv7Y82I0xokv8/AdrO3bFe01f7fAHG1hDcIC9AhcfpWA9+0Q3DffAfn1Cfm+9L4MuQlhoeeg==
+"@alien-worlds/api-core@^0.0.35":
+  version "0.0.35"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.35/e39ce31f3a9afa40a055c00cf45bd272d543b5a4#e39ce31f3a9afa40a055c00cf45bd272d543b5a4"
+  integrity sha512-UMu+U0b4+ZburHFXk6FlMHz9+Ybg4fj3isfNRfbz3WmHV8PawnUI2FnYJ43dDa6r6+FvAsjcoay1UQZuW8zjzg==
   dependencies:
     "@google-cloud/bigquery" "^6.0.3"
     eosjs "^22.1.0"
@@ -3698,9 +3698,9 @@ minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
     brace-expansion "^1.1.7"
 
 mongodb-connection-string-url@^2.5.3:
-  version "2.5.4"
-  resolved "https://registry.yarnpkg.com/mongodb-connection-string-url/-/mongodb-connection-string-url-2.5.4.tgz#1ee2496f4c4eae64f63c4b2d512aebc89996160a"
-  integrity sha512-SeAxuWs0ez3iI3vvmLk/j2y+zHwigTDKQhtdxTgt5ZCOQQS5+HW4g45/Xw5vzzbn7oQXCNQ24Z40AkJsizEy7w==
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/mongodb-connection-string-url/-/mongodb-connection-string-url-2.6.0.tgz#57901bf352372abdde812c81be47b75c6b2ec5cf"
+  integrity sha512-WvTZlI9ab0QYtTYnuMLgobULWhokRjtC7db9LtcVfJ+Hsnyr5eo6ZtNAt3Ly24XZScGMelOcGtm7lSn0332tPQ==
   dependencies:
     "@types/whatwg-url" "^8.2.1"
     whatwg-url "^11.0.0"

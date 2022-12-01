@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Mine } from '@alien-worlds/alienworlds-api-common';
-import { Long } from '@alien-worlds/api-core';
+import { Long, ObjectId } from '@alien-worlds/api-core';
 import { ListMinesOutput } from '../list-mines.output';
 
 const mineDocument = {
-  _id: '61dee6039181c700422ef773',
+  _id: new ObjectId('61dee6039181c700422ef773'),
   miner: 'fakeMiner',
   params: {
     invalid: 0,
