@@ -24,6 +24,7 @@ export class DeltaHandler {
       // this.logger.info(delta)
       switch (delta[0]) {
         case 'table_delta_v0':
+        case 'table_delta_v1':
           if (delta[1].name === 'contract_row') {
             // continue
             for (const row of delta[1].rows) {
