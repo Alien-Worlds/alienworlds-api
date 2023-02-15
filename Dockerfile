@@ -1,6 +1,6 @@
 FROM node:17-alpine3.12
 
-RUN apk add curl python3 make g++
+RUN apk add curl python python3 make g++
 
 RUN mkdir -p /var/www/api
 
