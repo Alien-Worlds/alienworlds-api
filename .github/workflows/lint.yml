@@ -35,7 +35,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Building dependencies
-        run: docker compose run api yarn
+        run: docker compose run api yarn --ignore-optional
 
       - name: Running ESLint
         run: docker compose run api yarn lint-es
