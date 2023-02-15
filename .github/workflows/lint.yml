@@ -6,9 +6,9 @@ concurrency:
 
 on:
   push:
-    branches: [master]
+    branches: [fake]
   pull_request:
-    branches: [master]
+    branches: [fake]
 
   workflow_dispatch:
 
