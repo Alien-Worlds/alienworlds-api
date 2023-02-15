@@ -47,10 +47,7 @@ export class TraceHandler {
   handleTrace(block_num, block_timestamp, trace) {
     const [api_message, trx] = trace;
 
-    if (
-      api_message === 'transaction_trace_v0' ||
-      api_message === 'transaction_trace_v1'
-    ) {
+    if (api_message === 'transaction_trace_v0') {
       this.stats.add('txs');
       for (const action of trx.action_traces) {
         this.handleAction(block_num, block_timestamp, trx, action);

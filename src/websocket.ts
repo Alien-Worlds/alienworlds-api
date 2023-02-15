@@ -29,7 +29,6 @@ class WSTraceHandler {
     for (const trace of traces) {
       switch (trace[0]) {
         case 'transaction_trace_v0':
-        case 'transaction_trace_v1':
           const trx = trace[1];
 
           for (let action of trx.action_traces) {
