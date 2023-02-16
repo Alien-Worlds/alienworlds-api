@@ -34,6 +34,7 @@ class WSTraceHandler {
           for (let action of trx.action_traces) {
             switch (action[0]) {
               case 'action_trace_v0':
+              case 'action_trace_v1':
                 if (
                   action[1].act.account === this.config.atomicassets.contract
                 ) {

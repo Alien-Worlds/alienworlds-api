@@ -47,10 +47,11 @@ export class TraceHandler {
   handleTrace(block_num, block_timestamp, trace) {
     const [api_message, trx] = trace;
 
-    if (api_message !== 'transaction_trace_v0') return;
-    this.stats.add('txs');
-    for (const action of trx.action_traces) {
-      this.handleAction(block_num, block_timestamp, trx, action);
+    if (api_message === 'transaction_trace_v0') {
+      this.stats.add('txs');
+      for (const action of trx.action_traces) {
+        this.handleAction(block_num, block_timestamp, trx, action);
+      }
     }
   }
 
@@ -96,23 +97,29 @@ export class TraceHandler {
   handleAction(block_num, block_timestamp, trx, action) {
     const [api_message, trace] = action;
 
-    if (api_message !== 'action_trace_v0') return;
+    if (
+      api_message === 'action_trace_v0' ||
+      api_message === 'action_trace_v1'
+    ) {
+      this.stats.add('actions');
 
-    this.stats.add('actions');
+      // console.log('handleAction: trace: ' + JSON.stringify(trace, null, 2));
+      if (trace.receiver !== trace.act.account) return;
 
-    // console.log('handleAction: trace: ' + JSON.stringify(trace, null, 2));
-    if (trace.receiver !== trace.act.account) return;
+      const action_name = `${trace.receiver}::${trace.act.name}`;
 
-    const action_name = `${trace.receiver}::${trace.act.name}`;
+      if (!this.filtered_actions.includes(action_name)) return;
 
-    if (!this.filtered_actions.includes(action_name)) return;
+      if (
+        action_name === this.abi_update_action &&
+        !this.setabiConcernsUs(trace)
+      )
+        return;
 
-    if (action_name === this.abi_update_action && !this.setabiConcernsUs(trace))
-      return;
-
-    const buffers = this.serialize(block_num, block_timestamp, trx, trace);
-    this.amq.send('action', buffers);
-    this.stats.add(trace.act.name);
+      const buffers = this.serialize(block_num, block_timestamp, trx, trace);
+      this.amq.send('action', buffers);
+      this.stats.add(trace.act.name);
+    }
   }
 
   async processTrace(block_num, traces, block_timestamp) {
