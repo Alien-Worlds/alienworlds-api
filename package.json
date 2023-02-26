@@ -30,7 +30,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@alien-worlds/alienworlds-api-common": "^0.0.14",
+    "@alien-worlds/alienworlds-api-common": "^0.0.15",
     "@alien-worlds/api-core": "^0.0.72",
     "dotenv": "^10.0.0",
     "ethers": "^5.1.0",
