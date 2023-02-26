@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Long } from '@alien-worlds/api-core';
+import { MongoDB } from '@alien-worlds/api-core';
 import { ListMinesInput } from '../list-mines.input';
 import { ListMinesQueryModel } from '../list-mines.query-model';
 
@@ -31,8 +31,8 @@ describe('ListMinesQueryModel Unit tests', () => {
           $lt: new Date('2021-06-17T02:05:38.000Z'),
         },
         global_sequence: {
-          $gte: Long.fromNumber(1),
-          $lt: Long.fromNumber(10),
+          $gte: MongoDB.Long.fromNumber(1),
+          $lt: MongoDB.Long.fromNumber(10),
         },
         land_id: {
           $in: ['fake_land_id'],
@@ -67,8 +67,8 @@ describe('ListMinesQueryModel Unit tests', () => {
     model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
 
     expect(model.toQueryParams().filter.global_sequence).toEqual({
-      $gte: Long.fromNumber(1),
-      $lt: Long.fromNumber(10),
+      $gte: MongoDB.Long.fromNumber(1),
+      $lt: MongoDB.Long.fromNumber(10),
     });
 
     requestData.global_sequence_from = null;
@@ -76,7 +76,7 @@ describe('ListMinesQueryModel Unit tests', () => {
     model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
 
     expect(model.toQueryParams().filter.global_sequence).toEqual({
-      $lt: Long.fromNumber(10),
+      $lt: MongoDB.Long.fromNumber(10),
     });
 
     requestData.global_sequence_from = 1;
@@ -84,7 +84,7 @@ describe('ListMinesQueryModel Unit tests', () => {
     model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
 
     expect(model.toQueryParams().filter.global_sequence).toEqual({
-      $gte: Long.fromNumber(1),
+      $gte: MongoDB.Long.fromNumber(1),
     });
   });
 

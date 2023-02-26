@@ -1,7 +1,6 @@
 import { NftDocument } from '@alien-worlds/alienworlds-api-common';
 import {
-  FindOptions,
-  Long,
+  MongoDB,
   MongoFindQueryParams,
   QueryModel,
 } from '@alien-worlds/api-core';
@@ -120,16 +119,20 @@ export class ListNftsQueryModel extends QueryModel {
 
     if (globalSequenceFrom && globalSequenceTo) {
       filter.global_sequence = {
-        $gte: Long.fromNumber(globalSequenceFrom),
-        $lt: Long.fromNumber(globalSequenceTo),
+        $gte: MongoDB.Long.fromNumber(globalSequenceFrom),
+        $lt: MongoDB.Long.fromNumber(globalSequenceTo),
       };
     } else if (globalSequenceFrom && !globalSequenceTo) {
-      filter.global_sequence = { $gte: Long.fromNumber(globalSequenceFrom) };
+      filter.global_sequence = {
+        $gte: MongoDB.Long.fromNumber(globalSequenceFrom),
+      };
     } else if (!globalSequenceFrom && globalSequenceTo) {
-      filter.global_sequence = { $lt: Long.fromNumber(globalSequenceTo) };
+      filter.global_sequence = {
+        $lt: MongoDB.Long.fromNumber(globalSequenceTo),
+      };
     }
 
-    const options: FindOptions = {};
+    const options: MongoDB.FindOptions = {};
 
     if (sort) {
       options.sort = { global_sequence: sort };

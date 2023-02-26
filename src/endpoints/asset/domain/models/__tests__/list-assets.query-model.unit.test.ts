@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Long } from '@alien-worlds/api-core';
+import { MongoDB } from '@alien-worlds/api-core';
 import { ListAssetsQueryModel } from '../list-assets.query-model';
 
 describe('ListAssetsQueryModel Unit tests', () => {
@@ -30,7 +30,9 @@ describe('ListAssetsQueryModel Unit tests', () => {
 
     expect(input.toQueryParams()).toEqual({
       filter: {
-        asset_id: { $in: [Long.fromBigInt(0n), Long.fromBigInt(1n)] },
+        asset_id: {
+          $in: [MongoDB.Long.fromBigInt(0n), MongoDB.Long.fromBigInt(1n)],
+        },
       },
       options: {},
     });

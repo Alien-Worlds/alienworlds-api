@@ -1,4 +1,4 @@
-import { Long } from '@alien-worlds/api-core';
+import { MongoDB } from '@alien-worlds/api-core';
 
 /**
  * Represents the available /nfts request query options
@@ -22,7 +22,7 @@ export type ListNftsRequestDto = {
  */
 export type NftSearchQuery = {
   block_timestamp?: { $gte?: Date; $lt?: Date };
-  global_sequence?: { $gte?: Long; $lt?: Long };
+  global_sequence?: { $gte?: MongoDB.Long; $lt?: MongoDB.Long };
   miner?: string;
   land_id?: { $in: string[] };
   'template_data.rarity'?: string;

@@ -1,5 +1,5 @@
 import { Container } from '@alien-worlds/api-core';
-import { bindNftsRepository } from '@alien-worlds/alienworlds-api-common';
+import { setupNftsRepository } from '@alien-worlds/alienworlds-api-common';
 import { MongoSource } from '@alien-worlds/api-core';
 import { ListNftsUseCase } from './domain/use-cases/list-nfts.use-case';
 import { NftsController } from './domain/nfts.controller';
@@ -9,7 +9,7 @@ export const bindNftsEndpointComponents = async (
   container: Container,
   mongoSource: MongoSource
 ): Promise<Container> => {
-  bindNftsRepository(container, mongoSource);
+  await setupNftsRepository(mongoSource, container);
   container.bind<ListNftsUseCase>(ListNftsUseCase.Token).to(ListNftsUseCase);
   container.bind<CountNftsUseCase>(CountNftsUseCase.Token).to(CountNftsUseCase);
   container.bind<NftsController>(NftsController.Token).to(NftsController);

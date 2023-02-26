@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Mine } from '@alien-worlds/alienworlds-api-common';
-import { Long, ObjectId } from '@alien-worlds/api-core';
+import { MongoDB } from '@alien-worlds/api-core';
 import { ListMinesOutput } from '../list-mines.output';
 
 const mineDocument = {
-  _id: new ObjectId('61dee6039181c700422ef773'),
+  _id: new MongoDB.ObjectId('61dee6039181c700422ef773'),
   miner: 'fakeMiner',
   params: {
     invalid: 0,
@@ -22,15 +22,15 @@ const mineDocument = {
   planet_name: 'neri.world',
   landowner: 'fakeowner1.wam',
   bag_items: [
-    Long.fromBigInt(1099561713548n),
-    Long.fromBigInt(1099561713532n),
-    Long.fromBigInt(1099561713528n),
+    MongoDB.Long.fromBigInt(1099561713548n),
+    MongoDB.Long.fromBigInt(1099561713532n),
+    MongoDB.Long.fromBigInt(1099561713528n),
   ],
   offset: 1817,
-  block_num: Long.fromBigInt(161084966n),
+  block_num: MongoDB.Long.fromBigInt(161084966n),
   block_timestamp: new Date('2022-01-12T14:27:41.000Z'),
 
-  global_sequence: Long.fromBigInt(34647697390n),
+  global_sequence: MongoDB.Long.fromBigInt(34647697390n),
   tx_id: '3d6d93bb26201b42007aa165d1e92dad880367972c93ede6b6f8672d330f65a7',
 };
 

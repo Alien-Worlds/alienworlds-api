@@ -2,20 +2,20 @@
 # yarn lockfile v1
 
 
-"@alien-worlds/alienworlds-api-common@^0.0.12":
-  version "0.0.12"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.12/f5cc9008a4080e7c4c2bc95d4381cb90535809fe#f5cc9008a4080e7c4c2bc95d4381cb90535809fe"
-  integrity sha512-gHjDe8ho5XBjVB1pyWh3v+snQ/YX4Mh2NKWEpeZW2ItxybOOIlq2fB9xiAYE+3T6RMYbCopyr2HLKFZ1+FwEEg==
+"@alien-worlds/alienworlds-api-common@^0.0.14":
+  version "0.0.14"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.14/6a24c36cd790746247c883e6c17fd3f4de0bbdfc#6a24c36cd790746247c883e6c17fd3f4de0bbdfc"
+  integrity sha512-YJC1wTWa4QSeP/Dy6vyKxE472lK+aBc/s3YIbGxwBpg16eYPPJAv3E8fdMV1X77PTNPMLxekAgnPVKX6tC5MoA==
   dependencies:
-    "@alien-worlds/api-core" "^0.0.35"
+    "@alien-worlds/api-core" "^0.0.72"
     atomicassets "^1.5.1"
     crypto "^1.0.1"
     eosjs "^22.1.0"
 
-"@alien-worlds/api-core@^0.0.35":
-  version "0.0.35"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.35/e39ce31f3a9afa40a055c00cf45bd272d543b5a4#e39ce31f3a9afa40a055c00cf45bd272d543b5a4"
-  integrity sha512-UMu+U0b4+ZburHFXk6FlMHz9+Ybg4fj3isfNRfbz3WmHV8PawnUI2FnYJ43dDa6r6+FvAsjcoay1UQZuW8zjzg==
+"@alien-worlds/api-core@^0.0.72":
+  version "0.0.72"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.72/c3199e5665c631a7bb93ed0905312a6a32fba124#c3199e5665c631a7bb93ed0905312a6a32fba124"
+  integrity sha512-gYBMzKCxv8f4ullcaU6DW5ANr7Yp5k5ox9J60ki7NgR9lI8007cl9XGiPu3Co35IgEjOAeoQclRW142d7T28Jw==
   dependencies:
     "@google-cloud/bigquery" "^6.0.3"
     eosjs "^22.1.0"

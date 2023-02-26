@@ -1,7 +1,6 @@
 import { AssetDocument } from '@alien-worlds/alienworlds-api-common';
 import {
-  FindOptions,
-  Long,
+  MongoDB,
   MongoFindQueryParams,
   QueryModel,
 } from '@alien-worlds/api-core';
@@ -51,14 +50,16 @@ export class ListAssetsQueryModel extends QueryModel {
   public toQueryParams(): MongoFindQueryParams<AssetDocument> {
     const { owner, limit, skip, schema, assetIds } = this;
     const filter = {};
-    const options: FindOptions = {};
+    const options: MongoDB.FindOptions = {};
 
     if (owner) {
       filter['owner'] = owner;
     }
 
     if (assetIds) {
-      filter['asset_id'] = { $in: assetIds.map(id => Long.fromBigInt(id)) };
+      filter['asset_id'] = {
+        $in: assetIds.map(id => MongoDB.Long.fromBigInt(id)),
+      };
     }
 
     if (schema) {

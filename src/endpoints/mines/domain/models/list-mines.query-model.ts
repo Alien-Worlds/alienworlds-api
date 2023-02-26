@@ -1,8 +1,6 @@
 import { MineDocument } from '@alien-worlds/alienworlds-api-common';
 import {
-  Filter,
-  FindOptions,
-  Long,
+  MongoDB,
   MongoFindQueryParams,
   parseDateToMs,
   QueryModel,
@@ -81,7 +79,7 @@ export class ListMinesQueryModel extends QueryModel {
       sort,
     } = this;
 
-    const filter: Filter<MineDocument> = {};
+    const filter: MongoDB.Filter<MineDocument> = {};
 
     if (miner) {
       filter.miner = miner;
@@ -109,20 +107,24 @@ export class ListMinesQueryModel extends QueryModel {
 
     if (globalSequenceFrom && globalSequenceTo) {
       filter.global_sequence = {
-        $gte: Long.fromNumber(globalSequenceFrom),
-        $lt: Long.fromNumber(globalSequenceTo),
+        $gte: MongoDB.Long.fromNumber(globalSequenceFrom),
+        $lt: MongoDB.Long.fromNumber(globalSequenceTo),
       };
     } else if (globalSequenceFrom && !globalSequenceTo) {
-      filter.global_sequence = { $gte: Long.fromNumber(globalSequenceFrom) };
+      filter.global_sequence = {
+        $gte: MongoDB.Long.fromNumber(globalSequenceFrom),
+      };
     } else if (!globalSequenceFrom && globalSequenceTo) {
-      filter.global_sequence = { $lt: Long.fromNumber(globalSequenceTo) };
+      filter.global_sequence = {
+        $lt: MongoDB.Long.fromNumber(globalSequenceTo),
+      };
     }
 
     if (txId) {
       filter.tx_id = txId;
     }
 
-    const options: FindOptions = {};
+    const options: MongoDB.FindOptions = {};
 
     if (limit) {
       options.limit = Number(limit);
