@@ -11,6 +11,7 @@ import { bindMineLuckEndpointComponents } from '../endpoints/mine-luck/ioc.confi
 import { bindMinesEndpointComponents } from '../endpoints/mines/ioc.config';
 import { bindNftsEndpointComponents } from '../endpoints/nfts/ioc.config';
 import { bindTokenEndpointComponents } from '../endpoints/token/ioc.config';
+import { bindMiningLeaderboardEndpointComponents } from '../endpoints/mining-leaderboard/ioc.config';
 
 export const setupEndpointDependencies = async (
   container: Container,
@@ -40,6 +41,9 @@ export const setupEndpointDependencies = async (
 
   /* /nfts */
   bindNftsEndpointComponents(container, mongoSource);
+
+  /* /mining-leaderboard */
+  bindMiningLeaderboardEndpointComponents(container, mongoSource);
 
   /* /token */
 

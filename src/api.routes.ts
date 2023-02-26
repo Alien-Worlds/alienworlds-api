@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { Container } from '@alien-worlds/api-core';
-import { FastifyRoute } from './fastify.route';
+import { Container, Route } from '@alien-worlds/api-core';
 import { AssetController } from './endpoints/asset/domain/asset.controller';
 import { GetAssetRoute } from './endpoints/asset/routes/list-assets.route';
 import { MineLuckController } from './endpoints/mine-luck/domain/mine-luck.controller';
@@ -21,25 +20,25 @@ export const mountRoutes = (api: FastifyInstance, ioc: Container) => {
   const nftsController = ioc.get<NftsController>(NftsController.Token);
   const tokenController = ioc.get<TokenController>(TokenController.Token);
 
-  FastifyRoute.mount(
+  Route.mount(
     api,
     GetAssetRoute.create(assetController.listAssets.bind(assetController))
   );
-  FastifyRoute.mount(
+  Route.mount(
     api,
     ListMineLuckRoute.create(
       mineLuckController.listMineLuck.bind(mineLuckController)
     )
   );
-  FastifyRoute.mount(
+  Route.mount(
     api,
     ListMinesRoute.create(minesController.listMines.bind(minesController))
   );
-  FastifyRoute.mount(
+  Route.mount(
     api,
     ListNftsRoute.create(nftsController.listNfts.bind(nftsController))
   );
-  FastifyRoute.mount(
+  Route.mount(
     api,
     GetTokenRoute.create(tokenController.getToken.bind(tokenController))
   );
