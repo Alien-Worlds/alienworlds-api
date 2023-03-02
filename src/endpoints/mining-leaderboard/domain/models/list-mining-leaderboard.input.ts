@@ -1,3 +1,4 @@
+import { MiningLeaderboardTimeframe } from '@alien-worlds/alienworlds-api-common';
 import { ListLeaderboardRequestDto } from '../../data/mining-leaderboard.dtos';
 
 /**
@@ -29,11 +30,8 @@ export class ListMiningLeaderboardInput {
    * @private
    */
   private constructor(
-    public readonly from: string,
-    public readonly to: string,
+    public readonly timeframe: MiningLeaderboardTimeframe,
     public readonly filter: string,
-    public readonly sort: string,
-    public readonly page: number,
-    public readonly itemsPerPage: number = 10
+    public readonly order: string
   ) {}
 }

@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@alien-worlds/alienworlds-api-common@^0.0.15":
-  version "0.0.15"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.15/3f2610f5f3f8ac6733461b62a87e83a4b50b04c9#3f2610f5f3f8ac6733461b62a87e83a4b50b04c9"
-  integrity sha512-e0fg/KSrkDSHDZbXkgKjtB/HcuGvmXBlP/vQL4JXP4kgjlVgSzJrYxiXq5oErgEzObW33vXu0ve3e2ItFVbp+g==
+"@alien-worlds/alienworlds-api-common@^0.0.18":
+  version "0.0.18"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.18/b8bae436a1734f16c8704d8c680c73673f04ae6e#b8bae436a1734f16c8704d8c680c73673f04ae6e"
+  integrity sha512-i3kXfC3SFdnXUmPsGvWBXGZVM5jWW3MWoZjXoNu82soIWuR86ysvpOp9iDXFfZdSMTTT4do2u5pVgp2jZvOlDQ==
   dependencies:
     "@alien-worlds/api-core" "^0.0.72"
     atomicassets "^1.5.1"

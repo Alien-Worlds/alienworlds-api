@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const commander = require('commander');
-const { MongoClient } = require('@alien-worlds/api-core');
+const { MongoDB } = require('@alien-worlds/api-core');
 
 const start = async options => {
   const { url, name } = options;
   console.log(`Connecting to database... ${url} ${name}`);
 
-  const client = new MongoClient(url);
+  const client = new MongoDB.MongoClient(url);
   const mongo = (await client.connect()).db(name);
 
   console.log('Connected!');

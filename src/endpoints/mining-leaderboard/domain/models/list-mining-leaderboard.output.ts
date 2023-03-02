@@ -27,10 +27,11 @@ export class ListMiningLeaderboardOutput {
 
   private static toJson(entry: MiningLeaderboard): MiningLeaderboardResultDto {
     const {
-      miner,
+      username,
+      walletId,
       tlmGainsTotal,
       tlmGainsHighest,
-      dailyTotalNftPoints,
+      totalNftPoints,
       avgChargeTime,
       avgMiningPower,
       avgNftPower,
@@ -43,7 +44,7 @@ export class ListMiningLeaderboardOutput {
       username: miner,
       tlm_gains_total: tlmGainsTotal,
       tlm_gains_highest: tlmGainsHighest,
-      daily_total_nft_points: dailyTotalNftPoints,
+      total_nft_points: dailyTotalNftPoints,
       avg_charge_time: avgChargeTime,
       avg_mining_power: avgMiningPower,
       avg_nft_power: avgNftPower,
