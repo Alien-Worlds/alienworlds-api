@@ -14,19 +14,21 @@ const mineRepository = {
 let container: Container;
 let useCase: ListMinesUseCase;
 
-const dto = {
-  limit: 10,
-  from: '2021-06-17T01:05:38.000Z',
-  to: '2021-06-17T02:05:38.000Z',
-  global_sequence_from: 1,
-  global_sequence_to: 10,
-  miner: 'fake_miner',
-  landowner: 'fake_landowner',
-  land_id: 'fake_land_id',
-  planet_name: 'fake_planet_name',
-  tx_id: 'fake_transaction_id',
-  sort: 'asc',
-};
+const request = {
+  query: {
+    limit: 10,
+    from: '2021-06-17T01:05:38.000Z',
+    to: '2021-06-17T02:05:38.000Z',
+    global_sequence_from: 1,
+    global_sequence_to: 10,
+    miner: 'fake_miner',
+    landowner: 'fake_landowner',
+    land_id: 'fake_land_id',
+    planet_name: 'fake_planet_name',
+    tx_id: 'fake_transaction_id',
+    sort: 'asc',
+  },
+} as any;
 
 describe('ListMinesUseCase Unit tests', () => {
   beforeAll(() => {
@@ -53,7 +55,7 @@ describe('ListMinesUseCase Unit tests', () => {
   });
 
   it('Should call repository.find', async () => {
-    await useCase.execute(ListMinesInput.fromRequest(dto));
+    await useCase.execute(ListMinesInput.fromRequest(request));
 
     expect(mineRepository.find).toBeCalled();
   });

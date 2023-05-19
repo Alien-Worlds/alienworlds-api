@@ -1,8 +1,7 @@
 import { inject, injectable } from '@alien-worlds/api-core';
-import { Mine } from '@alien-worlds/alienworlds-api-common';
-import { Result } from '@alien-worlds/api-core';
 import { ListMinesInput } from './models/list-mines.input';
 import { ListMinesUseCase } from './use-cases/list-mines.use-case';
+import { ListMinesOutput } from './models/list-mines.output';
 
 /**
  * @class
@@ -20,7 +19,9 @@ export class MinesController {
    * @param {ListMinesInput} input
    * @returns {Promise<Result<Mine[]>>}
    */
-  public async listMines(input: ListMinesInput): Promise<Result<Mine[]>> {
-    return this.listMinesUseCase.execute(input);
+  public async listMines(input: ListMinesInput): Promise<ListMinesOutput> {
+    const result = await this.listMinesUseCase.execute(input);
+
+    return ListMinesOutput.create(result);
   }
 }

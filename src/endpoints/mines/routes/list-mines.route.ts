@@ -1,54 +1,7 @@
 import { ListMinesOutput } from '../domain/models/list-mines.output';
 import { ListMinesInput } from '../domain/models/list-mines.input';
-import { ListMinesRequestDto } from '../data/mines.dtos';
-import {
-  Result,
-  Request,
-  GetRoute,
-  RouteHandler,
-  EntityNotFoundError,
-} from '@alien-worlds/api-core';
-import { Mine } from '@alien-worlds/alienworlds-api-common';
-
-/**
- *
- * @param {Result<Mine[]>} result
- * @returns
- */
-export const parseResultToControllerOutput = (result: Result<Mine[]>) => {
-  if (result.isFailure) {
-    const {
-      failure: { error },
-    } = result;
-
-    if (error instanceof EntityNotFoundError) {
-      return {
-        status: 200,
-        body: ListMinesOutput.createEmpty(),
-      };
-    }
-
-    return {
-      status: 500,
-      body: error.message,
-    };
-  }
-
-  return {
-    status: 200,
-    body: ListMinesOutput.fromEntities(result.content),
-  };
-};
-
-/**
- *
- * @param {Request} request
- * @returns
- */
-export const parseRequestToControllerInput = (request: Request) => {
-  // parse DTO (query) to the options required by the controller method
-  return ListMinesInput.fromRequest(request.query || {});
-};
+import { ListMinesRequestQuery } from '../data/mines.dtos';
+import { Request, GetRoute, RouteHandler } from '@alien-worlds/api-core';
 
 /**
  * @class
@@ -61,11 +14,13 @@ export class ListMinesRoute extends GetRoute {
   private constructor(handler: RouteHandler) {
     super('/v1/alienworlds/mines', handler, {
       hooks: {
-        pre: parseRequestToControllerInput,
-        post: parseResultToControllerOutput,
+        pre: ListMinesInput.fromRequest,
+        post: (output: ListMinesOutput) => output.toResponse(),
       },
       validators: {
-        request: (request: Request<ListMinesRequestDto>) => {
+        request: (
+          request: Request<unknown, unknown, ListMinesRequestQuery>
+        ) => {
           const errors = [];
 
           if (request.query.sort) {

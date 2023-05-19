@@ -1,8 +1,7 @@
-import { Asset } from '@alien-worlds/alienworlds-api-common';
-import { Result } from '@alien-worlds/api-core';
 import { inject, injectable } from '@alien-worlds/api-core';
 import { ListAssetsInput } from './models/list-assets.input';
 import { ListAssetsUseCase } from './use-cases/list-assets.use-case';
+import { ListAssetsOutput } from './models/list-assets.output';
 
 /**
  * @class
@@ -21,7 +20,9 @@ export class AssetController {
    * @param {ListAssetsInput} input
    * @returns {Promise<Result<Asset[]>>}
    */
-  public async listAssets(input: ListAssetsInput): Promise<Result<Asset[]>> {
-    return this.listAssetsUseCase.execute(input);
+  public async listAssets(input: ListAssetsInput): Promise<ListAssetsOutput> {
+    const result = await this.listAssetsUseCase.execute(input);
+
+    return ListAssetsOutput.create(result);
   }
 }

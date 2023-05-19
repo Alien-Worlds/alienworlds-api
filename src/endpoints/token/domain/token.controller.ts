@@ -5,6 +5,7 @@ import { GetCirculatingSupplyUseCase } from './use-cases/get-circulating-supply.
 import { GetTokenSuppliesUseCase } from './use-cases/get-token-supplies.use-case';
 import { TokenType } from '../token.enums';
 import { Failure, Result } from '@alien-worlds/api-core';
+import { GetTokenOutput } from './models/get-token.output';
 
 /**
  * @class
@@ -25,23 +26,24 @@ export class TokenController {
    * @param {GetTokenInput} input
    * @returns {Promise<Result<string>>}
    */
-  public async getToken(input: GetTokenInput): Promise<Result<string>> {
+  public async getToken(input: GetTokenInput): Promise<GetTokenOutput> {
     const { type } = input;
 
     if (type === TokenType.Supply) {
       const getTokenSuppliesResult =
         await this.getTokenSuppliesUseCase.execute();
 
-      return getTokenSuppliesResult;
+      return GetTokenOutput.create(getTokenSuppliesResult);
     }
 
     if (type === TokenType.Circulating) {
       const getCirculatingSupplyResult =
         await this.getCirculatingSupplyUseCase.execute();
 
-      return getCirculatingSupplyResult;
+      return GetTokenOutput.create(getCirculatingSupplyResult);
     }
-
-    return Result.withFailure(Failure.fromError(new InvalidTypeError()));
+    return GetTokenOutput.create(
+      Result.withFailure(Failure.fromError(new InvalidTypeError()))
+    );
   }
 }

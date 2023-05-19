@@ -1,3 +1,4 @@
+import { Request } from '@alien-worlds/api-core';
 import { TokenRequestDto } from '../../data/dtos/token.dtos';
 
 /**
@@ -9,8 +10,12 @@ export class GetTokenInput {
    * @param {TokenRequestDto} dto
    * @returns {GetTokenInput}
    */
-  public static fromDto(dto: TokenRequestDto): GetTokenInput {
-    const { type, offset, id, owner, schema } = dto;
+  public static fromRequest(
+    request: Request<unknown, unknown, TokenRequestDto>
+  ): GetTokenInput {
+    const {
+      query: { type, offset, id, owner, schema },
+    } = request || {};
     return new GetTokenInput(id, type, offset, owner, schema);
   }
   /**

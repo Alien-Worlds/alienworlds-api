@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Mine } from '@alien-worlds/alienworlds-api-common';
-import { MongoDB } from '@alien-worlds/api-core';
+import { MongoDB, Result } from '@alien-worlds/api-core';
 import { ListMinesOutput } from '../list-mines.output';
 
 const mineDocument = {
@@ -35,12 +35,12 @@ const mineDocument = {
 };
 
 describe('ListMinesOutput Unit tests', () => {
-  it('"ListMinesOutput.fromEntities" should create output based on entities', async () => {
-    const output = ListMinesOutput.fromEntities([
-      Mine.fromDocument(mineDocument),
-    ]);
-    expect(JSON.stringify(output)).toEqual(
-      JSON.stringify({
+  it('"ListMinesOutput.create" should create output based on entities', async () => {
+    const output = ListMinesOutput.create(
+      Result.withContent([Mine.fromDocument(mineDocument)])
+    );
+    expect(output.toResponse()).toEqual({
+      body: {
         results: [
           {
             _id: '61dee6039181c700422ef773',
@@ -72,16 +72,20 @@ describe('ListMinesOutput Unit tests', () => {
           },
         ],
         count: -1,
-      })
-    );
+      },
+      status: 200,
+    });
   });
 
   it('"ListMinesOutput.createEmpty" should create empty output', async () => {
     const output = ListMinesOutput.createEmpty();
-    expect(JSON.stringify(output)).toEqual(
+    expect(JSON.stringify(output.toResponse())).toEqual(
       JSON.stringify({
-        results: [],
-        count: -1,
+        status: 200,
+        body: {
+          results: [],
+          count: -1,
+        },
       })
     );
   });

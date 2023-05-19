@@ -1,38 +1,45 @@
-import { ListMineLuckResultDto } from '../../data/mine-luck.dtos';
+import { Result } from '@alien-worlds/api-core';
 import { MineLuck } from '../entities/mine-luck';
+import { UndefinedMineLuckError } from '../errors/undefined-mine-luck.error';
 
 /**
  * @class
  */
 export class ListMineLuckOutput {
-  /**
-   *
-   * @param {MineLuck[]} entities
-   * @returns {ListMineLuckOutput}
-   */
-  public static fromEntities(entities: MineLuck[]): ListMineLuckOutput {
-    return new ListMineLuckOutput(
-      entities.map(entity => entity.toJson()),
-      entities.length
-    );
+  public static create(result: Result<MineLuck[]>): ListMineLuckOutput {
+    return new ListMineLuckOutput(result);
   }
-
   /**
    *
    * @constructor
    * @private
    * @param {ListMineLuckResultDto[]} results
    */
-  private constructor(
-    public readonly results: ListMineLuckResultDto[],
-    public readonly count: number
-  ) {}
+  private constructor(public readonly result: Result<MineLuck[]>) {}
 
-  public toJson() {
-    const { count, results } = this;
+  public toResponse() {
+    const { result } = this;
+
+    if (result.isFailure) {
+      if (result.failure.error instanceof UndefinedMineLuckError) {
+        return {
+          status: 200,
+          body: {},
+        };
+      }
+
+      return {
+        status: 500,
+        body: result.failure.error.message,
+      };
+    }
+
     return {
-      results,
-      count,
+      status: 200,
+      body: {
+        results: result.content.map(entity => entity.toJson()),
+        count: result.content.length,
+      },
     };
   }
 }

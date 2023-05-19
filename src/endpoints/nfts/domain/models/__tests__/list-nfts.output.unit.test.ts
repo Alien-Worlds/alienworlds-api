@@ -3,6 +3,7 @@
 
 import { Nft } from '@alien-worlds/alienworlds-api-common';
 import { ListNftsOutput } from '../list-nfts.output';
+import { Result } from '@alien-worlds/api-core';
 
 const blockTimestamp = new Date(1645815926208);
 const nftParamsDto = {
@@ -50,52 +51,58 @@ const nftDto = {
 
 describe('ListNftsOutput Unit tests', () => {
   it('"toJson" should create controller output data as JSON', async () => {
-    const output = ListNftsOutput.create([Nft.fromDocument(nftDto)]);
-    expect(output.toJson()).toEqual({
-      count: 0,
-      results: [
-        {
-          _id: '',
-          block_num: 0,
-          block_timestamp: new Date('2022-02-25T19:05:26.208Z'),
-          global_sequence: 0,
-          land_id: 'fake.land',
-          miner: 'fake.foo',
-          params: {
-            commission: 1,
-            delay: 0,
-            difficulty: 1,
-            ease: 1,
-            error: 'error',
-            invalid: 0,
-            luck: 1,
+    const output = ListNftsOutput.create(
+      Result.withContent([Nft.fromDocument(nftDto)]),
+      Result.withContent(0)
+    );
+    expect(output.toResponse()).toEqual({
+      body: {
+        count: -1,
+        results: [
+          {
+            _id: '',
+            block_num: 0,
+            block_timestamp: new Date('2022-02-25T19:05:26.208Z'),
+            global_sequence: 0,
+            land_id: 'fake.land',
+            miner: 'fake.foo',
+            params: {
+              commission: 1,
+              delay: 0,
+              difficulty: 1,
+              ease: 1,
+              error: 'error',
+              invalid: 0,
+              luck: 1,
+            },
+            rand1: 1,
+            rand2: 2,
+            rand3: 3,
+            template_data: {
+              attack: 100,
+              backimg: 'back-none',
+              cardid: 1,
+              class: 'some',
+              defense: 200,
+              delay: 75,
+              description: 'foo bar baz',
+              difficulty: 1,
+              ease: 10,
+              element: 'some',
+              img: 'none',
+              luck: 5,
+              movecost: 2,
+              name: 'foo.nft',
+              race: 'some',
+              rarity: 'rare',
+              shine: 'Stone',
+              type: 'Manipulator',
+            },
+            template_id: 11,
           },
-          rand1: 1,
-          rand2: 2,
-          rand3: 3,
-          template_data: {
-            attack: 100,
-            backimg: 'back-none',
-            cardid: 1,
-            class: 'some',
-            defense: 200,
-            delay: 75,
-            description: 'foo bar baz',
-            difficulty: 1,
-            ease: 10,
-            element: 'some',
-            img: 'none',
-            luck: 5,
-            movecost: 2,
-            name: 'foo.nft',
-            race: 'some',
-            rarity: 'rare',
-            shine: 'Stone',
-            type: 'Manipulator',
-          },
-          template_id: 11,
-        },
-      ],
+        ],
+      },
+      status: 200,
     });
   });
 });

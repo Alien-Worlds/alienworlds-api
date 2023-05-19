@@ -37,7 +37,9 @@ describe('Asset Controller Unit tests', () => {
   });
 
   it('Should call ListAssetsUseCase execute', async () => {
-    await controller.listAssets(ListAssetsInput.fromRequest({}));
+    await controller.listAssets(
+      ListAssetsInput.fromRequest({ query: {} } as any)
+    );
 
     expect(listAssetsUseCase.execute).toBeCalled();
   });

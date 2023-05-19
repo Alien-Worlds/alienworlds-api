@@ -14,7 +14,7 @@ const mineLuckRepository = {
 let container: Container;
 let useCase: ListMineLuckUseCase;
 
-const dto = {
+const request = {
   query: {
     from: '2021-06-17T01:05:38.000Z',
     to: '2021-06-17T02:05:38.000Z',
@@ -46,7 +46,7 @@ describe('ListMineluckUseCase Unit tests', () => {
   });
 
   it('Should call mineLuckRepository.listMineLuck', async () => {
-    await useCase.execute(ListMineLuckInput.fromDto(dto));
+    await useCase.execute(ListMineLuckInput.fromRequest(request as any));
 
     expect(mineLuckRepository.listMineLuck).toBeCalled();
   });

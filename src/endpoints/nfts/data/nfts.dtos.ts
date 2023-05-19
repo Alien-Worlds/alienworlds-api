@@ -4,7 +4,7 @@ import { MongoDB } from '@alien-worlds/api-core';
  * Represents the available /nfts request query options
  * @type
  */
-export type ListNftsRequestDto = {
+export type ListNftsRequestQuery = {
   limit?: number;
   global_sequence_from?: number;
   global_sequence_to?: number;

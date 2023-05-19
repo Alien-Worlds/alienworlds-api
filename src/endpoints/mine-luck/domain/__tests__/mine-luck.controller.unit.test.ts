@@ -14,7 +14,7 @@ const listMineLuckUseCase = {
 let container: Container;
 let controller: MineLuckController;
 
-const dto = {
+const request = {
   query: {
     from: '2021-06-17T01:05:38.000Z',
     to: '2021-06-17T02:05:38.000Z',
@@ -46,7 +46,9 @@ describe('Asset Controller Unit tests', () => {
   });
 
   it('Should execute ListMineLuckUseCase', async () => {
-    await controller.listMineLuck(ListMineLuckInput.fromDto(dto));
+    await controller.listMineLuck(
+      ListMineLuckInput.fromRequest(request as any)
+    );
 
     expect(listMineLuckUseCase.execute).toBeCalled();
   });

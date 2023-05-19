@@ -1,58 +1,7 @@
 import { ListNftsInput } from '../domain/models/list-nfts.input';
 import { ListNftsOutput } from '../domain/models/list-nfts.output';
-import { ListNftsRequestDto } from '../data/nfts.dtos';
-import {
-  GetRoute,
-  Result,
-  RouteHandler,
-  Request,
-  EntityNotFoundError,
-} from '@alien-worlds/api-core';
-
-/**
- *
- * @param {Result<NFT[]>} result
- * @returns
- */
-export const parseResultToControllerOutput = (
-  result: Result<ListNftsOutput>
-) => {
-  if (result.isFailure) {
-    const {
-      failure: { error },
-    } = result;
-    if (error instanceof EntityNotFoundError) {
-      return {
-        status: 200,
-        body: ListNftsOutput.create().toJson(),
-      };
-    }
-
-    return {
-      status: 500,
-      body: 'Server error',
-    };
-  }
-
-  const { content } = result;
-
-  return {
-    status: 200,
-    body: content.toJson(),
-  };
-};
-
-/**
- *
- * @param {Request} request
- * @returns
- */
-export const parseRequestToControllerInput = (
-  request: Request<ListNftsRequestDto>
-) => {
-  // parse DTO (query) to the options required by the controller method
-  return ListNftsInput.fromDto(request.query || {});
-};
+import { ListNftsRequestQuery } from '../data/nfts.dtos';
+import { GetRoute, RouteHandler, Request } from '@alien-worlds/api-core';
 
 /**
  * @class
@@ -65,11 +14,11 @@ export class ListNftsRoute extends GetRoute {
   private constructor(handler: RouteHandler) {
     super('/v1/alienworlds/nfts', handler, {
       hooks: {
-        pre: parseRequestToControllerInput,
-        post: parseResultToControllerOutput,
+        pre: ListNftsInput.fromRequest,
+        post: (output: ListNftsOutput) => output.toResponse(),
       },
       validators: {
-        request: (request: Request<ListNftsRequestDto>) => {
+        request: (request: Request<unknown, unknown, ListNftsRequestQuery>) => {
           const errors = [];
 
           if (request.query.sort) {

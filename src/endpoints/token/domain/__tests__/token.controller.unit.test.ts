@@ -19,13 +19,15 @@ const getCirculatingSupplyUseCase = {
 let container: Container;
 let controller: TokenController;
 
-const dto = {
-  type: 'supply',
-  offset: 0,
-  id: 'foo_id',
-  owner: 'foo_owner',
-  schema: 'foo_schema',
-};
+const request = {
+  query: {
+    type: 'supply',
+    offset: 0,
+    id: 'foo_id',
+    owner: 'foo_owner',
+    schema: 'foo_schema',
+  },
+} as any;
 
 describe('Token Controller Unit tests', () => {
   beforeAll(() => {
@@ -53,22 +55,24 @@ describe('Token Controller Unit tests', () => {
   });
 
   it('Should execute GetTokenSuppliesUseCase when given type is "supply"', async () => {
-    await controller.getToken(GetTokenInput.fromDto(dto));
+    await controller.getToken(GetTokenInput.fromRequest(request));
 
     expect(getTokenSuppliesUseCase.execute).toBeCalled();
   });
 
   it('Should execute GetCirculatingSupplyUseCase when given type is "circulating"', async () => {
-    dto.type = 'circulating';
-    await controller.getToken(GetTokenInput.fromDto(dto));
+    request.query.type = 'circulating';
+    await controller.getToken(GetTokenInput.fromRequest(request));
 
     expect(getCirculatingSupplyUseCase.execute).toBeCalled();
   });
 
   it('Should return a failure when given type is invalid', async () => {
-    dto.type = 'fake';
-    const result = await controller.getToken(GetTokenInput.fromDto(dto));
+    request.query.type = 'fake';
+    const output = await controller.getToken(
+      GetTokenInput.fromRequest(request)
+    );
 
-    expect(result.isFailure).toBeTruthy();
+    expect(output.result.isFailure).toBeTruthy();
   });
 });

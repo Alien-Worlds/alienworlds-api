@@ -4,7 +4,7 @@ import { ListAssetsInput } from '../list-assets.input';
 
 describe('ListAssetsInput Unit tests', () => {
   it('ListAssetsInput.fromRequest should create input with default values when none were given', async () => {
-    const input = ListAssetsInput.fromRequest({});
+    const input = ListAssetsInput.fromRequest({} as any);
 
     expect(input).toEqual({
       limit: 20,
@@ -17,12 +17,14 @@ describe('ListAssetsInput Unit tests', () => {
 
   it('ListAssetsInput.fromRequest should parse given assetIds to BigInts and use other given values', async () => {
     const input = ListAssetsInput.fromRequest({
-      limit: 20,
-      offset: 0,
-      id: '1,2',
-      owner: 'foo',
-      schema: 'bar',
-    });
+      query: {
+        limit: 20,
+        offset: 0,
+        id: '1,2',
+        owner: 'foo',
+        schema: 'bar',
+      },
+    } as any);
 
     expect(input).toEqual({
       limit: 20,

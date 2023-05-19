@@ -40,13 +40,17 @@ describe('Asset Controller Unit tests', () => {
   });
 
   it('Should call assetRepository.find when asset ids were given', async () => {
-    await useCase.execute(ListAssetsInput.fromRequest({ id: '1,2' }));
+    await useCase.execute(
+      ListAssetsInput.fromRequest({ query: { id: '1,2' } } as any)
+    );
 
     expect(assetRepository.find).toBeCalled();
   });
 
   it('Should call assetRepository.find when owner was given', async () => {
-    await useCase.execute(ListAssetsInput.fromRequest({ owner: 'foo' }));
+    await useCase.execute(
+      ListAssetsInput.fromRequest({ query: { owner: 'foo' } } as any)
+    );
 
     expect(assetRepository.find).toBeCalled();
   });
@@ -55,7 +59,9 @@ describe('Asset Controller Unit tests', () => {
     assetRepository.find.mockResolvedValue(
       Result.withFailure(Failure.fromError(new Error('')))
     );
-    const result = await useCase.execute(ListAssetsInput.fromRequest({}));
+    const result = await useCase.execute(
+      ListAssetsInput.fromRequest({ query: {} } as any)
+    );
 
     expect(result.isFailure).toBeTruthy();
   });

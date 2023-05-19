@@ -4,7 +4,7 @@ import { MineParamsData } from '@alien-worlds/alienworlds-api-common';
  * Represents the available /asset request query options
  * @type
  */
-export type ListMinesRequestDto = {
+export type ListMinesRequestQuery = {
   limit?: number;
   from?: string;
   to?: string;

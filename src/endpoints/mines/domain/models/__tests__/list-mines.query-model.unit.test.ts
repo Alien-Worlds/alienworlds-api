@@ -5,7 +5,7 @@ import { MongoDB } from '@alien-worlds/api-core';
 import { ListMinesInput } from '../list-mines.input';
 import { ListMinesQueryModel } from '../list-mines.query-model';
 
-const requestData = {
+const query = {
   limit: 10,
   from: '2021-06-17T01:05:38.000Z',
   to: '2021-06-17T02:05:38.000Z',
@@ -18,10 +18,11 @@ const requestData = {
   tx_id: 'fake_transaction_id',
   sort: 'asc',
 };
+
 describe('ListMinesQueryModel Unit tests', () => {
   it('"ListMinesQueryModel.toQueryParams" should create mongodb query model', async () => {
     const model = ListMinesQueryModel.create(
-      ListMinesInput.fromRequest(requestData)
+      ListMinesInput.fromRequest({ query } as any)
     );
 
     expect(model.toQueryParams()).toEqual({
@@ -54,34 +55,40 @@ describe('ListMinesQueryModel Unit tests', () => {
   });
 
   it('"ListMinesQueryModel.toQueryParams" should handle global_sequence data based on input', async () => {
-    requestData.global_sequence_from = null;
-    requestData.global_sequence_to = null;
+    query.global_sequence_from = null;
+    query.global_sequence_to = null;
     let model = ListMinesQueryModel.create(
-      ListMinesInput.fromRequest(requestData)
+      ListMinesInput.fromRequest({ query } as any)
     );
 
     expect(model.toQueryParams().filter.global_sequence).toBeUndefined();
 
-    requestData.global_sequence_from = 1;
-    requestData.global_sequence_to = 10;
-    model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
+    query.global_sequence_from = 1;
+    query.global_sequence_to = 10;
+    model = ListMinesQueryModel.create(
+      ListMinesInput.fromRequest({ query } as any)
+    );
 
     expect(model.toQueryParams().filter.global_sequence).toEqual({
       $gte: MongoDB.Long.fromNumber(1),
       $lt: MongoDB.Long.fromNumber(10),
     });
 
-    requestData.global_sequence_from = null;
-    requestData.global_sequence_to = 10;
-    model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
+    query.global_sequence_from = null;
+    query.global_sequence_to = 10;
+    model = ListMinesQueryModel.create(
+      ListMinesInput.fromRequest({ query } as any)
+    );
 
     expect(model.toQueryParams().filter.global_sequence).toEqual({
       $lt: MongoDB.Long.fromNumber(10),
     });
 
-    requestData.global_sequence_from = 1;
-    requestData.global_sequence_to = null;
-    model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
+    query.global_sequence_from = 1;
+    query.global_sequence_to = null;
+    model = ListMinesQueryModel.create(
+      ListMinesInput.fromRequest({ query } as any)
+    );
 
     expect(model.toQueryParams().filter.global_sequence).toEqual({
       $gte: MongoDB.Long.fromNumber(1),
@@ -89,34 +96,40 @@ describe('ListMinesQueryModel Unit tests', () => {
   });
 
   it('"ListMinesQueryModel.toQueryParams" should handle block_timestamp data based on input', async () => {
-    requestData.to = null;
-    requestData.from = null;
+    query.to = null;
+    query.from = null;
     let model = ListMinesQueryModel.create(
-      ListMinesInput.fromRequest(requestData)
+      ListMinesInput.fromRequest({ query } as any)
     );
 
     expect(model.toQueryParams().filter.block_timestamp).toBeUndefined();
 
-    requestData.from = '2021-06-17T01:05:38.000Z';
-    requestData.to = '2021-06-17T02:05:38.000Z';
-    model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
+    query.from = '2021-06-17T01:05:38.000Z';
+    query.to = '2021-06-17T02:05:38.000Z';
+    model = ListMinesQueryModel.create(
+      ListMinesInput.fromRequest({ query } as any)
+    );
 
     expect(model.toQueryParams().filter.block_timestamp).toEqual({
       $gte: new Date('2021-06-17T01:05:38.000Z'),
       $lt: new Date('2021-06-17T02:05:38.000Z'),
     });
 
-    requestData.from = null;
-    requestData.to = '2021-06-17T02:05:38.000Z';
-    model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
+    query.from = null;
+    query.to = '2021-06-17T02:05:38.000Z';
+    model = ListMinesQueryModel.create(
+      ListMinesInput.fromRequest({ query } as any)
+    );
 
     expect(model.toQueryParams().filter.block_timestamp).toEqual({
       $lt: new Date('2021-06-17T02:05:38.000Z'),
     });
 
-    requestData.from = '2021-06-17T01:05:38.000Z';
-    requestData.to = null;
-    model = ListMinesQueryModel.create(ListMinesInput.fromRequest(requestData));
+    query.from = '2021-06-17T01:05:38.000Z';
+    query.to = null;
+    model = ListMinesQueryModel.create(
+      ListMinesInput.fromRequest({ query } as any)
+    );
 
     expect(model.toQueryParams().filter.block_timestamp).toEqual({
       $gte: new Date('2021-06-17T01:05:38.000Z'),

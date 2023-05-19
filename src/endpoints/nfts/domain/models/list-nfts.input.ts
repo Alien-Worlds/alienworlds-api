@@ -1,4 +1,5 @@
-import { ListNftsRequestDto } from '../../data/nfts.dtos';
+import { Request } from '@alien-worlds/api-core';
+import { ListNftsRequestQuery } from '../../data/nfts.dtos';
 
 /**
  * @class
@@ -6,21 +7,25 @@ import { ListNftsRequestDto } from '../../data/nfts.dtos';
 export class ListNftsInput {
   /**
    *
-   * @param {ListNftsRequestDto} dto
+   * @param {ListNftsRequestQuery} dto
    * @returns {ListNftsInput}
    */
-  public static fromDto(dto: ListNftsRequestDto): ListNftsInput {
+  public static fromRequest(
+    request: Request<unknown, unknown, ListNftsRequestQuery>
+  ): ListNftsInput {
     const {
-      limit,
-      from,
-      to,
-      global_sequence_from,
-      global_sequence_to,
-      miner,
-      land_id,
-      sort,
-      rarity,
-    } = dto;
+      query: {
+        limit,
+        from,
+        to,
+        global_sequence_from,
+        global_sequence_to,
+        miner,
+        land_id,
+        sort,
+        rarity,
+      },
+    } = request;
     return new ListNftsInput(
       Number(limit) || 20,
       from,

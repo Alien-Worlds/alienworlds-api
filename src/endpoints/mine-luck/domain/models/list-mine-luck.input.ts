@@ -1,4 +1,5 @@
-import { ListMineLuckRequestDto } from '../../data/mine-luck.dtos';
+import { ListMineLuckRequestQuery } from '../../data/mine-luck.dtos';
+import { Request } from '@alien-worlds/api-core';
 
 /**
  * @class
@@ -6,11 +7,13 @@ import { ListMineLuckRequestDto } from '../../data/mine-luck.dtos';
 export class ListMineLuckInput {
   /**
    *
-   * @param {ListMineLuckRequestDto} dto
+   * @param {ListMineLuckRequestQuery} dto
    * @returns {ListMineLuckInput}
    */
-  public static fromDto(dto: ListMineLuckRequestDto): ListMineLuckInput {
-    const { query } = dto;
+  public static fromRequest(
+    request: Request<unknown, unknown, ListMineLuckRequestQuery>
+  ): ListMineLuckInput {
+    const { query } = request;
     return new ListMineLuckInput(query?.from, query?.to);
   }
   /**

@@ -20,17 +20,19 @@ const countNftsUseCase = {
 let container: Container;
 let controller: NftsController;
 
-const dto = {
-  limit: 10,
-  from: '2021-06-17T01:05:38.000Z',
-  to: '2021-06-17T01:05:38.000Z',
-  global_sequence_from: 1,
-  global_sequence_to: 2,
-  miner: 'fake_miner',
-  land_id: 'fake_land_id',
-  sort: 'asc',
-  rarity: 'rare',
-};
+const request = {
+  query: {
+    limit: 10,
+    from: '2021-06-17T01:05:38.000Z',
+    to: '2021-06-17T01:05:38.000Z',
+    global_sequence_from: 1,
+    global_sequence_to: 2,
+    miner: 'fake_miner',
+    land_id: 'fake_land_id',
+    sort: 'asc',
+    rarity: 'rare',
+  },
+} as any;
 
 describe('Nfts Controller Unit tests', () => {
   beforeAll(() => {
@@ -60,7 +62,7 @@ describe('Nfts Controller Unit tests', () => {
   it('Should execute listNftsUseCase and countNftsUseCase', async () => {
     listNftsUseCase.execute.mockResolvedValue(Result.withContent([]));
     countNftsUseCase.execute.mockResolvedValue(Result.withContent(1));
-    await controller.listNfts(ListNftsInput.fromDto(dto));
+    await controller.listNfts(ListNftsInput.fromRequest(request));
 
     expect(listNftsUseCase.execute).toBeCalled();
     expect(countNftsUseCase.execute).toBeCalled();
@@ -70,9 +72,11 @@ describe('Nfts Controller Unit tests', () => {
     listNftsUseCase.execute.mockResolvedValue(
       Result.withFailure(Failure.withMessage('error'))
     );
-    const result = await controller.listNfts(ListNftsInput.fromDto(dto));
+    const output = await controller.listNfts(
+      ListNftsInput.fromRequest(request)
+    );
 
-    expect(result.isFailure).toBeTruthy();
+    expect(output.listResult.isFailure).toBeTruthy();
   });
 
   it('Should return a failure when countNftsUseCase fails', async () => {
@@ -80,8 +84,10 @@ describe('Nfts Controller Unit tests', () => {
     countNftsUseCase.execute.mockResolvedValue(
       Result.withFailure(Failure.withMessage('error'))
     );
-    const result = await controller.listNfts(ListNftsInput.fromDto(dto));
+    const output = await controller.listNfts(
+      ListNftsInput.fromRequest(request)
+    );
 
-    expect(result.isFailure).toBeTruthy();
+    expect(output.countResult.isFailure).toBeTruthy();
   });
 });

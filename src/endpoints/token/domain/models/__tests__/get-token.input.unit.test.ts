@@ -5,13 +5,15 @@ import { GetTokenInput } from '../get-token.input';
 
 describe('GetTokenInput Unit tests', () => {
   it('"GetTokenInput.fromDto" should create controller input data based on user data', async () => {
-    const input = GetTokenInput.fromDto({
-      type: 'supply',
-      offset: 0,
-      id: 'foo_id',
-      owner: 'foo_owner',
-      schema: 'foo_schema',
-    });
+    const input = GetTokenInput.fromRequest({
+      query: {
+        type: 'supply',
+        offset: 0,
+        id: 'foo_id',
+        owner: 'foo_owner',
+        schema: 'foo_schema',
+      },
+    } as any);
     expect(input).toEqual({
       type: 'supply',
       offset: 0,

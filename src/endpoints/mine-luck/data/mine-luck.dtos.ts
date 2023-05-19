@@ -16,11 +16,9 @@ export type MineLuckDto = {
  * Represents the data structure of the MineLuck request body
  * @type
  */
-export type ListMineLuckRequestDto = {
-  query?: {
-    from?: string;
-    to?: string;
-  };
+export type ListMineLuckRequestQuery = {
+  from?: string;
+  to?: string;
 };
 
 /**

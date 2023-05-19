@@ -1,7 +1,6 @@
 import { Mine, MineDocument } from '@alien-worlds/alienworlds-api-common';
 import { Failure, RepositoryImpl, Result } from '@alien-worlds/api-core';
 import { MineLuck } from '../../domain/entities/mine-luck';
-import { UndefinedMineLuckError } from '../../domain/errors/undefined-mine-luck.error';
 import { ListMineLuckQueryModel } from '../../domain/models/list-mine-luck.query-model';
 import { MineLuckDto } from '../mine-luck.dtos';
 

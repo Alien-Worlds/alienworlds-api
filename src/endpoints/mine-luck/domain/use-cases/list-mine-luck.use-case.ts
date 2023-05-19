@@ -3,7 +3,6 @@ import { Result, UseCase } from '@alien-worlds/api-core';
 import { MineLuck } from '../entities/mine-luck';
 import { ListMineLuckInput } from '../models/list-mine-luck.input';
 import { MineLuckRepository } from '../repositories/mine-luck.repository';
-import { ListMineLuckQueryModel } from '../models/list-mine-luck.query-model';
 
 /**
  * @class

@@ -1,4 +1,5 @@
-import { ListMinesRequestDto } from '../../data/mines.dtos';
+import { Request } from '@alien-worlds/api-core';
+import { ListMinesRequestQuery } from '../../data/mines.dtos';
 
 /**
  * @class
@@ -6,23 +7,27 @@ import { ListMinesRequestDto } from '../../data/mines.dtos';
 export class ListMinesInput {
   /**
    *
-   * @param {ListMinesRequestDto} dto
+   * @param {ListMinesRequestQuery} dto
    * @returns {ListMinesInput}
    */
-  public static fromRequest(dto: ListMinesRequestDto): ListMinesInput {
+  public static fromRequest(
+    request: Request<unknown, unknown, ListMinesRequestQuery>
+  ): ListMinesInput {
     const {
-      limit,
-      from,
-      to,
-      global_sequence_from,
-      global_sequence_to,
-      miner,
-      landowner,
-      land_id,
-      planet_name,
-      tx_id,
-      sort,
-    } = dto;
+      query: {
+        limit,
+        from,
+        to,
+        global_sequence_from,
+        global_sequence_to,
+        miner,
+        landowner,
+        land_id,
+        planet_name,
+        tx_id,
+        sort,
+      },
+    } = request;
 
     return new ListMinesInput(
       limit,

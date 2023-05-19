@@ -1,3 +1,4 @@
+import { Request } from '@alien-worlds/api-core';
 import { parseToBigInt } from '@alien-worlds/api-core';
 import { ListAssetsRequestDto } from '../../data/asset.dtos';
 
@@ -10,8 +11,11 @@ export class ListAssetsInput {
    * @param {ListAssetsRequestDto} dto
    * @returns {ListAssetsInput}
    */
-  public static fromRequest(dto: ListAssetsRequestDto): ListAssetsInput {
-    const { limit, offset, id, owner, schema } = dto;
+  public static fromRequest(
+    request: Request<unknown, unknown, ListAssetsRequestDto>
+  ): ListAssetsInput {
+    const { query } = request || {};
+    const { limit, offset, id, owner, schema } = query || {};
     const assetIds = id ? id.split(',').map(item => parseToBigInt(item)) : [];
 
     return new ListAssetsInput(

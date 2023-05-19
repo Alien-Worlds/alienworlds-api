@@ -1,46 +1,8 @@
 import { GetTokenInput } from '../domain/models/get-token.input';
 import { TokenRequestDto } from '../data/dtos/token.dtos';
 import { TokenType } from '../token.enums';
-import {
-  GetRoute,
-  Result,
-  RouteHandler,
-  Request,
-} from '@alien-worlds/api-core';
-
-/**
- *
- * @param {Result<NFT[]>} result
- * @returns
- */
-export const parseResultToControllerOutput = (result: Result<string>) => {
-  if (result.isFailure) {
-    // handle failure
-    const { error } = result.failure;
-    return {
-      status: 500,
-      body: error.message,
-    };
-  }
-  const { content } = result;
-
-  const supply = parseFloat(content.replace(' TLM', '')).toFixed(4);
-
-  return {
-    status: 200,
-    body: supply,
-  };
-};
-
-/**
- *
- * @param {Request} request
- * @returns
- */
-export const parseRequestToControllerInput = (request: Request) => {
-  // parse DTO (query) to the options required by the controller method
-  return GetTokenInput.fromDto(request.query || {});
-};
+import { GetRoute, RouteHandler, Request } from '@alien-worlds/api-core';
+import { GetTokenOutput } from '../domain/models/get-token.output';
 
 /**
  * @class
@@ -53,11 +15,11 @@ export class GetTokenRoute extends GetRoute {
   private constructor(handler: RouteHandler) {
     super('/v1/alienworlds/token', handler, {
       hooks: {
-        pre: parseRequestToControllerInput,
-        post: parseResultToControllerOutput,
+        pre: GetTokenInput.fromRequest,
+        post: (output: GetTokenOutput) => output.toResponse(),
       },
       validators: {
-        request: (request: Request<TokenRequestDto>) => {
+        request: (request: Request<unknown, unknown, TokenRequestDto>) => {
           if (request.query.type) {
             const type = request.query.type.toLowerCase();
 

@@ -14,17 +14,19 @@ const nftRepository = {
 let container: Container;
 let useCase: ListNftsUseCase;
 
-const dto = {
-  limit: 10,
-  from: '2021-06-17T01:05:38.000Z',
-  to: '2021-06-17T01:05:38.000Z',
-  global_sequence_from: 1,
-  global_sequence_to: 2,
-  miner: 'fake_miner',
-  land_id: 'fake_land_id',
-  sort: 'asc',
-  rarity: 'rare',
-};
+const request = {
+  query: {
+    limit: 10,
+    from: '2021-06-17T01:05:38.000Z',
+    to: '2021-06-17T01:05:38.000Z',
+    global_sequence_from: 1,
+    global_sequence_to: 2,
+    miner: 'fake_miner',
+    land_id: 'fake_land_id',
+    sort: 'asc',
+    rarity: 'rare',
+  },
+} as any;
 
 describe('Asset Controller Unit tests', () => {
   beforeAll(() => {
@@ -49,7 +51,7 @@ describe('Asset Controller Unit tests', () => {
   });
 
   it('Should call nftRepository.listNfts', async () => {
-    await useCase.execute(ListNftsInput.fromDto(dto));
+    await useCase.execute(ListNftsInput.fromRequest(request));
 
     expect(nftRepository.find).toBeCalled();
   });
