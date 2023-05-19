@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getJsonRpcProvider } from '../../src/ioc/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
-import { ListMineLuckOutput } from '../../src/endpoints/mine-luck/domain/models/list-mine-luck.output';
 import {
   emptyMineluckResponse,
   mineluckOnlyJanuary2022Response,
@@ -33,7 +32,7 @@ describe('Mineluck check', () => {
       url: '/v1/alienworlds/mineluck',
     });
 
-    const data: ListMineLuckOutput = JSON.parse(response.body);
+    const data = JSON.parse(response.body);
     expect(data.results).toEqual(
       expect.arrayContaining(mineluckResponse.results)
     );
@@ -48,8 +47,7 @@ describe('Mineluck check', () => {
       method: 'GET',
       url: '/v1/alienworlds/mineluck?from=2023-04-11T14:27:41',
     });
-    console.log(response.body);
-    const data: ListMineLuckOutput = JSON.parse(response.body);
+    const data = JSON.parse(response.body);
     expect(data).toEqual(emptyMineluckResponse);
   });
 
@@ -58,7 +56,7 @@ describe('Mineluck check', () => {
       method: 'GET',
       url: '/v1/alienworlds/mineluck?to=2019-04-11T14:27:41',
     });
-    const data: ListMineLuckOutput = JSON.parse(response.body);
+    const data = JSON.parse(response.body);
     expect(data).toEqual(emptyMineluckResponse);
   });
 
@@ -67,7 +65,7 @@ describe('Mineluck check', () => {
       method: 'GET',
       url: '/v1/alienworlds/mineluck?from=2022-01-01T00:00:00&to=2022-01-31T00:00:00',
     });
-    const data: ListMineLuckOutput = JSON.parse(response.body);
+    const data = JSON.parse(response.body);
     expect(data.results).toEqual(
       expect.arrayContaining(mineluckOnlyJanuary2022Response.results)
     );

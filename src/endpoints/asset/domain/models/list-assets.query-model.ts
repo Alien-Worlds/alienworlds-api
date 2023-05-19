@@ -72,7 +72,7 @@ export class ListAssetsQueryModel extends QueryModel {
     if (Number.isInteger(limit)) {
       options.limit = limit;
     }
-    console.log('query', { filter, options });
+
     return { filter, options };
   }
 }

@@ -27,7 +27,7 @@ export class ListNftsOutput {
       if (error instanceof EntityNotFoundError) {
         return {
           status: 200,
-          body: { results: [], count: -1 },
+          body: { results: [], count: 0 },
         };
       }
 

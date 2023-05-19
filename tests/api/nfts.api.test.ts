@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getJsonRpcProvider } from '../../src/ioc/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
-import { ListNftsOutput } from '../../src/endpoints/nfts/domain/models/list-nfts.output';
+
 import {
   emptyNftsResponse,
   fakeLandId,
@@ -32,9 +32,8 @@ describe('NFTS API Test', () => {
     });
 
     expect(response.statusCode).toEqual(200);
-    expect(response.body).toEqual(
-      JSON.stringify(ListNftsOutput.create().toJson())
-    );
+    const data = JSON.parse(response.body);
+    expect(data).toEqual({ results: [], count: 0 });
   });
 
   it('Should return 400 if limit is > 1000', async () => {

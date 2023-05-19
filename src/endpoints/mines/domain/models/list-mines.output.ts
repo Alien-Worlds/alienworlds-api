@@ -35,7 +35,7 @@ export class ListMinesOutput {
       if (result.failure.error instanceof EntityNotFoundError) {
         return {
           status: 200,
-          body: ListMinesOutput.createEmpty(),
+          body: { results: [], count: -1 },
         };
       }
 

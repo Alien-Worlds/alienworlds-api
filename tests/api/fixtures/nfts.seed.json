@@ -1,6 +1,8 @@
 [
   {
-    "_id": "60ca9fe119db468901f30cb0",
+    "_id": {
+      "$oid": "60ca9fe119db468901f30cb0"
+    },
     "miner": "fakeminer0.wm",
     "land_id": "109951296110",
     "params": {
@@ -36,7 +38,9 @@
     }
   },
   {
-    "_id": "60ca9fe08023a488c1de6141",
+    "_id": {
+      "$oid": "60ca9fe08023a488c1de6141"
+    },
     "miner": "fakeminer0.wm",
     "land_id": "1099512958541",
     "params": {
@@ -72,7 +76,9 @@
     }
   },
   {
-    "_id": "60ca9fd8477fe9891b492c14",
+    "_id": {
+      "$oid": "60ca9fd8477fe9891b492c14"
+    },
     "miner": "fakeminer1.wm",
     "land_id": "1099512960442",
     "params": {
@@ -108,7 +114,9 @@
     }
   },
   {
-    "_id": "60ca9fd22458f58866e3f949",
+    "_id": {
+      "$oid": "60ca9fd22458f58866e3f949"
+    },
     "miner": "fakeminer1.wm",
     "land_id": "1099512960442",
     "params": {
@@ -143,7 +151,9 @@
     }
   },
   {
-    "_id": "60ca9fce1f5951885c887f18",
+    "_id": {
+      "$oid": "60ca9fce1f5951885c887f18"
+    },
     "miner": "fakeminer0.wm",
     "land_id": "1099512958374",
     "params": {
@@ -178,7 +188,9 @@
     }
   },
   {
-    "_id": "60ca9fbdf020ef886c98015e",
+    "_id": {
+      "$oid": "60ca9fbdf020ef886c98015e"
+    },
     "miner": "fakeminer1.wm",
     "land_id": "1099512960175",
     "params": {
@@ -214,7 +226,9 @@
     }
   },
   {
-    "_id": "60ca9fbde2f0bf88a5254782",
+    "_id": {
+      "$oid": "60ca9fbde2f0bf88a5254782"
+    },
     "miner": "fakeminer2.wm",
     "land_id": "1099512961076",
     "params": {
@@ -249,7 +263,9 @@
     }
   },
   {
-    "_id": "60ca9fb11f5951885c887f17",
+    "_id": {
+      "$oid": "60ca9fb11f5951885c887f17"
+    },
     "miner": "fakeminer2.wm",
     "land_id": "1099512958187",
     "params": {
@@ -284,7 +300,9 @@
     }
   },
   {
-    "_id": "60ca9faf6de77488b04d34d9",
+    "_id": {
+      "$oid": "60ca9faf6de77488b04d34d9"
+    },
     "miner": "fakeminer2.wm",
     "land_id": "1099512961368",
     "params": {
@@ -319,7 +337,9 @@
     }
   },
   {
-    "_id": "60ca9f951f5951885c887f16",
+    "_id": {
+      "$oid": "60ca9f951f5951885c887f16"
+    },
     "miner": "fakeminer3.wm",
     "land_id": "1099512959279",
     "params": {

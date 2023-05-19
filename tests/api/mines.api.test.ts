@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getJsonRpcProvider } from '../../src/ioc/api.ioc.utils';
 import { createApiTestEnvironment } from '../environments';
-import { ListMinesOutput } from '../../src/endpoints/mines/domain/models/list-mines.output';
+
 import {
   emptyMinesResponse,
   fakeLandId,
@@ -32,9 +32,11 @@ describe('Mines API Test', () => {
     });
 
     expect(response.statusCode).toEqual(200);
-    expect(response.body).toEqual(
-      JSON.stringify(ListMinesOutput.fromEntities([]).toJson())
-    );
+    const data = JSON.parse(response.body);
+    expect(data).toEqual({
+      results: [],
+      count: -1,
+    });
   });
 
   it('Should return 400 if limit is > 5000', async () => {
