@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [develop, master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: Lint, build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # packages: read lets the install step fetch the private @alien-worlds
+    # packages from GitHub Packages with the automatic GITHUB_TOKEN.
+    permissions:
+      contents: read
+      packages: read
+    # .npmrc references ${GITHUB_TOKEN}, and yarn aborts every command when it
+    # is unset. A dummy value here keeps later steps (which run repo and
+    # dependency code) free of the real token, which only the install step gets.
+    env:
+      GITHUB_TOKEN: unused
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      # --ignore-scripts: do not run dependency install scripts, or the repo's
+      # own `prepare` (husky). The token is only in this step's environment;
+      # .npmrc sends it to npm.pkg.github.com and nowhere else.
+      - name: Install
+        run: yarn install --frozen-lockfile --ignore-scripts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: yarn lint
+
+      - run: yarn prettier:check
+
+      - run: yarn build
+
+      - run: yarn test:unit
+
+      # Report only.
+      - name: Dependency audit (non-blocking)
+        run: yarn audit --groups dependencies
+        continue-on-error: true
