@@ -47,10 +47,7 @@ jobs:
 
       - run: yarn lint
 
-      # tests/environments/index.ts already fails the format check on develop.
-      # Non-blocking until it is reformatted (a separate change).
       - run: yarn prettier:check
-        continue-on-error: true
 
       - run: yarn build
 
