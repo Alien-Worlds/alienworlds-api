@@ -40,6 +40,16 @@ jobs:
       - name: Type-check
         run: yarn tsc --noEmit
 
+      # Load the native modules on the runner (glibc, x86-64). Install scripts
+      # are off, so this tests what ships in the tarballs: the prebuilt
+      # abieos binary, and the New Relic agent without its optional
+      # native-metrics addon. The agent is disabled and reports nothing.
+      - name: Native modules load
+        run: |
+          node -e 'const a = require("@eosrio/node-abieos"); console.log("abieos loaded:", Object.keys(a).length, "exports")'
+          NEW_RELIC_ENABLED=false NEW_RELIC_NO_CONFIG_FILE=true NEW_RELIC_APP_NAME=ci \
+            node -e 'require("newrelic"); console.log("newrelic loaded")'
+
       # Report only.
       - name: Dependency audit (non-blocking)
         run: yarn audit --groups dependencies
