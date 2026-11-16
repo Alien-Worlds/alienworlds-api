@@ -54,3 +54,18 @@ jobs:
       - name: Dependency audit (non-blocking)
         run: yarn audit --groups dependencies
         continue-on-error: true
+
+  smoke:
+    name: API smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Builds the image, starts MongoDB (pinned by digest), a mock chain and the
+      # api on an internal network with no internet route, and compares 32
+      # recorded responses. See smoke/README.md.
+      - name: Smoke test
+        run: smoke/run.sh check
