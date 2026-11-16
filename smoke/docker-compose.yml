@@ -1,0 +1,53 @@
+# Smoke harness for the `api` process. See README.md.
+#
+# Everything runs on an internal network with no route to the internet:
+#   mongo       MongoDB (image pinned by digest), seeded by the runner
+#   mock-chain  fake WAX / ETH / BSC endpoints for the /token route
+#   api         an image built like ../Dockerfile (without the abis download), config mounted over dist/config.js
+#   runner      the same image, running smoke/run.js (seeds, requests, compares)
+name: aw-smoke
+
+services:
+  mongo:
+    # mongo 5.0 is the newest server line the 3.6 driver in this repo supports.
+    # It is end-of-life, which is acceptable for a throwaway test database.
+    image: mongo:5.0@sha256:41108d183e972dcbf98d09ed83f6cfc89a471a3f15d06f9d64a95e45d9db8dd2
+    networks: [smoke]
+    tmpfs: [/data/db]
+
+  mock-chain:
+    image: node:24-alpine
+    command: ['node', '/smoke/mock-chain.js']
+    volumes: ['./mock-chain.js:/smoke/mock-chain.js:ro']
+    networks: [smoke]
+
+  api:
+    build:
+      context: ..
+      dockerfile: smoke/Dockerfile
+    image: aw-smoke-api
+    command: ['node', 'dist/api.js']
+    environment:
+      NEW_RELIC_ENABLED: 'false'
+      NEW_RELIC_NO_CONFIG_FILE: 'true'
+      NEW_RELIC_APP_NAME: smoke
+    volumes: ['./config.smoke.js:/var/www/api/dist/config.js:ro']
+    depends_on: [mongo, mock-chain]
+    networks: [smoke]
+
+  runner:
+    image: aw-smoke-api
+    working_dir: /var/www/api
+    command: ['node', '/smoke/run.js']
+    environment:
+      MODE: ${MODE:-check}
+    volumes:
+      - ./run.js:/smoke/run.js:ro
+      - ./seed.js:/smoke/seed.js:ro
+      - ./golden:/smoke/golden
+    depends_on: [api]
+    networks: [smoke]
+
+networks:
+  smoke:
+    internal: true
