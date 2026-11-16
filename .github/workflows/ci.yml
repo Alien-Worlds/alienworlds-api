@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Lint and type-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      # --ignore-scripts: do not run dependency install scripts (the New Relic
+      # native-metrics binary download, native builds) or the repo's own
+      # `prepare` (husky).
+      - name: Install
+        run: yarn install --frozen-lockfile --ignore-scripts
+
+      - run: yarn lint
+
+      # Type-check only. `yarn build` also runs `abis`, which fetches ABIs
+      # from a live chain node, and this repo has no tests.
+      - name: Type-check
+        run: yarn tsc --noEmit
+
+      # Load the native modules on the runner (glibc, x86-64). Install scripts
+      # are off, so this tests what ships in the tarballs: the prebuilt
+      # abieos binary, and the New Relic agent without its optional
+      # native-metrics addon. The agent is disabled and reports nothing.
+      - name: Native modules load
+        run: |
+          node -e 'const a = require("@eosrio/node-abieos"); console.log("abieos loaded:", Object.keys(a).length, "exports")'
+          NEW_RELIC_ENABLED=false NEW_RELIC_NO_CONFIG_FILE=true NEW_RELIC_APP_NAME=ci \
+            node -e 'require("newrelic"); console.log("newrelic loaded")'
+
+      # Report only.
+      - name: Dependency audit (non-blocking)
+        run: yarn audit --groups dependencies
+        continue-on-error: true

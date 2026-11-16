@@ -1,4 +1,4 @@
-FROM node:17-alpine3.12
+FROM node:24-alpine
 
 RUN apk add curl python3 make g++
 
@@ -11,5 +11,5 @@ COPY config.js package.json tsconfig.json yarn.lock /var/www/api/
 
 WORKDIR /var/www/api
 
-RUN yarn
+RUN yarn install --frozen-lockfile --ignore-scripts
 RUN yarn build
