@@ -38,8 +38,10 @@ in the same pull request so a reviewer sees what moved.
 
 ## Known limits
 
-- Only the `api` process. `processor`, `filler` and `blockrange` need a SHiP node
-  and RabbitMQ; an `amqplib` upgrade needs its own check.
+- Only the `api` process, plus the index setup script. `processor`, `filler` and
+  `blockrange` need a SHiP node and RabbitMQ, so their real work (including the
+  `insertMany` callback in `processor.ts`) is not covered. An `amqplib` upgrade
+  needs its own check.
 - Load-time checks only for New Relic (agent disabled).
 - `/mineluck` groups without a sort, so the harness orders its results and arrays
   before comparing, and the seed keeps each miner's bag identical (otherwise `tools`

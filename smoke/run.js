@@ -2,7 +2,9 @@
 //   MODE=record  write smoke/golden/cases.json
 //   MODE=check   compare against it; exit 1 on any difference (default)
 const fs = require('fs');
+const { execFileSync } = require('child_process');
 const seed = require('./seed');
+const { MongoClient } = require('/var/www/api/node_modules/mongodb');
 
 const BASE = 'http://api:8800';
 const P = '/v1/alienworlds';
@@ -82,11 +84,29 @@ async function call([name, method, path, headers]) {
   return { name, request: `${method} ${path}`, status: res.status, headers: h, body };
 }
 
+// Runs the real index setup script (dist/mongo_setup.js, via the repo's own
+// connectMongo) against the seeded database, then lists the indexes it made.
+// This is the only check that exercises the connection code used by processor,
+// filler and blockrange.
+async function indexSetupCase() {
+  execFileSync('node', ['dist/mongo_setup.js'], { cwd: '/var/www/api', stdio: 'pipe' });
+  const client = await MongoClient.connect('mongodb://mongo:27017', { useUnifiedTopology: true });
+  const db = client.db('smoke');
+  const body = {};
+  for (const c of ['mines', 'nfts', 'assets', 'atomictransfers']) {
+    const idx = await db.collection(c).indexes();
+    body[c] = idx.map(i => ({ name: i.name, key: i.key })).sort((a, b) => a.name.localeCompare(b.name));
+  }
+  await client.close();
+  return { name: 'mongo_setup indexes', request: 'node dist/mongo_setup.js', status: 0, headers: {}, body: stable(body) };
+}
+
 (async () => {
   await seed('mongodb://mongo:27017', 'smoke');
   await waitForApi();
   const results = [];
   for (const c of cases) results.push(await call(c));
+  results.push(await indexSetupCase());
 
   if (MODE === 'record') {
     fs.writeFileSync(GOLDEN, JSON.stringify(results, null, 2) + '\n');

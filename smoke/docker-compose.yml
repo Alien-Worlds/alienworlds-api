@@ -42,6 +42,7 @@ services:
     environment:
       MODE: ${MODE:-check}
     volumes:
+      - ./config.smoke.js:/var/www/api/dist/config.js:ro
       - ./run.js:/smoke/run.js:ro
       - ./seed.js:/smoke/seed.js:ro
       - ./golden:/smoke/golden
