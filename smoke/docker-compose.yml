@@ -28,7 +28,8 @@ services:
     image: aw-smoke-api
     command: ['node', 'dist/api.js']
     environment:
-      NEW_RELIC_ENABLED: 'false'
+      NEW_RELIC_ENABLED: ${NR_ENABLED:-false}
+      NEW_RELIC_LICENSE_KEY: ${NR_LICENSE_KEY:-}
       NEW_RELIC_NO_CONFIG_FILE: 'true'
       NEW_RELIC_APP_NAME: smoke
     volumes: ['./config.smoke.js:/var/www/api/dist/config.js:ro']
