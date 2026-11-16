@@ -79,6 +79,11 @@
     "typescript": "^4.5.4"
   },
   "resolutions": {
-    "@grpc/grpc-js": "1.14.6"
+    "@grpc/grpc-js": "1.14.6",
+    "elliptic": "6.6.1",
+    "url-parse": "1.5.10",
+    "**/@ethersproject/providers/ws": "7.5.13",
+    "brace-expansion": "1.1.21",
+    "@eosdacio/eosio-statereceiver/ws": "6.2.6"
   }
 }
