@@ -52,10 +52,9 @@
     "fastify": "^3.11.0",
     "fastify-autoload": "^3.4.2",
     "fastify-cors": "^5.2.0",
-    "fastify-mongodb": "^2.0.1",
     "fastify-oas": "^3.0.8",
     "file-exists": "^5.0.1",
-    "mongodb": "^3.6.3",
+    "mongodb": "^4.17.2",
     "newrelic": "^8.7.1",
     "node-fetch": "^2.6.1"
   },
