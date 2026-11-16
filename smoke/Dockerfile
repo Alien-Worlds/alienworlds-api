@@ -13,6 +13,6 @@ COPY config.js package.json tsconfig.json yarn.lock /var/www/api/
 
 WORKDIR /var/www/api
 
-RUN yarn install --frozen-lockfile --ignore-scripts
+RUN yarn install --frozen-lockfile --ignore-scripts --ignore-optional
 
 RUN yarn check-config && yarn clean && yarn tsc && yarn copy-files
