@@ -113,6 +113,10 @@ More information about how to login to Github's Docker registry with docker usin
 
 `docker compose push`
 
+### Deploying a release
+
+For the rollout order, pre-flight checks and rollback plan of the Node 24 / dependency upgrade release, see [docs/deployment-playbook.md](docs/deployment-playbook.md).
+
 ### Pulling the latest compiled images from Docker repository
 
 This command is part of the CI chain and normally don't need to run locally.
