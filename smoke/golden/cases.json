@@ -1754,5 +1754,160 @@
         }
       ]
     }
+  },
+  {
+    "name": "mongo_setup indexes",
+    "request": "node dist/mongo_setup.js",
+    "status": 0,
+    "headers": {},
+    "body": {
+      "assets": [
+        {
+          "key": {
+            "_id": 1
+          },
+          "name": "_id_"
+        },
+        {
+          "key": {
+            "asset_id": 1
+          },
+          "name": "asset_id_1"
+        },
+        {
+          "key": {
+            "owner": 1
+          },
+          "name": "owner_1"
+        }
+      ],
+      "atomictransfers": [
+        {
+          "key": {
+            "_id": 1
+          },
+          "name": "_id_"
+        },
+        {
+          "key": {
+            "asset_ids": 1
+          },
+          "name": "asset_ids_1"
+        }
+      ],
+      "mines": [
+        {
+          "key": {
+            "_id": 1
+          },
+          "name": "_id_"
+        },
+        {
+          "key": {
+            "block_num": -1
+          },
+          "name": "block_num_-1"
+        },
+        {
+          "key": {
+            "block_timestamp": 1
+          },
+          "name": "block_timestamp_1"
+        },
+        {
+          "key": {
+            "global_sequence": 1
+          },
+          "name": "global_sequence_1"
+        },
+        {
+          "key": {
+            "block_timestamp": -1,
+            "land_id": 1
+          },
+          "name": "land_id_1_block_timestamp_-1"
+        },
+        {
+          "key": {
+            "global_sequence": -1,
+            "land_id": 1
+          },
+          "name": "land_id_1_global_sequence_-1"
+        },
+        {
+          "key": {
+            "block_timestamp": -1,
+            "landowner": 1
+          },
+          "name": "landowner_1_block_timestamp_-1"
+        },
+        {
+          "key": {
+            "global_sequence": -1,
+            "landowner": 1
+          },
+          "name": "landowner_1_global_sequence_-1"
+        },
+        {
+          "key": {
+            "global_sequence": -1,
+            "miner": 1
+          },
+          "name": "miner_1_global_sequence_-1"
+        },
+        {
+          "key": {
+            "global_sequence": -1,
+            "planet": 1
+          },
+          "name": "planet_1_global_sequence_-1"
+        },
+        {
+          "key": {
+            "tx_id": 1
+          },
+          "name": "tx_id_1"
+        }
+      ],
+      "nfts": [
+        {
+          "key": {
+            "_id": 1
+          },
+          "name": "_id_"
+        },
+        {
+          "key": {
+            "global_sequence": 1
+          },
+          "name": "global_sequence_1"
+        },
+        {
+          "key": {
+            "block_timestamp": -1,
+            "global_sequence": 1
+          },
+          "name": "global_sequence_1_block_timestamp_-1"
+        },
+        {
+          "key": {
+            "land_id": 1
+          },
+          "name": "land_id_1"
+        },
+        {
+          "key": {
+            "miner": 1
+          },
+          "name": "miner_1"
+        },
+        {
+          "key": {
+            "template_data.rarity": 1
+          },
+          "name": "template_data.rarity_1"
+        }
+      ]
+    }
   }
 ]

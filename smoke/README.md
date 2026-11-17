@@ -20,7 +20,7 @@ smoke/run.sh record   # re-record the golden file (do this only on purpose, see 
 
 1. Builds an image like the repo Dockerfile (frozen lockfile, `--ignore-scripts`),
    except it skips `yarn abis`, which downloads ABIs from a live public API.
-2. Starts MongoDB 5.0 (pinned by digest), a mock chain endpoint and the `api` on an
+2. Starts MongoDB 6.0 (pinned by digest, the major version production runs), a mock chain endpoint and the `api` on an
    internal Docker network with no route to the internet.
 3. Seeds fixed documents (`smoke/seed.js`), calls 32 requests (`smoke/run.js`) and
    compares status, selected headers (content-type, CORS) and the JSON body.
@@ -38,13 +38,15 @@ in the same pull request so a reviewer sees what moved.
 
 ## Known limits
 
-- Only the `api` process. `processor`, `filler` and `blockrange` need a SHiP node
-  and RabbitMQ; an `amqplib` upgrade needs its own check.
+- Only the `api` process, plus the index setup script. `processor`, `filler` and
+  `blockrange` need a SHiP node and RabbitMQ, so their real work (including the
+  `insertMany` callback in `processor.ts`) is not covered. An `amqplib` upgrade
+  needs its own check.
 - Load-time checks only for New Relic (agent disabled).
 - `/mineluck` groups without a sort, so the harness orders its results and arrays
   before comparing, and the seed keeps each miner's bag identical (otherwise `tools`
   depends on `$addToSet` order). Both are existing quirks of that route.
-- MongoDB 5.0 is end-of-life. It is the newest server line the 3.6 driver supports.
-  Replace it when the driver is upgraded.
+- MongoDB 6.0 is past its end of life; it is used because production runs MongoDB 6.
+  Move the image forward when production does.
 - The mock chain returns fixed numbers, so `/token` checks the arithmetic and
   plumbing, not the real chain.

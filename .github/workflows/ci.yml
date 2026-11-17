@@ -29,9 +29,10 @@ jobs:
 
       # --ignore-scripts: do not run dependency install scripts (the New Relic
       # native-metrics binary download, native builds) or the repo's own
-      # `prepare` (husky).
+      # `prepare` (husky). --ignore-optional: skip the unused AWS SDK packages
+      # that mongodb 4.x lists as optional.
       - name: Install
-        run: yarn install --frozen-lockfile --ignore-scripts
+        run: yarn install --frozen-lockfile --ignore-scripts --ignore-optional
 
       - run: yarn lint
 

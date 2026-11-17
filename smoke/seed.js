@@ -57,7 +57,7 @@ const nfts = [
 }));
 
 module.exports = async function seed(url, dbName) {
-  const client = await MongoClient.connect(url, { useUnifiedTopology: true });
+  const client = await MongoClient.connect(url, { useUnifiedTopology: true }); // ignored by driver 4+; 3.x needs it to retry while mongo starts
   const db = client.db(dbName);
   await db.dropDatabase();
   await db.collection('assets').insertMany(assets);
