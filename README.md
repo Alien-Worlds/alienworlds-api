@@ -124,4 +124,4 @@ Requires a successful docker login to the registry first ([please read the offic
 
 - In local development mode the API is accessible at http://localhost:8900
 - Production API documentation is available at https://alien-worlds.github.io/alienworlds-api
-- For extending / updating our API documentation, please look into the official [fastify-oas](https://github.com/SkeLLLa/fastify-oas) documentation.
+- For extending / updating our API documentation, please look into the official [@fastify/swagger](https://github.com/fastify/fastify-swagger) documentation.
