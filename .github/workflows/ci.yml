@@ -70,3 +70,9 @@ jobs:
       # recorded responses. See smoke/README.md.
       - name: Smoke test
         run: smoke/run.sh check
+
+      # Same requests with the New Relic agent switched on (a fake key; the
+      # network has no route out, so nothing is reported). Checks that the
+      # agent's instrumentation of fastify and mongodb does not change responses.
+      - name: Smoke test with the New Relic agent enabled
+        run: NR_ENABLED=true NR_LICENSE_KEY=0000000000000000000000000000000000000000 smoke/run.sh check
