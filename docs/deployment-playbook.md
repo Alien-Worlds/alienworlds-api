@@ -11,7 +11,9 @@ This playbook covers deploying the release that contains PRs #79 to #84:
 | #83 | New Relic agent 8.17.1 to 13.20.0 |
 | #84 | Fastify 3 to 5 and its plugins |
 
-Production dependency audit after the release: 0 critical, 0 high (21 moderate, 10 low). Before: 12 critical, 29 high.
+Production dependency audit (`yarn audit --groups dependencies`) after the release: 0 critical, 0 high (21 moderate, 10 low). Before: 12 critical, 29 high.
+
+GitHub's Dependabot page for `master` shows a larger number (65 open alerts when this was written: 11 critical, 19 high, 22 medium, 8 low). Its runtime-scope alerts are 5 medium only; **all 11 critical and 19 high are in development dependencies** (lint and test tooling such as eslint and jest), which are not part of the production audit above. They are still installed into the Docker image, because the `Dockerfile` installs without `--production` (see section 9).
 
 The goal of this document is to deploy without breaking anything and without harming the existing MongoDB. It lists what was verified, what was not, and the order to roll out in.
 
@@ -132,6 +134,7 @@ To check the server version: `db.version()` in `mongosh`.
 
 - Move the driver to 6.x. It removes callbacks and `cursor.count()`, so the callback in `processor.ts`, `connectMongo` and the `.count()` calls need to change, and `processor` needs its own test first.
 - Upgrade TypeScript. Fastify 5 ships TypeScript 5 type declarations, so `src/api.ts` loads the Fastify packages with `require()` until then.
+- Keep development dependencies out of the production image (a multi-stage build, or `yarn install --production` for the final stage). They are the source of the critical and high Dependabot alerts, and they are not needed at runtime. Clearing the alerts themselves means upgrading eslint, jest and their plugins.
 - The remaining moderate audit findings (`@opentelemetry/core` via `newrelic`, `bn.js` via `eosjs` and `ethers`, `glob` and `minimatch` via `@fastify/swagger-ui`).
 
 ## Appendix A: duplicate-key handling check
