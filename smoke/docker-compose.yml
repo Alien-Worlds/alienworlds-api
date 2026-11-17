@@ -1,7 +1,7 @@
 # Smoke harness for the `api` process. See README.md.
 #
 # Everything runs on an internal network with no route to the internet:
-#   mongo       MongoDB (image pinned by digest), seeded by the runner
+#   mongo       MongoDB 6.0 (image pinned by digest), seeded by the runner
 #   mock-chain  fake WAX / ETH / BSC endpoints for the /token route
 #   api         an image built like ../Dockerfile (without the abis download), config mounted over dist/config.js
 #   runner      the same image, running smoke/run.js (seeds, requests, compares)
@@ -9,9 +9,9 @@ name: aw-smoke
 
 services:
   mongo:
-    # mongo 5.0 is the newest server line the 3.6 driver in this repo supports.
-    # It is end-of-life, which is acceptable for a throwaway test database.
-    image: mongo:5.0@sha256:41108d183e972dcbf98d09ed83f6cfc89a471a3f15d06f9d64a95e45d9db8dd2
+    # Production runs MongoDB 6. Driver 4.8 to 4.17 fully supports server 6.0.
+    # 6.0 is past its end of life, which is acceptable for a throwaway test database.
+    image: mongo:6.0@sha256:8b6d8f5bbedb25cb73517b65cf99f13aeb75ad5b157a56c479287a840bbad3ac
     networks: [smoke]
     tmpfs: [/data/db]
 
