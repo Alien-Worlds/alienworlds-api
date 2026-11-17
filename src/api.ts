@@ -8,40 +8,44 @@ process.title = 'eosdac-api';
 // const {loadConfig} = require('./functions');
 // const path = require('path');
 import path from 'path';
-import fastify, { FastifyInstance } from 'fastify';
-import fastifyOas from 'fastify-oas';
-import fastifyCors from 'fastify-cors';
-import fastifyAutoload from 'fastify-autoload';
-import { Server, IncomingMessage, ServerResponse } from 'http';
+// Loaded with require() on purpose: fastify 5 ships TypeScript 5 type
+// declarations, which the TypeScript 4.5 used here cannot parse.
+const fastify = require('fastify');
+const fastifySwagger = require('@fastify/swagger');
+const fastifySwaggerUi = require('@fastify/swagger-ui');
+const fastifyCors = require('@fastify/cors');
+const fastifyAutoload = require('@fastify/autoload');
 const config = require('./config');
 const { MongoClient } = require('mongodb');
 
 const logger = console;
 
-const server: FastifyInstance<Server, IncomingMessage, ServerResponse> =
-  fastify({
-    ignoreTrailingSlash: true,
-    trustProxy: true,
-    logger: true,
-  });
+const server = fastify({
+  ignoreTrailingSlash: true,
+  trustProxy: true,
+  logger: true,
+});
 
-const openApi = {
-  routePrefix: '/v1/alienworlds/docs',
-  exposeRoute: true,
-  swagger: {
+const docsHost = config.docs_host || 'localhost';
+const docsScheme = (config.api.schemes || ['https'])[0];
+
+// OpenAPI 3 document, served at /v1/alienworlds/docs/json (and /yaml, plus the
+// UI at /v1/alienworlds/docs). Must be registered before the routes it describes.
+server.register(fastifySwagger, {
+  openapi: {
+    openapi: '3.0.0',
     info: {
       title: 'Alien Worlds API',
       description: 'API for Alien Worlds information',
       version: '1.0.0',
     },
-    host: config.docs_host || 'localhost',
-    schemes: config.api.schemes || ['https'],
-    consumes: ['application/json'],
-    produces: ['application/json'],
+    servers: [{ url: `${docsScheme}://${docsHost}/` }],
   },
-};
+});
 
-server.register(fastifyOas, openApi);
+server.register(fastifySwaggerUi, {
+  routePrefix: '/v1/alienworlds/docs',
+});
 
 server.register(fastifyAutoload, {
   dir: path.join(__dirname, 'api-handlers'),
@@ -76,14 +80,13 @@ const server_port = config.api.port || '8800';
           'New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']'
         );
         console.log(`Started API server on ${server_address}:${server_port}`);
-        await server.oas();
       },
       err => {
         console.error('Error starting API', err);
       }
     );
 
-    await server.listen(server_port, server_address);
+    await server.listen({ port: Number(server_port), host: server_address });
   } catch (err) {
     server.log.error(err);
     process.exit(1);
