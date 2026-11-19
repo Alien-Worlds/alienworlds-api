@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('./include/disable-keepalive');
+
 // Fetching all ABIs
 const fetch_abis = async directory => {
   const fetch = require('node-fetch');

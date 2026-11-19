@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import './include/disable-keepalive';
 import { connectMongo } from './connections/mongo';
 import { AssetAggregator } from './include/assetaggregator';
 

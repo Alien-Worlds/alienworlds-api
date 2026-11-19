@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-unused-vars */
 const newrelic = require('newrelic');
+import './include/disable-keepalive';
 
 process.title = 'eosdac-api';
 
