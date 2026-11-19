@@ -27,6 +27,11 @@ RUN mkdir -p /var/www/api
 WORKDIR /var/www/api
 
 COPY package.json yarn.lock .yarnrc /var/www/api/
+COPY scripts/use-compiled-scripts.js /tmp/use-compiled-scripts.js
+
+# `yarn api`, `yarn processor`, `yarn filler` and `yarn blockrange` run tsc-watch, a dev
+# dependency. Make them run the compiled code instead, so existing start commands work.
+RUN node /tmp/use-compiled-scripts.js package.json && rm /tmp/use-compiled-scripts.js
 
 RUN yarn install --frozen-lockfile --production --ignore-scripts --ignore-optional \
   && yarn cache clean

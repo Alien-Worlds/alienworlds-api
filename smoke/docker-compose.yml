@@ -26,7 +26,8 @@ services:
       context: ..
       dockerfile: smoke/Dockerfile
     image: aw-smoke-api
-    command: ['node', 'dist/api.js']
+    # API_CMD lets the harness also check the usual `yarn api` start command.
+    command: ['sh', '-c', '${API_CMD:-node dist/api.js}']
     environment:
       NEW_RELIC_ENABLED: ${NR_ENABLED:-false}
       NEW_RELIC_LICENSE_KEY: ${NR_LICENSE_KEY:-}

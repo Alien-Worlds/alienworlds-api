@@ -2,9 +2,10 @@
 # compiles the code. `production` (the default target) has only the production
 # dependencies and the compiled output, so the dev tooling is not shipped.
 #
-# Containers must run the compiled code (for example `node dist/api.js`). The
-# `yarn api` / `yarn processor` scripts use tsc-watch, which is a dev dependency
-# and is only in the `build` stage: docker build --target build .
+# In the production stage `yarn api`, `yarn processor`, `yarn filler` and `yarn
+# blockrange` run the compiled code (`node dist/x.js`) instead of tsc-watch, so the
+# usual start commands still work; there is just no live recompiling. To get the
+# tooling back (tsc, tsc-watch, eslint, redoc-cli): docker build --target build .
 
 FROM node:24-alpine AS build
 
@@ -32,6 +33,11 @@ RUN mkdir -p /var/www/api
 WORKDIR /var/www/api
 
 COPY package.json yarn.lock .yarnrc /var/www/api/
+COPY scripts/use-compiled-scripts.js /tmp/use-compiled-scripts.js
+
+# `yarn api`, `yarn processor`, `yarn filler` and `yarn blockrange` run tsc-watch, a dev
+# dependency. Make them run the compiled code instead, so existing start commands work.
+RUN node /tmp/use-compiled-scripts.js package.json && rm /tmp/use-compiled-scripts.js
 
 RUN yarn install --frozen-lockfile --production --ignore-scripts --ignore-optional \
   && yarn cache clean
