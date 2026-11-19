@@ -27,6 +27,7 @@ The goal of this document is to deploy without breaking anything and without har
 | `mongodb` driver | 3.6 | 4.17.2 |
 | `fastify` | 3.25 | 5.12 (plugins replaced, see section 6) |
 | New Relic agent | 8.17 | 13.20 |
+| Outgoing HTTP | keep-alive off (Node 17 default) | keep-alive off, set explicitly at start-up (`src/include/disable-keepalive.ts`), because Node 19+ turns it on |
 | Dependency installs | `yarn` with scripts | `yarn install --frozen-lockfile --ignore-scripts --ignore-optional` |
 
 **MongoDB**
@@ -52,7 +53,7 @@ These were verified before the release was merged:
 - **New Relic reporting** into an account: route names, MongoDB spans, and whether the bundled security agent is off by default. Nothing was sent from the test network.
 - **The production connection string** under driver 4 (see section 4), authentication method and CPU architecture.
 - Real traffic. `master` has no unit tests.
-- The real `Dockerfile` build: its `yarn abis` step downloads ABIs from a live public API and failed intermittently during testing. The smoke image, which skips that step, builds and passes.
+- The real `Dockerfile` build was failing at `yarn abis` with `FetchError: ... socket hang up`. That was not an outage: since Node 19 the default HTTP agent keeps connections alive, and `node-fetch` 2 reuses sockets the server has closed. The same thing can hit `node-fetch` and `ethers` calls at runtime (`/token`, `processor`, `filler`). It is fixed by `src/include/disable-keepalive.ts`, which restores the Node 17 behaviour; deploy a build that contains it. The smoke harness now fails without that fix (its mock chain refuses socket reuse).
 
 ## 4. Pre-flight checklist
 

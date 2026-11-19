@@ -1957,5 +1957,17 @@
         }
       ]
     }
+  },
+  {
+    "name": "fetch_abis",
+    "request": "node dist/fetch_abis.js",
+    "status": 0,
+    "headers": {},
+    "body": {
+      "files": [
+        "one.test-108.hex: 0a0b0c",
+        "two.test-108.hex: 0a0b0c"
+      ]
+    }
   }
 ]

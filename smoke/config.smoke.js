@@ -8,7 +8,7 @@ module.exports = {
   endpoints: ['http://mock-chain:8080'],
   mining_contract: 'm.federation',
   notify_contract: 'notify.world',
-  abi_fetch_contracts: [],
+  abi_fetch_contracts: ['one.test', 'two.test'],
   hyperion_endpoint: 'http://mock-chain:8080',
   bsc_endpoint: 'http://mock-chain:8080/',
   eth_endpoint: 'http://mock-chain:8080/',
