@@ -5,6 +5,7 @@ services:
     restart: 'no'
     build:
       context: .
+      target: build # scripts/apigen.sh runs redoc-cli, a dev dependency
     depends_on:
       - api
     volumes:

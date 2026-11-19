@@ -13,7 +13,7 @@ This playbook covers deploying the release that contains PRs #79 to #84:
 
 Production dependency audit (`yarn audit --groups dependencies`) after the release: 0 critical, 0 high (21 moderate, 10 low). Before: 12 critical, 29 high.
 
-GitHub's Dependabot page for `master` shows a larger number (65 open alerts when this was written: 11 critical, 19 high, 22 medium, 8 low). Its runtime-scope alerts are 5 medium only; **all 11 critical and 19 high are in development dependencies** (lint and test tooling such as eslint and jest), which are not part of the production audit above. They are still installed into the Docker image, because the `Dockerfile` installs without `--production` (see section 9).
+GitHub's Dependabot page for `master` shows a larger number (65 open alerts when this was written: 11 critical, 19 high, 22 medium, 8 low). Its runtime-scope alerts are 5 medium only; **all 11 critical and 19 high are in development dependencies** (lint and test tooling such as eslint and jest), which are not part of the production audit above. The Docker image no longer contains them: the `Dockerfile` has a `build` stage with every dependency and a default `production` stage with production dependencies and the compiled `dist` only (about 160 MB of `node_modules` instead of about 400 MB).
 
 The goal of this document is to deploy without breaking anything and without harming the existing MongoDB. It lists what was verified, what was not, and the order to roll out in.
 
@@ -69,7 +69,7 @@ Do these before the first production change.
 4. **Check the MongoDB password.** `saslprep` is not installed (optional dependencies are skipped). An ASCII password behaves the same; a non-ASCII password may fail SCRAM authentication.
 5. **Check `FILLER_FLAGS`** in production (for example `-r -s <start block> -c`). A restart with replay flags would refill from the start block. Leave the flags exactly as they are.
 6. **Build the image once, in CI or staging, and deploy that image.** Do not build on the production host. Keep the previous image tag, or the previous pm2 release directory, for rollback.
-7. **Runtime**: the host or image needs Node 24.22.1 or later. With pm2 on a host, install Node 24, then `yarn install --frozen-lockfile --ignore-scripts --ignore-optional` and `yarn build`. The `@eosrio/node-abieos` prebuilt binary is x86-64 glibc; it loaded on Alpine amd64. It has not been tried on arm64.
+7. **Runtime**: the host or image needs Node 24.22.1 or later. The image's default `production` stage has no dev tooling, so containers must run the compiled code (`node dist/api.js` and so on). The `yarn api` / `yarn processor` scripts use `tsc-watch`, a dev dependency, and only work in the `build` stage (`docker build --target build .`) or with a bind mount of an installed checkout. With pm2 on a host, install Node 24, then `yarn install --frozen-lockfile --ignore-scripts --ignore-optional` and `yarn build`. The `@eosrio/node-abieos` prebuilt binary is x86-64 glibc; it loaded on Alpine amd64. It has not been tried on arm64.
 8. **Do not run `yarn mongo-indexes`** as part of the deploy. The indexes already exist; the dev `docker-compose.override.yml` runs it at API start, which production should not.
 
 ## 5. Staging rehearsal (recommended)
@@ -135,7 +135,7 @@ To check the server version: `db.version()` in `mongosh`.
 
 - Move the driver to 6.x. It removes callbacks and `cursor.count()`, so the callback in `processor.ts`, `connectMongo` and the `.count()` calls need to change, and `processor` needs its own test first.
 - Upgrade TypeScript. Fastify 5 ships TypeScript 5 type declarations, so `src/api.ts` loads the Fastify packages with `require()` until then.
-- Keep development dependencies out of the production image (a multi-stage build, or `yarn install --production` for the final stage). They are the source of the critical and high Dependabot alerts, and they are not needed at runtime. Clearing the alerts themselves means upgrading eslint, jest and their plugins.
+- Clearing the development-dependency Dependabot alerts at the source means upgrading or removing the dev tooling (eslint and its plugins, `redoc-cli`, `ts-jest`, `tsc-watch`). `redoc-cli` alone accounts for most of the critical and high alerts.
 - The remaining moderate audit findings (`@opentelemetry/core` via `newrelic`, `bn.js` via `eosjs` and `ethers`, `glob` and `minimatch` via `@fastify/swagger-ui`).
 
 ## Appendix A: duplicate-key handling check
