@@ -106,12 +106,28 @@ async function indexSetupCase() {
   return { name: 'mongo_setup indexes', request: 'node dist/mongo_setup.js', status: 0, headers: {}, body: stable(body) };
 }
 
+// Runs the real dist/fetch_abis.js against the mock chain. It makes one request per
+// contract in sequence, which is what fails with "socket hang up" when keep-alive
+// is left on. Records the exit status and the files it wrote.
+async function fetchAbisCase() {
+  const dir = fs.mkdtempSync('/tmp/abis-');
+  let status = 0;
+  try {
+    execFileSync('node', ['dist/fetch_abis.js', dir], { cwd: '/var/www/api', stdio: 'pipe' });
+  } catch (e) {
+    status = e.status || 1;
+  }
+  const files = fs.readdirSync(dir).sort().map(f => `${f}: ${fs.readFileSync(`${dir}/${f}`, 'utf8')}`);
+  return { name: 'fetch_abis', request: 'node dist/fetch_abis.js', status, headers: {}, body: stable({ files }) };
+}
+
 (async () => {
   await seed('mongodb://mongo:27017', 'smoke');
   await waitForApi();
   const results = [];
   for (const c of cases) results.push(await call(c));
   results.push(await indexSetupCase());
+  results.push(await fetchAbisCase());
 
   if (MODE === 'record') {
     fs.writeFileSync(GOLDEN, JSON.stringify(results, null, 2) + '\n');

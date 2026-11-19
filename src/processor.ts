@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-case-declarations */
 const newrelic = require('newrelic');
+import './include/disable-keepalive';
 import { StatsDisplay } from './include/statsdisplay';
 
 import { Amq } from './connections/amq';

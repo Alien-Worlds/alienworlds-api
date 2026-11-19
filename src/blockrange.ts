@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 const newrelic = require('newrelic');
+import './include/disable-keepalive';
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
 // import { connectMongo } from './connections/mongo';
