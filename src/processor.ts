@@ -3,6 +3,8 @@
 const newrelic = require('newrelic');
 import './include/disable-keepalive';
 import { StatsDisplay } from './include/statsdisplay';
+import { WorkerSupervisor } from './include/worker-supervisor';
+import { guardJobHandler } from './include/job-guard';
 
 import { Amq } from './connections/amq';
 import { connectMongo } from './connections/mongo';
@@ -11,7 +13,7 @@ import { AssetAggregator } from './include/assetaggregator';
 const { Api, JsonRpc, Serialize } = require('eosjs');
 const { Long } = require('mongodb');
 import { deserialize, ObjectSchema } from 'atomicassets';
-import * as cluster from 'cluster';
+import cluster from 'cluster';
 import * as os from 'os';
 // const crypto = require('crypto');
 // const fetch = require('node-fetch');
@@ -57,16 +59,38 @@ class AlienAPIProcessor {
     // start queue processor
     console.log('Starting queue processor');
     console.log('New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']');
-    setInterval(this.process_insert_queue.bind(this), 50);
+    setInterval(() => {
+      this.process_insert_queue().catch(e =>
+        console.error(`process_insert_queue failed: ${e && e.message}`)
+      );
+    }, 50);
   }
 
   start() {
     console.log(`Starting processor`);
     for (let i = 0; i < 30; i++) {
       // pull 10 jobs at a time
-      this.amq.listen('action', this.process_action_job.bind(this));
-      this.amq.listen('recalc_asset', this.process_recalc_job.bind(this));
+      this.amq.listen(
+        'action',
+        guardJobHandler('action', this.process_action_job.bind(this), this.amq)
+      );
+      this.amq.listen(
+        'recalc_asset',
+        guardJobHandler(
+          'recalc_asset',
+          this.process_recalc_job.bind(this),
+          this.amq
+        )
+      );
     }
+  }
+
+  // amq.ack, reject and send return promises that some paths do not await. Log a failure
+  // instead of leaving an unhandled rejection, which would terminate this worker.
+  background(promise: Promise<any>, what: string) {
+    Promise.resolve(promise).catch(e =>
+      console.error(`${what} failed: ${e && e.message}`)
+    );
   }
 
   buffer_to_bigint(buf) {
@@ -176,12 +200,13 @@ class AlienAPIProcessor {
     });
     // console.log(inserts);
     for (let col_name in inserts) {
-      const documents = inserts[col_name].map(i => i.document);
+      try {
+        const documents = inserts[col_name].map(i => i.document);
 
-      const col = this.mongo.collection(col_name);
+        const col = this.mongo.collection(col_name);
 
-      // testing
-      /*const to_delete = [];
+        // testing
+        /*const to_delete = [];
             for (let d=0;d<documents.length;d++){
                 if (d % 2 === 0){
                     // console.log(documents[d])
@@ -190,53 +215,86 @@ class AlienAPIProcessor {
             }
             const delres = await col.deleteMany({global_sequence: {$in: to_delete}});*/
 
-      col.insertMany(documents, { ordered: false }, (err, res) => {
-        // console.log(err, res);
-        if (err) {
-          // some documents failed
-          // console.log('ERROR', err.result);
-          // console.log(err.result.result.writeErrors);
-          // console.log(err.result.result.insertedIds);
+        col.insertMany(documents, { ordered: false }, (err, res) => {
+          // console.log(err, res);
+          if (err) {
+            // some documents failed
+            // console.log('ERROR', err.result);
+            // console.log(err.result.result.writeErrors);
+            // console.log(err.result.result.insertedIds);
 
-          // loop through everything and see if the index errored
-          for (let i = 0; i < inserts[col_name].length; i++) {
-            const write_error = err.result.result.writeErrors.find(
-              we => we.err.index === i
-            );
-            if (write_error) {
-              if (write_error.err.code === 11000) {
-                // console.log('duplicate')
-                try {
-                  this.amq.ack(inserts[col_name][i].job);
-                } catch (e) {
-                  console.error(e.message);
-                  process.exit(1);
-                }
-              } else {
-                this.amq.reject(inserts[col_name][i].job);
-                // throw new Error(write_error.err.errmsg)
-              }
-              // console.error(i, write_error.err.errmsg);
-            } else {
-              this.amq.ack(inserts[col_name][i].job);
+            // Only a bulk write error carries per-document results. Any other error (a timeout,
+            // a failover, a lost connection) has none, and reading it used to throw a TypeError
+            // here, which killed the worker. Nothing was confirmed, so put every job back.
+            const write_errors =
+              err.result && err.result.result && err.result.result.writeErrors;
+            if (!write_errors) {
+              console.error(`Insert into ${col_name} failed: ${err.message}`);
+              inserts[col_name].forEach(i =>
+                this.background(
+                  this.amq.reject(i.job),
+                  'Returning an insert job to the queue'
+                )
+              );
+              return;
             }
-            // console.log(inserts[col_name][i].job)
 
-            //
-          }
+            // loop through everything and see if the index errored
+            for (let i = 0; i < inserts[col_name].length; i++) {
+              const write_error = write_errors.find(we => we.err.index === i);
+              if (write_error) {
+                if (write_error.err.code === 11000) {
+                  // console.log('duplicate')
+                  try {
+                    this.background(
+                      this.amq.ack(inserts[col_name][i].job),
+                      'Acking a duplicate insert job'
+                    );
+                  } catch (e) {
+                    console.error(e.message);
+                    process.exit(1);
+                  }
+                } else {
+                  this.background(
+                    this.amq.reject(inserts[col_name][i].job),
+                    'Returning an insert job to the queue'
+                  );
+                  // throw new Error(write_error.err.errmsg)
+                }
+                // console.error(i, write_error.err.errmsg);
+              } else {
+                this.background(
+                  this.amq.ack(inserts[col_name][i].job),
+                  'Acking an insert job'
+                );
+              }
+              // console.log(inserts[col_name][i].job)
 
-          /*for (let e = 0; e < err.result.result.writeErrors.length; e++){
+              //
+            }
+
+            /*for (let e = 0; e < err.result.result.writeErrors.length; e++){
                         const write_error = err.result.result.writeErrors[e];
                         console.log(write_error.err.op)
                     }*/
-        } else if (res) {
-          // console.log('SUCCESS', res)
-          // all documents inserted
-          inserts[col_name].forEach(i => {
-            this.amq.ack(i.job);
-          });
-        }
-      });
+          } else if (res) {
+            // console.log('SUCCESS', res)
+            // all documents inserted
+            inserts[col_name].forEach(i => {
+              this.background(this.amq.ack(i.job), 'Acking an insert job');
+            });
+          }
+        });
+      } catch (e) {
+        // insertMany failed before it could start
+        console.error(`Insert into ${col_name} failed: ${e && e.message}`);
+        inserts[col_name].forEach(i =>
+          this.background(
+            this.amq.reject(i.job),
+            'Returning an insert job to the queue'
+          )
+        );
+      }
     }
   }
 
@@ -346,7 +404,10 @@ class AlienAPIProcessor {
               BigInt(store_data.asset_ids[a].toString()),
               0
             );
-            this.amq.send('recalc_asset', Buffer.concat([asset_id]));
+            this.background(
+              this.amq.send('recalc_asset', Buffer.concat([asset_id])),
+              'Queueing an asset recalculation'
+            );
           }
           break;
       }
@@ -539,30 +600,43 @@ const deserializer = new AbiDeserializer(`${__dirname}/abis`);
     console.log(`Threads set to ${threads}`);
     if (threads === 0 || isNaN(threads)) {
       const cpus = os.cpus().length;
-      console.log(`We have ${cpus} CPUs, setting threads to ${cpus - 4}`);
-      threads = cpus - 4;
+      // At least one: with 4 CPUs or fewer, `cpus - 4` is zero or negative and no worker
+      // would start, leaving a processor that runs but never consumes.
+      threads = Math.max(1, cpus - 4);
+      console.log(`We have ${cpus} CPUs, setting threads to ${threads}`);
     }
 
-    const workers = [];
+    // Restart any worker that exits (crash, unhandled error, process.exit), and log it.
+    const supervisor = new WorkerSupervisor(cluster);
+    supervisor.start();
+
+    let recalc_worker = null;
+    let processors_started = false;
+
+    const spawn_processor = () =>
+      supervisor.spawn('processor', (worker, msg) => {
+        // Worker is online
+        if (msg.online) {
+          worker.send({ type: 'processor' });
+        } else if (recalc_worker && recalc_worker.isConnected()) {
+          // console.log('other msg', msg)
+          recalc_worker.send(msg);
+        }
+      });
+
     // recalc_worker
-    const recalc_worker = await cluster.fork();
-    recalc_worker.on('message', msg => {
+    supervisor.spawn('recalc', (worker, msg) => {
       // Worker is online
       if (msg.online) {
-        recalc_worker.send({ type: 'recalc' });
+        recalc_worker = worker;
+        worker.send({ type: 'recalc' });
 
-        // start the processor workers
-        for (let i = 0; i < threads; i++) {
-          workers.push(cluster.fork());
-          workers[i].on('message', msg => {
-            // Worker is online
-            if (msg.online) {
-              workers[i].send({ type: 'processor' });
-            } else {
-              // console.log('other msg', msg)
-              recalc_worker.send(msg);
-            }
-          });
+        // start the processor workers (once; the supervisor restarts them after that)
+        if (!processors_started) {
+          processors_started = true;
+          for (let i = 0; i < threads; i++) {
+            spawn_processor();
+          }
         }
       }
     });

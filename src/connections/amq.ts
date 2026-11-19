@@ -129,7 +129,9 @@ export class Amq {
       await this.init();
     }
     try {
-      return this.channel.ack(job);
+      const result = this.channel.ack(job);
+      job.__settled = true; // see include/job-guard.ts
+      return result;
     } catch (e) {
       this.logger.error(`Failed to ack job`, e);
       // failure to ack isnt a problem, all jobs are idempotent
@@ -141,7 +143,9 @@ export class Amq {
       await this.init();
     }
     try {
-      return this.channel.reject(job, true);
+      const result = this.channel.reject(job, true);
+      job.__settled = true; // see include/job-guard.ts
+      return result;
     } catch (e) {
       this.logger.error(`Failed to reject job`);
     }
