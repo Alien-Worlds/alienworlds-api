@@ -121,10 +121,41 @@ export class Amq {
     // await this.channel.assertQueue(queue_name, {durable: true})
     this.listeners.push({ queue_name, cb });
 
-    this.channel.consume(queue_name, cb, { noAck: false });
+    // Remember which channel delivered each job. Delivery tags only mean something on that
+    // channel, so a job must never be acked or rejected on a replacement channel (see
+    // is_from_old_channel). The callback gets `null` when RabbitMQ cancels the consumer.
+    const channel = this.channel;
+    channel.consume(
+      queue_name,
+      msg => {
+        if (msg) {
+          msg.__channel = channel;
+        }
+        return cb(msg);
+      },
+      { noAck: false }
+    );
+  }
+
+  // True if the job was delivered on a channel that is no longer the current one (the
+  // connection dropped and was re-established). RabbitMQ puts the unsettled deliveries of a
+  // closed channel back on the queue by itself, so there is nothing left to do for the job, and
+  // settling it on the new channel would hit an unrelated delivery or make RabbitMQ close that
+  // channel (unknown delivery tag).
+  is_from_old_channel(job) {
+    return (
+      !!job.__channel && (!this.initialized || job.__channel !== this.channel)
+    );
   }
 
   async ack(job) {
+    if (this.is_from_old_channel(job)) {
+      this.logger.warn(
+        `Not acking a job from a closed channel; RabbitMQ requeues it`
+      );
+      job.__settled = true; // see include/job-guard.ts
+      return;
+    }
     if (!this.initialized) {
       await this.init();
     }
@@ -139,6 +170,13 @@ export class Amq {
   }
 
   async reject(job) {
+    if (this.is_from_old_channel(job)) {
+      this.logger.warn(
+        `Not rejecting a job from a closed channel; RabbitMQ requeues it`
+      );
+      job.__settled = true; // see include/job-guard.ts
+      return;
+    }
     if (!this.initialized) {
       await this.init();
     }

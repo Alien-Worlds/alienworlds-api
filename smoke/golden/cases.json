@@ -1971,13 +1971,15 @@
     }
   },
   {
-    "name": "processor survives a malformed message and a killed worker",
+    "name": "processor survives a malformed message, a killed worker and cancelled consumers",
     "request": "node dist/processor.js (RabbitMQ queue action)",
     "status": 0,
     "headers": {},
     "body": {
+      "consumers_after_cancellation": 60,
       "consumers_after_malformed_message": 60,
       "consumers_after_worker_restart": 60,
+      "consumers_cancelled_by_queue_deletion": true,
       "consumers_when_ready": 60,
       "worker_loss_seen": true
     }

@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { exponentialDelay } from './backoff';
 /**
  * Keeps cluster workers alive.
  *
@@ -98,10 +99,7 @@ export class WorkerSupervisor {
         : (this.exitsInARow.get(entry.role) || 0) + 1;
     this.exitsInARow.set(entry.role, inARow);
 
-    const delayMs = Math.min(
-      this.maxDelayMs,
-      this.baseDelayMs * Math.pow(2, inARow - 1)
-    );
+    const delayMs = exponentialDelay(inARow, this.baseDelayMs, this.maxDelayMs);
     const pid = worker.process && worker.process.pid;
     const what = `Worker ${worker.id} (${entry.role}, pid ${pid}) exited with code ${code}, signal ${signal} after ${livedMs}ms`;
 

@@ -4,7 +4,8 @@ const newrelic = require('newrelic');
 import './include/disable-keepalive';
 import { StatsDisplay } from './include/statsdisplay';
 import { WorkerSupervisor } from './include/worker-supervisor';
-import { guardJobHandler } from './include/job-guard';
+import { exitOnConsumerCancel, guardJobHandler } from './include/job-guard';
+import { exponentialDelay } from './include/backoff';
 
 import { Amq } from './connections/amq';
 import { connectMongo } from './connections/mongo';
@@ -31,6 +32,7 @@ class AlienAPIProcessor {
   stats: StatsDisplay;
   recalc_worker: any;
   insert_queue: any;
+  insert_failures: number;
 
   constructor(config, deserializer, amq, mongo, stats) {
     const fetch = require('node-fetch');
@@ -44,6 +46,7 @@ class AlienAPIProcessor {
     this.logger = console;
     this.stats = stats;
     this.insert_queue = [];
+    this.insert_failures = 0;
 
     this.recalc_worker = null;
 
@@ -68,18 +71,28 @@ class AlienAPIProcessor {
 
   start() {
     console.log(`Starting processor`);
+    // If RabbitMQ cancels a consumer, exit so the master restarts this worker.
+    const exit_on_cancel = exitOnConsumerCancel();
     for (let i = 0; i < 30; i++) {
       // pull 10 jobs at a time
       this.amq.listen(
         'action',
-        guardJobHandler('action', this.process_action_job.bind(this), this.amq)
+        guardJobHandler(
+          'action',
+          this.process_action_job.bind(this),
+          this.amq,
+          {
+            onCancel: exit_on_cancel,
+          }
+        )
       );
       this.amq.listen(
         'recalc_asset',
         guardJobHandler(
           'recalc_asset',
           this.process_recalc_job.bind(this),
-          this.amq
+          this.amq,
+          { onCancel: exit_on_cancel }
         )
       );
     }
@@ -91,6 +104,29 @@ class AlienAPIProcessor {
     Promise.resolve(promise).catch(e =>
       console.error(`${what} failed: ${e && e.message}`)
     );
+  }
+
+  // The inserts of a batch failed in a way that says nothing about the individual jobs (a
+  // timeout, a failover, a lost connection). Put them back on the queue, but not at once: if
+  // MongoDB is unavailable, an immediate redelivery would be inserted and fail again on the next
+  // 50 ms flush, hammering the database and the log. The delay grows with each failure in a row
+  // and resets after an insert that reaches MongoDB. While the jobs are held, their consumers
+  // stay busy, so no new jobs are taken. Jobs held across an AMQP reconnect are skipped by
+  // Amq (is_from_old_channel); RabbitMQ requeues those itself.
+  return_jobs_later(jobs, why) {
+    this.insert_failures++;
+    const delay = exponentialDelay(this.insert_failures, 1000, 30000);
+    console.error(
+      `${why}; returning ${jobs.length} job(s) to the queue in ${delay}ms (failure ${this.insert_failures} in a row)`
+    );
+    setTimeout(() => {
+      jobs.forEach(job =>
+        this.background(
+          this.amq.reject(job),
+          'Returning an insert job to the queue'
+        )
+      );
+    }, delay);
   }
 
   buffer_to_bigint(buf) {
@@ -229,15 +265,13 @@ class AlienAPIProcessor {
             const write_errors =
               err.result && err.result.result && err.result.result.writeErrors;
             if (!write_errors) {
-              console.error(`Insert into ${col_name} failed: ${err.message}`);
-              inserts[col_name].forEach(i =>
-                this.background(
-                  this.amq.reject(i.job),
-                  'Returning an insert job to the queue'
-                )
+              this.return_jobs_later(
+                inserts[col_name].map(i => i.job),
+                `Insert into ${col_name} failed: ${err.message}`
               );
               return;
             }
+            this.insert_failures = 0; // MongoDB answered
 
             // loop through everything and see if the index errored
             for (let i = 0; i < inserts[col_name].length; i++) {
@@ -280,6 +314,7 @@ class AlienAPIProcessor {
           } else if (res) {
             // console.log('SUCCESS', res)
             // all documents inserted
+            this.insert_failures = 0;
             inserts[col_name].forEach(i => {
               this.background(this.amq.ack(i.job), 'Acking an insert job');
             });
@@ -287,12 +322,9 @@ class AlienAPIProcessor {
         });
       } catch (e) {
         // insertMany failed before it could start
-        console.error(`Insert into ${col_name} failed: ${e && e.message}`);
-        inserts[col_name].forEach(i =>
-          this.background(
-            this.amq.reject(i.job),
-            'Returning an insert job to the queue'
-          )
+        this.return_jobs_later(
+          inserts[col_name].map(i => i.job),
+          `Insert into ${col_name} failed: ${e && e.message}`
         );
       }
     }

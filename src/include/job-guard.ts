@@ -12,7 +12,8 @@
  * would make RabbitMQ close the whole channel, so a settled job is left alone.
  *
  * RabbitMQ also calls the callback with `null` when it cancels the consumer (for example when
- * the queue is deleted or a node fails over); that is logged and ignored.
+ * the queue is deleted or a node fails over). That is logged and `onCancel` is called, because
+ * the consumer is gone and nothing else would notice.
  */
 
 export interface JobGuardLogger {
@@ -21,6 +22,12 @@ export interface JobGuardLogger {
 }
 
 export interface JobGuardOptions {
+  /**
+   * Called when RabbitMQ cancels the consumer (it sends a `null` job). The consumer is gone
+   * for good: neither the AMQP reconnection nor the worker supervision notices, so the owner
+   * must act, normally by exiting so the supervisor starts a worker that subscribes again.
+   */
+  onCancel?: () => void;
   retryDelayMs?: number;
   log?: JobGuardLogger;
   sleep?: (ms: number) => Promise<void>;
@@ -41,6 +48,9 @@ export function guardJobHandler(
   return async (job: any): Promise<void> => {
     if (!job) {
       log.warn(`The ${name} consumer was cancelled by the server`);
+      if (options.onCancel) {
+        options.onCancel();
+      }
       return;
     }
     try {
@@ -67,5 +77,27 @@ export function guardJobHandler(
         );
       }
     }
+  };
+}
+
+/**
+ * Returns an `onCancel` for guardJobHandler that makes the process exit (once, however many of
+ * its consumers are cancelled together), so the worker supervisor starts a replacement that
+ * subscribes again. Unsettled jobs go back on the queue by themselves when the process dies.
+ */
+export function exitOnConsumerCancel(
+  log: JobGuardLogger = console,
+  exit: (code: number) => void = code => process.exit(code)
+) {
+  let exiting = false;
+  return () => {
+    if (exiting) {
+      return;
+    }
+    exiting = true;
+    log.error(
+      'RabbitMQ cancelled a consumer; exiting so that the worker is restarted and subscribes again'
+    );
+    exit(1);
   };
 }

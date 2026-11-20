@@ -126,7 +126,8 @@ async function fetchAbisCase() {
 // The processor (RabbitMQ consumer, cluster master and workers). A worker that crashed used to
 // disappear for good: the processor stayed up and logged nothing new while it had no consumers
 // left, so queues filled and nothing was processed. Checks that its consumers survive a
-// malformed message, and that a killed worker is replaced.
+// malformed message, that a killed worker is replaced, and that it subscribes again after RabbitMQ
+// cancels its consumers.
 async function processorCase() {
   const WORKERS = 2; // processor_threads in config.smoke.js
   const EXPECTED = WORKERS * 30; // the processor opens 30 consumers on 'action' per worker
@@ -168,10 +169,19 @@ async function processorCase() {
   fs.writeFileSync('/flag/kill', '1');
   const dropped = await waitFor(n => n < EXPECTED, 60, 'the killed worker to disappear');
   const recovered = await waitFor(n => n === EXPECTED, 120, 'the killed worker to be replaced');
+
+  // Deleting the queue makes RabbitMQ cancel every consumer on it while the connections stay
+  // open. Nothing used to notice, so the workers stayed up with no consumers. Now they exit, the
+  // master restarts them, and they declare the queue again and subscribe.
+  const ch2 = await conn.createChannel();
+  await ch2.deleteQueue('action');
+  await ch2.close();
+  const queueGone = await waitFor(n => n === -1, 30, 'the deleted queue to disappear');
+  const resubscribed = await waitFor(n => n === EXPECTED, 180, 'the workers to subscribe again after the queue was deleted');
   await conn.close();
 
   return {
-    name: 'processor survives a malformed message and a killed worker',
+    name: 'processor survives a malformed message, a killed worker and cancelled consumers',
     request: 'node dist/processor.js (RabbitMQ queue action)',
     status: 0,
     headers: {},
@@ -180,6 +190,8 @@ async function processorCase() {
       consumers_after_malformed_message: afterMalformed,
       worker_loss_seen: dropped < EXPECTED,
       consumers_after_worker_restart: recovered,
+      consumers_cancelled_by_queue_deletion: queueGone === -1,
+      consumers_after_cancellation: resubscribed,
     }),
   };
 }

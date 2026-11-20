@@ -6,7 +6,7 @@ import { Amq } from './connections/amq';
 // import { connectMongo } from './connections/mongo';
 import { StatsDisplay } from './include/statsdisplay';
 import { WorkerSupervisor } from './include/worker-supervisor';
-import { guardJobHandler } from './include/job-guard';
+import { exitOnConsumerCancel, guardJobHandler } from './include/job-guard';
 import { TraceHandler } from './handlers/tracehandler';
 import { DeltaHandler } from './handlers/deltahandler';
 // import { program } from 'commander';
@@ -103,7 +103,9 @@ class AlienAPIBlockRange {
       guardJobHandler(
         'aw_block_range',
         this.process_blockrange_job.bind(this),
-        this.amq
+        this.amq,
+        // If RabbitMQ cancels the consumer, exit so the master restarts this worker.
+        { onCancel: exitOnConsumerCancel() }
       )
     );
   }
