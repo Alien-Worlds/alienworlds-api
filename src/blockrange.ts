@@ -5,11 +5,13 @@ const StateReceiver = require('@eosdacio/eosio-statereceiver');
 import { Amq } from './connections/amq';
 // import { connectMongo } from './connections/mongo';
 import { StatsDisplay } from './include/statsdisplay';
+import { WorkerSupervisor } from './include/worker-supervisor';
+import { exitOnConsumerCancel, guardJobHandler } from './include/job-guard';
 import { TraceHandler } from './handlers/tracehandler';
 import { DeltaHandler } from './handlers/deltahandler';
 // import { program } from 'commander';
 // import fetch from 'node-fetch';
-import * as cluster from 'cluster';
+import cluster from 'cluster';
 import * as os from 'os';
 const { Serialize } = require('eosjs');
 
@@ -96,7 +98,16 @@ class AlienAPIBlockRange {
   async start() {
     console.log('New Relic App Name: [' + process.env.NEW_RELIC_APP_NAME + ']');
 
-    this.amq.listen('aw_block_range', this.process_blockrange_job.bind(this));
+    this.amq.listen(
+      'aw_block_range',
+      guardJobHandler(
+        'aw_block_range',
+        this.process_blockrange_job.bind(this),
+        this.amq,
+        // If RabbitMQ cancels the consumer, exit so the master restarts this worker.
+        { onCancel: exitOnConsumerCancel() }
+      )
+    );
   }
 }
 
@@ -110,12 +121,18 @@ class AlienAPIBlockRange {
     let threads = parseInt(config.blockrange_threads);
     if (threads === 0 || isNaN(threads)) {
       const cpus = os.cpus().length;
-      threads = cpus - 4;
+      // At least one: with 4 CPUs or fewer, `cpus - 4` is zero or negative and no worker
+      // would start.
+      threads = Math.max(1, cpus - 4);
     }
     console.log(`Threads set to ${threads}`);
 
+    // Restart any worker that exits (crash, unhandled error, process.exit), and log it.
+    const supervisor = new WorkerSupervisor(cluster);
+    supervisor.start();
+
     for (let i = 0; i < threads; i++) {
-      cluster.fork();
+      supervisor.spawn('blockrange');
     }
   } else {
     const stats = new StatsDisplay();

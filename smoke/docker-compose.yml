@@ -4,6 +4,8 @@
 #   mongo       MongoDB 6.0 (image pinned by digest), seeded by the runner
 #   mock-chain  fake WAX / ETH / BSC endpoints for the /token route
 #   api         an image built like ../Dockerfile (without the abis download), config mounted over dist/config.js
+#   rabbitmq    RabbitMQ (image pinned by digest) for the processor
+#   processor   the same image running dist/processor.js (linux/amd64: the abieos binary is x86-64)
 #   runner      the same image, running smoke/run.js (seeds, requests, compares)
 name: aw-smoke
 
@@ -37,6 +39,51 @@ services:
     depends_on: [mongo, mock-chain]
     networks: [smoke]
 
+  rabbitmq:
+    image: rabbitmq:3@sha256:87178a0ee3e2f52980ba356d38646ed1056705ff2d5ff281f8965456eaa0c1e3
+    environment:
+      RABBITMQ_DEFAULT_USER: aw
+      RABBITMQ_DEFAULT_PASS: aw
+    # The Erlang cookie file must belong to the rabbitmq user (999); otherwise some Docker
+    # setups fail to start with "Error when reading /var/lib/rabbitmq/.erlang.cookie: eacces".
+    tmpfs: ['/var/lib/rabbitmq:uid=999,gid=999,mode=0700']
+    networks: [smoke]
+
+  processor:
+    # Same Dockerfile as the api, built for linux/amd64 because @eosrio/node-abieos ships an
+    # x86-64 binary (on an x86 CI runner this is the native architecture).
+    platform: linux/amd64
+    build:
+      context: ..
+      dockerfile: smoke/Dockerfile
+    image: aw-smoke-processor
+    # Starts the processor, then waits for the runner to create /flag/kill and kills the newest
+    # process (the last processor worker), to check that the master restarts it.
+    command:
+      - sh
+      - -c
+      - |
+        # depends_on only waits for the container to start, and the processor exits if it cannot
+        # connect to RabbitMQ at start-up, so wait for the port first.
+        until node -e "require('net').connect(5672, 'rabbitmq').on('connect', () => process.exit(0)).on('error', () => process.exit(1))"; do sleep 1; done
+        node dist/processor.js &
+        MASTER=$$!
+        while [ ! -f /flag/kill ]; do sleep 1; done
+        WORKER=$$(ps -o pid,args | grep 'dist/processor.js' | grep -v grep | tail -1 | awk '{print $$1}')
+        echo "smoke: killing processor worker $$WORKER"
+        kill -9 $$WORKER
+        wait $$MASTER
+    environment:
+      NEW_RELIC_ENABLED: 'false'
+      NEW_RELIC_NO_CONFIG_FILE: 'true'
+      NEW_RELIC_APP_NAME: smoke-processor
+    volumes:
+      - ./config.smoke.js:/var/www/api/dist/config.js:ro
+      - ./fixtures/abis:/var/www/api/dist/abis:ro
+      - killflag:/flag
+    depends_on: [mongo, rabbitmq]
+    networks: [smoke]
+
   runner:
     image: aw-smoke-api
     working_dir: /var/www/api
@@ -48,8 +95,12 @@ services:
       - ./run.js:/smoke/run.js:ro
       - ./seed.js:/smoke/seed.js:ro
       - ./golden:/smoke/golden
-    depends_on: [api]
+      - killflag:/flag
+    depends_on: [api, processor]
     networks: [smoke]
+
+volumes:
+  killflag:
 
 networks:
   smoke:

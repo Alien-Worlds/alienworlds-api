@@ -23,7 +23,10 @@ smoke/run.sh record   # re-record the golden file (do this only on purpose, see 
 2. Starts MongoDB 6.0 (pinned by digest, the major version production runs), a mock chain endpoint and the `api` on an
    internal Docker network with no route to the internet.
 3. Seeds fixed documents (`smoke/seed.js`), calls 32 requests (`smoke/run.js`) and
-   compares status, selected headers (content-type, CORS) and the JSON body.
+   compares status, selected headers (content-type, CORS) and the JSON body. It also starts a
+   RabbitMQ and the real `dist/processor.js`, and checks that the processor keeps its consumers
+   after a malformed message, replaces a worker that is killed, and subscribes again when RabbitMQ
+   cancels its consumers (the queue is deleted).
 
 Covered: `/mines`, `/nfts`, `/mineluck`, `/asset` and `/token` with their filters, the
 error paths (limit too large, bad sort, non-integer limit, not found), the OpenAPI
@@ -38,7 +41,8 @@ in the same pull request so a reviewer sees what moved.
 
 ## Known limits
 
-- Only the `api` process, plus the index setup script. `processor`, `filler` and
+- The `api` process, the index setup script, and the processor's consumers and worker
+  supervision (not its real work: no SHiP node or chain data). `processor`, `filler` and
   `blockrange` need a SHiP node and RabbitMQ, so their real work (including the
   `insertMany` callback in `processor.ts`) is not covered. An `amqplib` upgrade
   needs its own check.

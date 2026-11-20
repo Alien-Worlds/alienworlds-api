@@ -93,6 +93,23 @@ Deploy one process at a time, and stop at the first sign of trouble.
 
 With Docker Compose, use the same order: `docker compose pull`, then `docker compose up -d <service>` one service at a time.
 
+### Is the processor consuming?
+
+A processor can start cleanly, log no error, and still consume nothing: its cluster workers are
+separate processes, and before the hardening release a worker that crashed was never restarted.
+So "the container is running" does not mean "blocks are being processed". Check the queue:
+
+```sh
+rabbitmqctl list_queues name consumers messages_ready messages_unacknowledged
+```
+
+The `action` queue should have `30 x <number of processor workers>` consumers (60 with two
+workers) and `messages_ready` should not keep growing while the filler runs. **0 consumers means
+the workers are gone.** Look at the container log for `Worker N (processor, pid P) exited with
+code ...` lines (the master now logs every exit and restarts the worker after a delay) and for
+`Unhandled error in the action job handler`. Also look for `We have N CPUs, setting threads to M`:
+before the hardening release a container reporting 4 CPUs or fewer started zero workers.
+
 ### Changes API consumers will notice
 
 - Validation errors (HTTP 400) now read `querystring/limit must be integer` (it was `querystring.limit should be integer`) and carry a `"code": "FST_ERR_VALIDATION"` field. A client that matches on the message text would break.
@@ -108,7 +125,7 @@ With Docker Compose, use the same order: `docker compose pull`, then `docker com
 
 ## 7. Stop signs and rollback
 
-**Roll back the process you just changed** if you see any of: crash-loop restarts, a growing RabbitMQ queue, `global_sequence` not advancing, a sudden jump in MongoDB connections or error logs, an API 5xx rate above baseline, or New Relic showing no transactions.
+**Roll back the process you just changed** if you see any of: crash-loop restarts, a growing RabbitMQ queue or a processor with 0 consumers on `action`, `global_sequence` not advancing, a sudden jump in MongoDB connections or error logs, an API 5xx rate above baseline, or New Relic showing no transactions.
 
 **Rollback**: revert one process at a time to the previous image tag or pm2 release. There is no data migration to undo. Keep the Node 17 runtime or the old image available until the new release has been stable for a few days.
 
